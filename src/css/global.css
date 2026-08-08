@@ -1,0 +1,197 @@
+/* Global Layout & Responsive Resets */
+@import './variables.css';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: #f1f5f9;
+  color: var(--dark-gray);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  background-color: var(--white);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Widescreen wrapper constraint for student portal content */
+.student-content-wrap {
+  width: 100%;
+  max-width: var(--max-width-desktop);
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+/* Sticky Bottom Navigation - Mobile ONLY */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--max-width);
+  height: 60px;
+  background-color: var(--white);
+  border-top: 1px solid var(--border-gray);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 100;
+  box-shadow: 0 -4px 10px rgba(0,0,0,0.08);
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: var(--light-gray);
+  cursor: pointer;
+  width: 50%;
+  height: 100%;
+  transition: color 0.2s ease;
+  font-family: var(--font-family);
+  font-weight: 500;
+}
+
+.bottom-nav-item.active {
+  color: var(--primary-blue);
+}
+
+.bottom-nav-item svg {
+  width: 22px;
+  height: 22px;
+  margin-bottom: 2px;
+}
+
+/* Hide bottom nav on desktop/tablet */
+@media (min-width: 768px) {
+  .bottom-nav {
+    display: none;
+  }
+}
+
+/* Floating Actions Area */
+.floating-actions {
+  position: fixed;
+  bottom: 75px;
+  right: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  align-items: center;
+  z-index: 99;
+}
+
+/* Adjust floating stack on desktop */
+@media (min-width: 768px) {
+  .floating-actions {
+    bottom: var(--spacing-lg);
+  }
+}
+
+.floating-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: none;
+  background-color: var(--white);
+}
+
+.floating-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.floating-btn.whatsapp {
+  background-color: var(--whatsapp-green);
+  color: var(--white);
+}
+
+.floating-btn.phone {
+  background-color: var(--white);
+  color: var(--primary-blue);
+  border: 1px solid var(--border-light);
+}
+
+.floating-btn.scroll-top {
+  background-color: var(--white);
+  color: var(--dark-gray);
+  border: 1px solid var(--border-gray);
+}
+
+.floating-chat-bubble {
+  width: 54px;
+  height: 54px;
+  border-radius: var(--radius-full);
+  background-color: var(--primary-blue);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  border: none;
+}
+
+.floating-chat-bubble:hover {
+  background-color: var(--primary-blue-hover);
+  transform: translateY(-2px);
+}
+
+/* Utility Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
