@@ -486,3 +486,124 @@
   margin-bottom: var(--spacing-md);
   text-align: center;
 }
+
+/* Mobile responsive overrides for admin panel */
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100% !important;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .admin-sidebar-header {
+    padding: 12px 15px !important;
+    justify-content: space-between;
+  }
+
+  .admin-sidebar-nav {
+    flex-direction: row !important;
+    overflow-x: auto;
+    padding: 5px 15px !important;
+    gap: 8px !important;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-nav-item {
+    padding: 10px 14px !important;
+    border-left: none !important;
+    border-bottom: 3px solid transparent;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .admin-nav-item.active {
+    border-bottom-color: var(--primary-light-blue);
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .admin-sidebar-footer {
+    display: none !important; /* Hide standard sidebar footer */
+  }
+
+  .admin-main {
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .admin-header {
+    height: auto !important;
+    padding: 12px 15px !important;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .admin-header-title {
+    font-size: 1.05rem !important;
+  }
+
+  .admin-header-user {
+    font-size: 0.78rem !important;
+  }
+
+  .admin-content {
+    padding: 12px !important;
+  }
+
+  .admin-grid-stats {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    margin-bottom: 15px !important;
+  }
+
+  .admin-stat-card {
+    padding: 12px !important;
+  }
+
+  .admin-card {
+    padding: 12px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .admin-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .admin-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 14px !important;
+  }
+
+  .admin-form-row {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .admin-table-container {
+    margin: 0 -12px;
+    padding: 0 12px;
+    width: calc(100% + 24px);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-table {
+    min-width: 600px; /* Force table horizontal scrolling on tiny screens to avoid squishing */
+  }
+
+  /* Sliders grid adjustments */
+  .admin-sliders-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
