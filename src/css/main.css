@@ -1420,3 +1420,52 @@
   border-top: 1.5px solid var(--border-light);
   margin-top: 20px;
 }
+
+/* Mobile responsive adjustments for viewports <= 480px */
+@media (max-width: 480px) {
+  /* Prevent screen horizontal overflow cutting off elements from right */
+  body, html, #root, .app-container {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  .header {
+    padding: 0 var(--spacing-sm) !important; /* Reduce padding on mobile */
+  }
+  
+  .header-left {
+    gap: 4px !important; /* Minimal gap between icon and name logo */
+  }
+
+  .header-logo-icon {
+    height: 32px !important; /* Scale down icon height */
+    width: auto !important;
+  }
+
+  .header-logo-text {
+    width: 120px !important; /* Scale down name text logo width */
+    height: auto !important;
+    max-height: 28px !important;
+  }
+
+  .header-right {
+    gap: 6px !important; /* Reduce gap between call/user/hamburger buttons */
+  }
+
+  .header-btn {
+    width: 36px !important; /* Make buttons slightly smaller on mobile */
+    height: 36px !important;
+  }
+  
+  .header-btn svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  
+  /* Fix floating action overlay stack positioning */
+  .floating-actions {
+    right: 15px !important;
+    bottom: 75px !important; /* Push it up to clear bottom nav bar */
+    gap: 10px !important;
+  }
+}
