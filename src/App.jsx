@@ -228,6 +228,8 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
                 src={settings.logoUrl} 
                 className="header-logo-icon" 
                 alt="Logo Icon" 
+                fetchPriority="high"
+                loading="eager"
                 style={{ 
                   height: settings.logoIconHeight || '44px',
                   width: 'auto',
@@ -241,6 +243,8 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
                 src={settings.logoNameUrl} 
                 className="header-logo-text" 
                 alt={settings.instituteName} 
+                fetchPriority="high"
+                loading="eager"
                 style={{ 
                   width: settings.logoWidth || '180px',
                   height: settings.logoHeight || '45px',
@@ -500,6 +504,8 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl }) {
           <img 
             src={kalam.imageUrl} 
             alt="Dr. APJ Abdul Kalam - Our Mentor" 
+            fetchPriority="high"
+            loading="eager"
             style={{ width: '100%', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)', objectFit: 'contain' }} 
             onError={(e) => { e.target.style.display = 'none'; }}
           />
