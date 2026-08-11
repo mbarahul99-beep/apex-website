@@ -29,6 +29,7 @@ export default function App() {
   const [enquiryModalOpen, setEnquiryModalOpen] = useState(false);
   const [selectedCourseForEnquiry, setSelectedCourseForEnquiry] = useState(null);
   const [videoModalUrl, setVideoModalUrl] = useState(null);
+  const [selectedCourseDetails, setSelectedCourseDetails] = useState(null);
 
   // Sync with browser navigation
   useEffect(() => {
@@ -76,6 +77,7 @@ export default function App() {
         navigate={navigate} 
         openEnquiry={openEnquiry} 
         setVideoModalUrl={setVideoModalUrl}
+        setSelectedCourseDetails={setSelectedCourseDetails}
       />
     );
   } else if (currentPath === '/courses') {
@@ -83,6 +85,7 @@ export default function App() {
       <CoursesListView 
         navigate={navigate} 
         openEnquiry={openEnquiry}
+        setSelectedCourseDetails={setSelectedCourseDetails}
       />
     );
   } else if (currentPath === '/online-prep' || currentPath === '/student-portal') {
@@ -127,6 +130,7 @@ export default function App() {
         navigate={navigate} 
         openEnquiry={openEnquiry} 
         setVideoModalUrl={setVideoModalUrl}
+        setSelectedCourseDetails={setSelectedCourseDetails}
       />
     );
   }
@@ -173,6 +177,89 @@ export default function App() {
             selectedCourse={selectedCourseForEnquiry} 
             onClose={() => setEnquiryModalOpen(false)}
           />
+        )}
+
+        {selectedCourseDetails && (
+          <div className="modal-backdrop" onClick={() => setSelectedCourseDetails(null)}>
+            <div className="modal-content" style={{ maxWidth: '550px', width: '95%' }} onClick={e => e.stopPropagation()}>
+              <div className="modal-header">
+                <span className="modal-title">{selectedCourseDetails.title} Curriculum Details</span>
+                <button className="modal-close" onClick={() => setSelectedCourseDetails(null)}><IconClose /></button>
+              </div>
+              <div className="modal-body" style={{ padding: '20px', maxHeight: '75vh', overflowY: 'auto' }}>
+                {selectedCourseDetails.showImage !== false && selectedCourseDetails.image && (
+                  <img 
+                    src={selectedCourseDetails.image} 
+                    alt={selectedCourseDetails.title} 
+                    style={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: 'var(--radius-md)', marginBottom: '15px' }} 
+                  />
+                )}
+                
+                <h3 style={{ color: 'var(--navy-dark)', fontFamily: 'var(--font-family)', fontSize: '1.2rem', marginBottom: '12px', fontWeight: 700 }}>
+                  {selectedCourseDetails.title}
+                </h3>
+                
+                {selectedCourseDetails.showDetails !== false && selectedCourseDetails.details && (
+                  <p style={{ fontSize: '0.9rem', color: 'var(--dark-gray)', lineHeight: '1.6', marginBottom: '20px' }}>
+                    {selectedCourseDetails.details}
+                  </p>
+                )}
+
+                <div style={{ backgroundColor: '#f8fafc', padding: '15px', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+                  {selectedCourseDetails.showTarget !== false && selectedCourseDetails.target && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                      <span style={{ fontWeight: 600, color: 'var(--light-gray)' }}>Target Group:</span>
+                      <span style={{ color: 'var(--navy-dark)', fontWeight: 500 }}>{selectedCourseDetails.target}</span>
+                    </div>
+                  )}
+                  {selectedCourseDetails.showBoards !== false && selectedCourseDetails.boards && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                      <span style={{ fontWeight: 600, color: 'var(--light-gray)' }}>Board Prep:</span>
+                      <span style={{ color: 'var(--navy-dark)', fontWeight: 500 }}>{selectedCourseDetails.boards}</span>
+                    </div>
+                  )}
+                  {selectedCourseDetails.showDuration !== false && selectedCourseDetails.duration && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                      <span style={{ fontWeight: 600, color: 'var(--light-gray)' }}>Course Duration:</span>
+                      <span style={{ color: 'var(--navy-dark)', fontWeight: 500 }}>{selectedCourseDetails.duration}</span>
+                    </div>
+                  )}
+                  {selectedCourseDetails.showSchedule !== false && selectedCourseDetails.schedule && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                      <span style={{ fontWeight: 600, color: 'var(--light-gray)' }}>Weekly Schedule:</span>
+                      <span style={{ color: 'var(--navy-dark)', fontWeight: 500 }}>{selectedCourseDetails.schedule}</span>
+                    </div>
+                  )}
+                  {selectedCourseDetails.showFee !== false && selectedCourseDetails.fee && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', borderTop: '1px solid #e2e8f0', paddingTop: '8px', marginTop: '4px' }}>
+                      <span style={{ fontWeight: 700, color: 'var(--navy-dark)' }}>Registration Fee:</span>
+                      <span style={{ color: 'var(--primary-blue)', fontWeight: 800 }}>₹ {selectedCourseDetails.fee.toLocaleString()}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button 
+                    className="courses-action-btn"
+                    style={{ flex: 1, padding: '12px', fontSize: '0.9rem', width: '100%' }}
+                    onClick={() => {
+                      openEnquiry(selectedCourseDetails);
+                      setSelectedCourseDetails(null);
+                    }}
+                  >
+                    Enquire / Enroll Now
+                  </button>
+                  <button 
+                    className="courses-action-btn secondary"
+                    style={{ padding: '12px 20px', fontSize: '0.9rem', width: 'auto', backgroundColor: '#e2e8f0', color: 'var(--dark-gray)', border: 'none' }}
+                    onClick={() => setSelectedCourseDetails(null)}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </HelmetProvider>
@@ -410,7 +497,7 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
 }
 
 // ---------------- HOME VIEW ----------------
-function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl }) {
+function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelectedCourseDetails }) {
   const [sliders, setSliders] = useState([]);
   const [courses, setCourses] = useState([]);
   const [kalam, setKalam] = useState({});
@@ -538,37 +625,64 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl }) {
         <div className="courses-container">
           {previewCourses.map(course => (
             <div className="course-card" key={course.id}>
-              <div className="course-banner">
-                <img src={course.image} alt={course.title} />
-                <div className="course-banner-overlay">
-                  <button className="course-detail-btn" onClick={() => openEnquiry(course)}>View details</button>
+              {course.showImage !== false && (
+                <div className="course-banner">
+                  <img src={course.image} alt={course.title} />
+                  <div className="course-banner-overlay">
+                    <button className="course-detail-btn" onClick={() => setSelectedCourseDetails(course)}>View details</button>
+                  </div>
                 </div>
-              </div>
+              )}
               <div className="course-info">
-                <span className="testimonial-rank" style={{ marginBottom: '8px' }}>
-                  {course.category === 'class-11-12' ? 'Class 11th - 12th' : 'Class 9th - 10th'}
-                </span>
-                <h3 className="course-title">{course.title}</h3>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                  <span className="testimonial-rank" style={{ backgroundColor: 'var(--navy-blue)', color: '#fff' }}>
+                    {course.category === 'class-11-12' ? 'Class 11-12' : 'Class 9-10'}
+                  </span>
+                  {course.showTarget !== false && course.target && (
+                    <span className="testimonial-rank">
+                      {course.target}
+                    </span>
+                  )}
+                </div>
+                
+                <h3 className="course-title" style={{ cursor: 'pointer' }} onClick={() => setSelectedCourseDetails(course)}>{course.title}</h3>
                 
                 <div className="course-meta-list">
-                  <div className="course-meta-item">
-                    <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span>{course.schedule}</span>
-                  </div>
-                  <div className="course-meta-item">
-                    <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M12 2.25V9.75m0-7.25c.01-.2.03-.4.07-.6M12 9.75c.01.2.03.4.07.6" /></svg>
-                    <span>{course.boards}</span>
-                  </div>
+                  {course.showSchedule !== false && course.schedule && (
+                    <div className="course-meta-item">
+                      <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      <span>{course.schedule}</span>
+                    </div>
+                  )}
+                  {course.showBoards !== false && course.boards && (
+                    <div className="course-meta-item">
+                      <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M12 2.25V9.75m0-7.25c.01-.2.03-.4.07-.6M12 9.75c.01.2.03.4.07.6" /></svg>
+                      <span>{course.boards}</span>
+                    </div>
+                  )}
+                  {course.showDuration !== false && course.duration && (
+                    <div className="course-meta-item">
+                      <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                      <span>Duration: {course.duration}</span>
+                    </div>
+                  )}
                 </div>
 
                 <hr className="course-divider" />
 
-                <div className="course-footer">
-                  <div>
-                    <span className="course-price-label">Registration:</span>
-                    <div className="course-price-val">₹ {course.fee.toLocaleString()}</div>
+                <div className="course-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  {course.showFee !== false && course.fee ? (
+                    <div>
+                      <span className="course-price-label">Registration:</span>
+                      <div className="course-price-val">₹ {course.fee.toLocaleString()}</div>
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button className="enrol-btn secondary" style={{ padding: '8px 12px', fontSize: '0.8rem', backgroundColor: '#e2e8f0', color: 'var(--navy-dark)', border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer', fontWeight: 600 }} onClick={() => setSelectedCourseDetails(course)}>View Details</button>
+                    <button className="enrol-btn" style={{ padding: '8px 12px', fontSize: '0.8rem' }} onClick={() => openEnquiry(course)}>Enrol now</button>
                   </div>
-                  <button className="enrol-btn" onClick={() => openEnquiry(course)}>Enrol now</button>
                 </div>
               </div>
             </div>
@@ -810,7 +924,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl }) {
 }
 
 // ---------------- COURSES LIST VIEW ----------------
-function CoursesListView({ navigate, openEnquiry }) {
+function CoursesListView({ navigate, openEnquiry, setSelectedCourseDetails }) {
   const [courses, setCourses] = useState([]);
   const [activeTab, setActiveTab] = useState('all');
 
@@ -860,44 +974,70 @@ function CoursesListView({ navigate, openEnquiry }) {
       <div className="courses-container" style={{ borderBottom: 'none' }}>
         {filteredCourses.map(course => (
           <div className="course-card" key={course.id}>
-            <div className="course-banner">
-              <img src={course.image} alt={course.title} />
-              <div className="course-banner-overlay">
-                <button className="course-detail-btn" onClick={() => openEnquiry(course)}>View curriculum</button>
+            {course.showImage !== false && (
+              <div className="course-banner">
+                <img src={course.image} alt={course.title} />
+                <div className="course-banner-overlay">
+                  <button className="course-detail-btn" onClick={() => setSelectedCourseDetails(course)}>View Curriculum</button>
+                </div>
               </div>
-            </div>
+            )}
             <div className="course-info">
-              <span className="testimonial-rank" style={{ marginBottom: '8px' }}>
-                {course.category === 'class-11-12' ? 'Class 11th - 12th' : 'Class 9th - 10th'}
-              </span>
-              <h3 className="course-title">{course.title}</h3>
-              <p style={{ fontSize: '0.85rem', color: 'var(--light-gray)', marginBottom: '16px', lineHeight: 1.45 }}>
-                {course.details}
-              </p>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                <span className="testimonial-rank" style={{ backgroundColor: 'var(--navy-blue)', color: '#fff' }}>
+                  {course.category === 'class-11-12' ? 'Class 11-12' : 'Class 9-10'}
+                </span>
+                {course.showTarget !== false && course.target && (
+                  <span className="testimonial-rank">
+                    {course.target}
+                  </span>
+                )}
+              </div>
+              
+              <h3 className="course-title" style={{ cursor: 'pointer' }} onClick={() => setSelectedCourseDetails(course)}>{course.title}</h3>
+              
+              {course.showDetails !== false && course.details && (
+                <p style={{ fontSize: '0.85rem', color: 'var(--light-gray)', marginBottom: '16px', lineHeight: 1.45 }}>
+                  {course.details}
+                </p>
+              )}
               
               <div className="course-meta-list">
-                <div className="course-meta-item">
-                  <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  <span>{course.schedule}</span>
-                </div>
-                <div className="course-meta-item">
-                  <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
-                  <span>{course.duration}</span>
-                </div>
-                <div className="course-meta-item">
-                  <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M12 2.25V9.75m0-7.25c.01-.2.03-.4.07-.6M12 9.75c.01.2.03.4.07.6" /></svg>
-                  <span>{course.boards}</span>
-                </div>
+                {course.showSchedule !== false && course.schedule && (
+                  <div className="course-meta-item">
+                    <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>{course.schedule}</span>
+                  </div>
+                )}
+                {course.showDuration !== false && course.duration && (
+                  <div className="course-meta-item">
+                    <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+                    <span>Duration: {course.duration}</span>
+                  </div>
+                )}
+                {course.showBoards !== false && course.boards && (
+                  <div className="course-meta-item">
+                    <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M12 2.25V9.75m0-7.25c.01-.2.03-.4.07-.6M12 9.75c.01.2.03.4.07.6" /></svg>
+                    <span>{course.boards}</span>
+                  </div>
+                )}
               </div>
 
               <hr className="course-divider" />
 
-              <div className="course-footer">
-                <div>
-                  <span className="course-price-label">Fee Details:</span>
-                  <div className="course-price-val">₹ {course.fee.toLocaleString()}</div>
+              <div className="course-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                {course.showFee !== false && course.fee ? (
+                  <div>
+                    <span className="course-price-label">Fee Details:</span>
+                    <div className="course-price-val">₹ {course.fee.toLocaleString()}</div>
+                  </div>
+                ) : (
+                  <div></div>
+                )}
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button className="enrol-btn secondary" style={{ padding: '8px 12px', fontSize: '0.8rem', backgroundColor: '#e2e8f0', color: 'var(--navy-dark)', border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer', fontWeight: 600 }} onClick={() => setSelectedCourseDetails(course)}>View Details</button>
+                  <button className="enrol-btn" style={{ padding: '8px 12px', fontSize: '0.8rem' }} onClick={() => openEnquiry(course)}>Enrol now</button>
                 </div>
-                <button className="enrol-btn" onClick={() => openEnquiry(course)}>Enrol now</button>
               </div>
             </div>
           </div>
@@ -1838,6 +1978,15 @@ function AdminCourses() {
   const [image, setImage] = useState('');
   const [details, setDetails] = useState('');
 
+  // Individual visibility toggles
+  const [showTarget, setShowTarget] = useState(true);
+  const [showBoards, setShowBoards] = useState(true);
+  const [showDuration, setShowDuration] = useState(true);
+  const [showSchedule, setShowSchedule] = useState(true);
+  const [showFee, setShowFee] = useState(true);
+  const [showImage, setShowImage] = useState(true);
+  const [showDetails, setShowDetails] = useState(true);
+
   const loadCoursesList = () => {
     setCourses(dbService.getCourses());
   };
@@ -1857,6 +2006,15 @@ function AdminCourses() {
     setFee(course.fee);
     setImage(course.image);
     setDetails(course.details);
+    
+    // Default to true if property is undefined
+    setShowTarget(course.showTarget !== false);
+    setShowBoards(course.showBoards !== false);
+    setShowDuration(course.showDuration !== false);
+    setShowSchedule(course.showSchedule !== false);
+    setShowFee(course.showFee !== false);
+    setShowImage(course.showImage !== false);
+    setShowDetails(course.showDetails !== false);
     setFormOpen(true);
   };
 
@@ -1871,6 +2029,14 @@ function AdminCourses() {
     setFee('');
     setImage('https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=600');
     setDetails('');
+    
+    setShowTarget(true);
+    setShowBoards(true);
+    setShowDuration(true);
+    setShowSchedule(true);
+    setShowFee(true);
+    setShowImage(true);
+    setShowDetails(true);
     setFormOpen(true);
   };
 
@@ -1893,7 +2059,14 @@ function AdminCourses() {
       schedule,
       fee: Number(fee),
       image,
-      details
+      details,
+      showTarget,
+      showBoards,
+      showDuration,
+      showSchedule,
+      showFee,
+      showImage,
+      showDetails
     });
     setFormOpen(false);
     loadCoursesList();
@@ -1932,26 +2105,46 @@ function AdminCourses() {
             <div className="admin-input-group">
               <label>Target Audience Label (e.g. 11th studying) *</label>
               <input type="text" value={target} onChange={e => setTarget(e.target.value)} placeholder="For Class 11th Studying" required />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
+                <input type="checkbox" id="chk-show-target" checked={showTarget} onChange={e => setShowTarget(e.target.checked)} />
+                <label htmlFor="chk-show-target" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#666', cursor: 'pointer', display: 'inline', margin: 0 }}>Show target on website</label>
+              </div>
             </div>
             <div className="admin-input-group">
               <label>Board Coverage (e.g. CBSE & HBSE) *</label>
               <input type="text" value={boards} onChange={e => setBoards(e.target.value)} placeholder="CBSE, ICSE & HBSE Board Students" required />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
+                <input type="checkbox" id="chk-show-boards" checked={showBoards} onChange={e => setShowBoards(e.target.checked)} />
+                <label htmlFor="chk-show-boards" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#666', cursor: 'pointer', display: 'inline', margin: 0 }}>Show boards on website</label>
+              </div>
             </div>
           </div>
           <div className="admin-form-row">
             <div className="admin-input-group">
               <label>Course Duration *</label>
               <input type="text" value={duration} onChange={e => setDuration(e.target.value)} placeholder="1 Year / 2 Year Course" required />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
+                <input type="checkbox" id="chk-show-duration" checked={showDuration} onChange={e => setShowDuration(e.target.checked)} />
+                <label htmlFor="chk-show-duration" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#666', cursor: 'pointer', display: 'inline', margin: 0 }}>Show duration on website</label>
+              </div>
             </div>
             <div className="admin-input-group">
               <label>Class Weekly Schedule *</label>
               <input type="text" value={schedule} onChange={e => setSchedule(e.target.value)} placeholder="Mon - Fri (3 hrs) • Sat - Sun (3 hrs)" required />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
+                <input type="checkbox" id="chk-show-schedule" checked={showSchedule} onChange={e => setShowSchedule(e.target.checked)} />
+                <label htmlFor="chk-show-schedule" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#666', cursor: 'pointer', display: 'inline', margin: 0 }}>Show schedule on website</label>
+              </div>
             </div>
           </div>
           <div className="admin-form-row">
             <div className="admin-input-group">
               <label>Registration Fee (INR) *</label>
               <input type="number" value={fee} onChange={e => setFee(e.target.value)} required />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
+                <input type="checkbox" id="chk-show-fee" checked={showFee} onChange={e => setShowFee(e.target.checked)} />
+                <label htmlFor="chk-show-fee" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#666', cursor: 'pointer', display: 'inline', margin: 0 }}>Show fee on website</label>
+              </div>
             </div>
             <div className="admin-input-group">
               <label>Cover Image Source URL</label>
@@ -1961,11 +2154,19 @@ function AdminCourses() {
                 onChange={setImage} 
                 label="Or Upload and Compress File" 
               />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
+                <input type="checkbox" id="chk-show-image" checked={showImage} onChange={e => setShowImage(e.target.checked)} />
+                <label htmlFor="chk-show-image" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#666', cursor: 'pointer', display: 'inline', margin: 0 }}>Show cover image on website</label>
+              </div>
             </div>
           </div>
           <div className="admin-input-group">
             <label>Course Details / Description *</label>
             <textarea value={details} onChange={e => setDetails(e.target.value)} rows="3" required></textarea>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
+              <input type="checkbox" id="chk-show-details" checked={showDetails} onChange={e => setShowDetails(e.target.checked)} />
+              <label htmlFor="chk-show-details" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#666', cursor: 'pointer', display: 'inline', margin: 0 }}>Show description text on website</label>
+            </div>
           </div>
           
           <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
