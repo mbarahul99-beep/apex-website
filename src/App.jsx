@@ -1438,6 +1438,10 @@ function AdminPanel({ navigate }) {
             <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>
             Scholarships CRUD
           </div>
+          <div className={`admin-nav-item ${activeTab === 'testimonials' ? 'active' : ''}`} onClick={() => setActiveTab('testimonials')}>
+            <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L6 12zm0 0h7.5" /></svg>
+            Video Testimonials
+          </div>
         </nav>
         <div className="admin-sidebar-footer">
           <button className="admin-logout-btn" onClick={handleLogout}>Logout Panel</button>
@@ -1466,6 +1470,7 @@ function AdminPanel({ navigate }) {
           {activeTab === 'resources' && <AdminResources />}
           {activeTab === 'enquiries' && <AdminEnquiries />}
           {activeTab === 'scholarships' && <AdminScholarships />}
+          {activeTab === 'testimonials' && <AdminTestimonials />}
         </div>
       </main>
     </div>
@@ -1570,6 +1575,11 @@ function SettingsForm() {
         <div className="admin-input-group">
           <label>Logo Icon URL / Source</label>
           <input type="text" name="logoUrl" value={settings.logoUrl || ''} onChange={handleChange} placeholder="e.g. /logo.png" />
+          <ImageUploadCompress 
+            value={settings.logoUrl} 
+            onChange={(val) => setSettings(prev => ({ ...prev, logoUrl: val }))} 
+            label="Or Upload and Compress Logo Icon" 
+          />
         </div>
         <div className="admin-input-group">
           <label>Logo Icon Height (e.g. 44px)</label>
@@ -1580,6 +1590,11 @@ function SettingsForm() {
         <div className="admin-input-group">
           <label>Logo Name Text Image URL / Source</label>
           <input type="text" name="logoNameUrl" value={settings.logoNameUrl || ''} onChange={handleChange} placeholder="e.g. /logo_name.png" />
+          <ImageUploadCompress 
+            value={settings.logoNameUrl} 
+            onChange={(val) => setSettings(prev => ({ ...prev, logoNameUrl: val }))} 
+            label="Or Upload and Compress Logo Text Image" 
+          />
         </div>
         <div className="admin-input-group">
           <label>Logo Name Image Width (e.g. 180px)</label>
@@ -1707,6 +1722,11 @@ function AdminSliders() {
                       onChange={e => setEditUrl(e.target.value)} 
                       style={{ padding: '6px', fontSize: '0.78rem' }}
                     />
+                    <ImageUploadCompress 
+                      value={editUrl} 
+                      onChange={setEditUrl} 
+                      label="Or Upload and Compress File" 
+                    />
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem' }}>
                     <input 
@@ -1775,6 +1795,11 @@ function AdminKalam() {
         <div className="admin-input-group">
           <label>Kalam Banner Image URL / Path</label>
           <input type="text" name="imageUrl" value={kalam.imageUrl} onChange={handleChange} required />
+          <ImageUploadCompress 
+            value={kalam.imageUrl} 
+            onChange={(val) => setKalam(prev => ({ ...prev, imageUrl: val }))} 
+            label="Or Upload and Compress File" 
+          />
           <span style={{ fontSize: '0.75rem', color: '#666', marginTop: '4px', display: 'block' }}>
             Set a URL or a local path. Default is <code>/kalam.jpg</code> (copied from the brochure).
           </span>
@@ -1925,6 +1950,11 @@ function AdminCourses() {
             <div className="admin-input-group">
               <label>Cover Image Source URL</label>
               <input type="text" value={image} onChange={e => setImage(e.target.value)} />
+              <ImageUploadCompress 
+                value={image} 
+                onChange={setImage} 
+                label="Or Upload and Compress File" 
+              />
             </div>
           </div>
           <div className="admin-input-group">
@@ -2084,6 +2114,11 @@ function AdminResults() {
             <div className="admin-input-group">
               <label>Student Photo URL</label>
               <input type="text" value={photo} onChange={e => setPhoto(e.target.value)} />
+              <ImageUploadCompress 
+                value={photo} 
+                onChange={setPhoto} 
+                label="Or Upload and Compress File" 
+              />
             </div>
             <div className="admin-input-group" style={{ maxWidth: '150px' }}>
               <label>Academic Year *</label>
@@ -2451,6 +2486,11 @@ function AdminPosts() {
             <div className="admin-input-group">
               <label>Cover Image Source URL</label>
               <input type="text" value={coverImage} onChange={e => setCoverImage(e.target.value)} />
+              <ImageUploadCompress 
+                value={coverImage} 
+                onChange={setCoverImage} 
+                label="Or Upload and Compress File" 
+              />
             </div>
           </div>
 
@@ -3098,6 +3138,280 @@ function AllBlogsView({ navigate }) {
               </div>
             );
           })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------- IMAGE UPLOAD & FRONTEND CANVAS COMPRESSION COMPONENT ----------------
+function ImageUploadCompress({ value, onChange, label = "Upload Image" }) {
+  const [compressing, setCompressing] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setError('Selected file is not an image.');
+      return;
+    }
+
+    setCompressing(true);
+    setError(null);
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 1000;
+        const MAX_HEIGHT = 1000;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.70);
+        onChange(compressedDataUrl);
+        setCompressing(false);
+      };
+      img.onerror = () => {
+        setError('Failed to process image file.');
+        setCompressing(false);
+      };
+    };
+    reader.onerror = () => {
+      setError('Failed to read image file.');
+      setCompressing(false);
+    };
+  };
+
+  return (
+    <div style={{ marginTop: '6px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+        <input 
+          type="file" 
+          accept="image/*" 
+          onChange={handleFileChange} 
+          style={{ display: 'none' }} 
+          id={`file-compress-${label.replace(/\s+/g, '-').toLowerCase()}`} 
+        />
+        <label 
+          htmlFor={`file-compress-${label.replace(/\s+/g, '-').toLowerCase()}`} 
+          className="admin-btn secondary" 
+          style={{ cursor: 'pointer', padding: '6px 12px', fontSize: '0.76rem', display: 'inline-flex', alignItems: 'center', margin: 0 }}
+        >
+          {compressing ? '⌛ Compressing Image...' : label}
+        </label>
+        {value && value.startsWith('data:image') && (
+          <span style={{ fontSize: '0.74rem', color: 'var(--accent-green)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+            ✓ Compressed (Ready)
+          </span>
+        )}
+      </div>
+      {error && <span style={{ fontSize: '0.72rem', color: '#ef4444', fontWeight: 500 }}>{error}</span>}
+    </div>
+  );
+}
+
+// ---------------- ADMIN TESTIMONIALS (STUDENT VIDEO REVIEWS) SUB-VIEW ----------------
+function AdminTestimonials() {
+  const [testimonials, setTestimonials] = useState([]);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingTestimonial, setEditingTestimonial] = useState(null);
+
+  const [studentName, setStudentName] = useState('');
+  const [examType, setExamType] = useState('JEE');
+  const [rankBadge, setRankBadge] = useState('');
+  const [photo, setPhoto] = useState('');
+  const [videoUrl, setVideoUrl] = useState('');
+  const [textReview, setTextReview] = useState('');
+
+  const loadList = () => setTestimonials(dbService.getTestimonials());
+
+  useEffect(() => {
+    loadList();
+  }, []);
+
+  const handleEdit = (item) => {
+    setEditingTestimonial(item);
+    setStudentName(item.studentName || '');
+    setExamType(item.examType || 'JEE');
+    setRankBadge(item.rankBadge || '');
+    setPhoto(item.photo || '');
+    setVideoUrl(item.videoUrl || '');
+    setTextReview(item.textReview || '');
+    setFormOpen(true);
+  };
+
+  const handleCreateNew = () => {
+    setEditingTestimonial(null);
+    setStudentName('');
+    setExamType('JEE');
+    setRankBadge('');
+    setPhoto('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150');
+    setVideoUrl('');
+    setTextReview('');
+    setFormOpen(true);
+  };
+
+  const handleDelete = (id) => {
+    if (confirm('Are you sure you want to delete this student review?')) {
+      dbService.deleteTestimonial(id);
+      loadList();
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dbService.saveTestimonial({
+      id: editingTestimonial ? editingTestimonial.id : undefined,
+      studentName,
+      examType,
+      rankBadge,
+      photo,
+      videoUrl,
+      textReview
+    });
+    setFormOpen(false);
+    loadList();
+  };
+
+  return (
+    <div className="admin-card fade-in">
+      <div className="admin-card-header">
+        <span className="admin-card-title">Manage Toppers Student Video Reviews & Textimonials</span>
+        {!formOpen && (
+          <button className="admin-btn" onClick={handleCreateNew}>
+            <IconPlus /> Add Review / Testimonial
+          </button>
+        )}
+      </div>
+
+      {formOpen ? (
+        <form onSubmit={handleSubmit} style={{ border: '1px solid #e2e8f0', padding: '20px', borderRadius: 'var(--radius-lg)' }}>
+          <h4 style={{ marginBottom: '15px' }}>{editingTestimonial ? 'Edit Student Review' : 'Create Student Review'}</h4>
+          
+          <div className="admin-form-row">
+            <div className="admin-input-group">
+              <label>Student Name *</label>
+              <input type="text" value={studentName} onChange={e => setStudentName(e.target.value)} required />
+            </div>
+            <div className="admin-input-group">
+              <label>Exam / Stream Type *</label>
+              <input type="text" value={examType} onChange={e => setExamType(e.target.value)} placeholder="e.g. JEE Main, NEET Topper" required />
+            </div>
+          </div>
+
+          <div className="admin-form-row">
+            <div className="admin-input-group">
+              <label>Rank / Achievement Badge (e.g. AIR 128, CBSE 98%) *</label>
+              <input type="text" value={rankBadge} onChange={e => setRankBadge(e.target.value)} required />
+            </div>
+            <div className="admin-input-group">
+              <label>YouTube Video Embed URL (Optional for video review)</label>
+              <input type="text" value={videoUrl} onChange={e => setVideoUrl(e.target.value)} placeholder="e.g. https://www.youtube.com/embed/XXXXXX" />
+              <span style={{ fontSize: '0.7rem', color: '#666', marginTop: '4px', display: 'block' }}>
+                Must be an embed URL (with <code>/embed/</code> in it) for the video player to load.
+              </span>
+            </div>
+          </div>
+
+          <div className="admin-form-row">
+            <div className="admin-input-group">
+              <label>Student Profile Image URL</label>
+              <input type="text" value={photo} onChange={e => setPhoto(e.target.value)} />
+              <ImageUploadCompress 
+                value={photo} 
+                onChange={setPhoto} 
+                label="Or Upload and Compress Student Photo File" 
+              />
+            </div>
+            <div className="admin-input-group">
+              {photo && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                  <label>Photo Preview:</label>
+                  <img src={photo} alt="Student Preview" style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }} />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="admin-input-group">
+            <label>Text Review / Testimonial Write-up *</label>
+            <textarea value={textReview} onChange={e => setTextReview(e.target.value)} rows={4} required placeholder="Write student experience story here..." />
+          </div>
+
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button type="submit" className="admin-btn">Save Review</button>
+            <button type="button" className="admin-btn secondary" onClick={() => setFormOpen(false)}>Cancel</button>
+          </div>
+        </form>
+      ) : (
+        <div className="admin-table-container">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Photo</th>
+                <th>Student Name</th>
+                <th>Exam Category</th>
+                <th>Rank Badge</th>
+                <th>Video</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {testimonials.map(item => (
+                <tr key={item.id}>
+                  <td>
+                    <img src={item.photo} alt={item.studentName} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                  </td>
+                  <td style={{ fontWeight: 600, color: 'var(--navy-dark)' }}>{item.studentName}</td>
+                  <td>{item.examType}</td>
+                  <td>
+                    <span className="status-badge new">{item.rankBadge}</span>
+                  </td>
+                  <td>{item.videoUrl ? '🎥 Yes (YouTube)' : '✍️ Text Only'}</td>
+                  <td>
+                    <div className="table-actions">
+                      <button className="table-action-btn" onClick={() => handleEdit(item)} title="Edit Record">
+                        <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
+                      </button>
+                      <button className="table-action-btn delete" onClick={() => handleDelete(item.id)} title="Delete Record">
+                        <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {testimonials.length === 0 && (
+                <tr>
+                  <td colSpan="6" style={{ textAlign: 'center', padding: '20px', color: 'var(--light-gray)' }}>
+                    No student reviews found. Click "Add Review" to create your first topper success story!
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
