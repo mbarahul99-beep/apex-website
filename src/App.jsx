@@ -594,9 +594,15 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl }) {
           {/* Results Filters pills */}
           <div className="filters-wrapper">
             <button className={`filter-pill ${activeResultTab === 'all' ? 'active' : ''}`} onClick={() => setActiveResultTab('all')}>All Ranks</button>
-            <button className={`filter-pill ${activeResultTab === 'JEE Main' ? 'active' : ''}`} onClick={() => setActiveResultTab('JEE Main')}>JEE Main</button>
-            <button className={`filter-pill ${activeResultTab === 'NEET' ? 'active' : ''}`} onClick={() => setActiveResultTab('NEET')}>NEET</button>
-            <button className={`filter-pill ${activeResultTab === 'Olympiads' ? 'active' : ''}`} onClick={() => setActiveResultTab('Olympiads')}>Olympiads</button>
+            {Array.from(new Set(results.map(r => r.examType).filter(Boolean))).map(cat => (
+              <button 
+                key={cat} 
+                className={`filter-pill ${activeResultTab === cat ? 'active' : ''}`} 
+                onClick={() => setActiveResultTab(cat)}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
 
           <div className="results-grid">
@@ -2015,7 +2021,8 @@ function AdminResults() {
   const [editingResult, setEditingResult] = useState(null);
 
   const [studentName, setStudentName] = useState('');
-  const [examType, setExamType] = useState('JEE Main');
+  const [examTypeSelect, setExamTypeSelect] = useState('JEE Main');
+  const [customExamType, setCustomExamType] = useState('');
   const [achievement, setAchievement] = useState('');
   const [location, setLocation] = useState('');
   const [photo, setPhoto] = useState('');
@@ -2030,7 +2037,16 @@ function AdminResults() {
   const handleEdit = (res) => {
     setEditingResult(res);
     setStudentName(res.studentName);
-    setExamType(res.examType);
+    
+    const PREDEFINED = ['JEE Main', 'NEET', 'Olympiads', 'GUJ-CET'];
+    if (PREDEFINED.includes(res.examType)) {
+      setExamTypeSelect(res.examType);
+      setCustomExamType('');
+    } else {
+      setExamTypeSelect('Custom');
+      setCustomExamType(res.examType || '');
+    }
+    
     setAchievement(res.achievement);
     setLocation(res.location);
     setPhoto(res.photo);
@@ -2041,7 +2057,8 @@ function AdminResults() {
   const handleCreateNew = () => {
     setEditingResult(null);
     setStudentName('');
-    setExamType('JEE Main');
+    setExamTypeSelect('JEE Main');
+    setCustomExamType('');
     setAchievement('');
     setLocation('State Haryana');
     setPhoto('https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=200');
@@ -2061,7 +2078,7 @@ function AdminResults() {
     dbService.saveResult({
       id: editingResult ? editingResult.id : undefined,
       studentName,
-      examType,
+      examType: examTypeSelect === 'Custom' ? customExamType : examTypeSelect,
       achievement,
       location,
       photo,
@@ -2092,12 +2109,23 @@ function AdminResults() {
             </div>
             <div className="admin-input-group">
               <label>Exam Category *</label>
-              <select value={examType} onChange={e => setExamType(e.target.value)}>
+              <select value={examTypeSelect} onChange={e => setExamTypeSelect(e.target.value)}>
                 <option value="JEE Main">JEE Main</option>
                 <option value="NEET">NEET Medical</option>
                 <option value="Olympiads">Olympiads</option>
-                <option value="GUJ-CET">GUJ-CET / Other</option>
+                <option value="GUJ-CET">GUJ-CET</option>
+                <option value="Custom">Custom...</option>
               </select>
+              {examTypeSelect === 'Custom' && (
+                <input 
+                  type="text" 
+                  value={customExamType} 
+                  onChange={e => setCustomExamType(e.target.value)} 
+                  placeholder="Type custom exam category (e.g. Board Exams, NTSE)..." 
+                  style={{ marginTop: '10px' }}
+                  required 
+                />
+              )}
             </div>
           </div>
           <div className="admin-form-row">
