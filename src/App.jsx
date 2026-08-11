@@ -2088,6 +2088,10 @@ function AdminResults() {
     loadResultsList();
   };
 
+  const defaultPresets = ['JEE Main', 'NEET', 'Olympiads', 'GUJ-CET'];
+  const savedCategories = Array.from(new Set(results.map(r => r.examType).filter(Boolean)));
+  const allCategories = Array.from(new Set([...defaultPresets, ...savedCategories]));
+
   return (
     <div className="admin-card fade-in">
       <div className="admin-card-header">
@@ -2110,10 +2114,9 @@ function AdminResults() {
             <div className="admin-input-group">
               <label>Exam Category *</label>
               <select value={examTypeSelect} onChange={e => setExamTypeSelect(e.target.value)}>
-                <option value="JEE Main">JEE Main</option>
-                <option value="NEET">NEET Medical</option>
-                <option value="Olympiads">Olympiads</option>
-                <option value="GUJ-CET">GUJ-CET</option>
+                {allCategories.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
                 <option value="Custom">Custom...</option>
               </select>
               {examTypeSelect === 'Custom' && (
@@ -2457,6 +2460,10 @@ function AdminPosts() {
     loadPostsList();
   };
 
+  const defaultBlogPresets = ['JEE', 'NEET', 'Olympiads', 'Announcements', 'Academic Guides', 'Admission Alerts'];
+  const savedBlogCategories = Array.from(new Set(posts.map(p => p.category).filter(Boolean)));
+  const allBlogCategories = Array.from(new Set([...defaultBlogPresets, ...savedBlogCategories]));
+
   return (
     <div className="admin-card fade-in">
       <div className="admin-card-header">
@@ -2492,12 +2499,9 @@ function AdminPosts() {
             <div className="admin-input-group">
               <label>Category Label *</label>
               <select value={categorySelect} onChange={e => setCategorySelect(e.target.value)}>
-                <option value="JEE">JEE Engineering</option>
-                <option value="NEET">NEET Medical</option>
-                <option value="Olympiads">Olympiads</option>
-                <option value="Announcements">Announcements</option>
-                <option value="Academic Guides">Academic Guides</option>
-                <option value="Admission Alerts">Admission Alerts</option>
+                {allBlogCategories.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
                 <option value="Custom">Custom...</option>
               </select>
               {categorySelect === 'Custom' && (
