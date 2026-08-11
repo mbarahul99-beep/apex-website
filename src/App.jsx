@@ -270,6 +270,11 @@ export default function App() {
 function StudentLayout({ children, settings, navigate, currentPath, openEnquiry }) {
   const [scrollTopVisible, setScrollTopVisible] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [customPages, setCustomPages] = useState([]);
+
+  useEffect(() => {
+    setCustomPages(dbService.getPages());
+  }, [currentPath]);
 
   useEffect(() => {
     const toggleVisibility = () => {
@@ -350,7 +355,38 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
               <span className={`desktop-nav-link ${currentPath === '/scholarships' ? 'active' : ''}`} onClick={() => navigate('/scholarships')}>Scholarships</span>
               <span className={`desktop-nav-link ${currentPath === '/online-prep' || currentPath === '/student-portal' ? 'active' : ''}`} onClick={() => navigate('/online-prep')}>Online Prep</span>
               <span className={`desktop-nav-link ${currentPath === '/blogs' ? 'active' : ''}`} onClick={() => navigate('/blogs')}>Blogs</span>
-              <span className="desktop-nav-link" onClick={() => navigate('/pages/about-apex-jind')}>About Us</span>
+              <span className={`desktop-nav-link ${currentPath === '/pages/about-apex-jind' ? 'active' : ''}`} onClick={() => navigate('/pages/about-apex-jind')}>About Us</span>
+              
+              {customPages.filter(p => p.slug !== 'about-apex-jind').length > 0 && (
+                <div className="nav-dropdown-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
+                  <span className="desktop-nav-link" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    Pages
+                    <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ width: '12px', height: '12px' }}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+                  </span>
+                  <div className="nav-dropdown-menu">
+                    {customPages.filter(p => p.slug !== 'about-apex-jind').map(page => (
+                      <a 
+                        key={page.id} 
+                        onClick={() => navigate(`/pages/${page.slug}`)}
+                        style={{ 
+                          display: 'block', 
+                          padding: '8px 16px', 
+                          fontSize: '0.88rem', 
+                          color: 'var(--navy-dark)', 
+                          cursor: 'pointer', 
+                          whiteSpace: 'nowrap', 
+                          transition: 'background 0.2s',
+                          fontFamily: 'var(--font-family)',
+                          fontWeight: 500
+                        }}
+                        className="nav-dropdown-item"
+                      >
+                        {page.title}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </nav>
             
             <button className="header-btn" onClick={handleCall}>
@@ -389,7 +425,16 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
               <span className={`mobile-nav-link ${currentPath === '/scholarships' ? 'active' : ''}`} onClick={() => { navigate('/scholarships'); setMobileMenuOpen(false); }}>Scholarships</span>
               <span className={`mobile-nav-link ${currentPath === '/online-prep' || currentPath === '/student-portal' ? 'active' : ''}`} onClick={() => { navigate('/online-prep'); setMobileMenuOpen(false); }}>Online Prep</span>
               <span className={`mobile-nav-link ${currentPath === '/blogs' ? 'active' : ''}`} onClick={() => { navigate('/blogs'); setMobileMenuOpen(false); }}>Blogs</span>
-              <span className="mobile-nav-link" onClick={() => { navigate('/pages/about-apex-jind'); setMobileMenuOpen(false); }}>About Us</span>
+              <span className={`mobile-nav-link ${currentPath === '/pages/about-apex-jind' ? 'active' : ''}`} onClick={() => { navigate('/pages/about-apex-jind'); setMobileMenuOpen(false); }}>About Us</span>
+              {customPages.filter(p => p.slug !== 'about-apex-jind').map(page => (
+                <span 
+                  key={page.id}
+                  className={`mobile-nav-link ${currentPath === `/pages/${page.slug}` ? 'active' : ''}`} 
+                  onClick={() => { navigate(`/pages/${page.slug}`); setMobileMenuOpen(false); }}
+                >
+                  {page.title}
+                </span>
+              ))}
             </nav>
             <div className="mobile-drawer-footer">
               <button 
@@ -429,6 +474,11 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
                 <li className="footer-link-item"><a onClick={() => navigate('/')}>Home</a></li>
                 <li className="footer-link-item"><a onClick={() => navigate('/courses')}>All Courses</a></li>
                 <li className="footer-link-item"><a onClick={() => navigate('/pages/about-apex-jind')}>About Us</a></li>
+                {customPages.filter(p => p.slug !== 'about-apex-jind').map(page => (
+                  <li className="footer-link-item" key={page.id}>
+                    <a onClick={() => navigate(`/pages/${page.slug}`)}>{page.title}</a>
+                  </li>
+                ))}
               </ul>
             </div>
 
