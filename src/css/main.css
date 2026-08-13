@@ -134,13 +134,14 @@
 .slider-container {
   position: relative;
   width: 100%;
-  aspect-ratio: 192 / 54; /* 16:4.5 aspect ratio (3.55:1) matching designed 1920x540 banner */
+  aspect-ratio: 16 / 13; /* Mobile aspect ratio matching Aakash reference screenshot (tall/square) */
   background-color: #e2e8f0;
   overflow: hidden;
 }
 
 @media (min-width: 768px) {
   .slider-container {
+    aspect-ratio: 192 / 54; /* Desktop widescreen aspect ratio (16:4.5) */
     max-height: 440px;
   }
 }

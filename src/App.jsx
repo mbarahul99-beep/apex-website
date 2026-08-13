@@ -628,7 +628,10 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
           >
             {sliders.map((slide, idx) => (
               <div className="slide" key={slide.id || idx}>
-                <img src={slide.imageUrl} alt={`Apex Banner Slide ${idx + 1}`} style={{ borderRadius: '0' }} />
+                <picture style={{ width: '100%', height: '100%', display: 'block' }}>
+                  <source media="(max-width: 767px)" srcSet={slide.mobileImageUrl || slide.imageUrl} />
+                  <img src={slide.imageUrl} alt={`Apex Banner Slide ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0' }} />
+                </picture>
               </div>
             ))}
           </div>
@@ -1965,6 +1968,7 @@ function AdminSliders() {
   const [sliders, setSliders] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [editUrl, setEditUrl] = useState('');
+  const [editMobileUrl, setEditMobileUrl] = useState('');
   const [editActive, setEditActive] = useState(true);
 
   useEffect(() => {
@@ -1974,6 +1978,7 @@ function AdminSliders() {
   const handleEdit = (slide) => {
     setEditingId(slide.id);
     setEditUrl(slide.imageUrl);
+    setEditMobileUrl(slide.mobileImageUrl || '');
     setEditActive(slide.active);
   };
 
@@ -1981,7 +1986,7 @@ function AdminSliders() {
     if (!editUrl) return;
     const updated = sliders.map(s => {
       if (s.id === id) {
-        return { ...s, imageUrl: editUrl, active: editActive };
+        return { ...s, imageUrl: editUrl, mobileImageUrl: editMobileUrl, active: editActive };
       }
       return s;
     });
@@ -1995,20 +2000,27 @@ function AdminSliders() {
       <div className="admin-card-header">
         <span className="admin-card-title">Homepage Banner Carousel (Max 10 Images)</span>
       </div>
-      <p style={{ fontSize: '0.82rem', color: 'var(--light-gray)', marginBottom: '20px' }}>Manage the banner slides that rotate just below the student navigation header.</p>
+      <p style={{ fontSize: '0.82rem', color: 'var(--light-gray)', marginBottom: '20px' }}>Manage separate desktop and mobile banners to fit different screens cleanly.</p>
       
       <div className="admin-sliders-grid">
         {sliders.map((slide, idx) => (
           <div className="admin-slider-card" key={slide.id}>
-            <div className="admin-slider-card-thumb">
-              <img src={slide.imageUrl} alt={`Slide ${idx + 1}`} />
-              <span className="admin-slider-card-badge">Slot {idx + 1}</span>
+            <div className="admin-slider-card-thumb" style={{ display: 'flex', gap: '5px', height: '100px', backgroundColor: '#f3f4f6', padding: '5px', borderRadius: 'var(--radius-md)' }}>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--light-gray)' }}>Desktop</span>
+                <img src={slide.imageUrl} alt={`Slide ${idx + 1}`} style={{ height: '70px', width: '100%', objectFit: 'cover', borderRadius: '4px' }} />
+              </div>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--light-gray)' }}>Mobile</span>
+                <img src={slide.mobileImageUrl || slide.imageUrl} alt={`Slide ${idx + 1}`} style={{ height: '70px', width: '100%', objectFit: 'cover', borderRadius: '4px' }} />
+              </div>
+              <span className="admin-slider-card-badge" style={{ zIndex: 5 }}>Slot {idx + 1}</span>
             </div>
             <div className="admin-slider-card-content">
               {editingId === slide.id ? (
                 <>
-                  <div className="admin-input-group" style={{ marginBottom: 0 }}>
-                    <label>Image Source URL</label>
+                  <div className="admin-input-group" style={{ marginBottom: '8px' }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700 }}>Desktop Image (Widescreen 1920x540)</label>
                     <input 
                       type="text" 
                       value={editUrl} 
@@ -2018,10 +2030,24 @@ function AdminSliders() {
                     <ImageUploadCompress 
                       value={editUrl} 
                       onChange={setEditUrl} 
-                      label="Or Upload and Compress File" 
+                      label="Upload Desktop Banner" 
                     />
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem' }}>
+                  <div className="admin-input-group" style={{ marginBottom: '8px' }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700 }}>Mobile Image (Tall 1080x950 / Square)</label>
+                    <input 
+                      type="text" 
+                      value={editMobileUrl} 
+                      onChange={e => setEditMobileUrl(e.target.value)} 
+                      style={{ padding: '6px', fontSize: '0.78rem' }}
+                    />
+                    <ImageUploadCompress 
+                      value={editMobileUrl} 
+                      onChange={setEditMobileUrl} 
+                      label="Upload Mobile Banner" 
+                    />
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', margin: '8px 0' }}>
                     <input 
                       type="checkbox" 
                       id={`chk-${slide.id}`} 
