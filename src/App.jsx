@@ -618,17 +618,17 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
     : results.filter(r => r.examType === activeResultTab);
 
   return (
-    <div className="fade-in student-content-wrap">
-      {/* 10-Image Banner Slideshow Section */}
+    <div className="fade-in">
+      {/* 10-Image Banner Slideshow Section (Full Width) */}
       {sliders.length > 0 && (
-        <section className="slider-container" style={{ borderRadius: 'var(--radius-lg)', marginTop: '20px', boxShadow: 'var(--shadow-md)' }}>
+        <section className="slider-container" style={{ borderRadius: '0', marginTop: '0', boxShadow: 'none' }}>
           <div 
             className="slider-wrapper" 
             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
           >
             {sliders.map((slide, idx) => (
               <div className="slide" key={slide.id || idx}>
-                <img src={slide.imageUrl} alt={`Apex Banner Slide ${idx + 1}`} />
+                <img src={slide.imageUrl} alt={`Apex Banner Slide ${idx + 1}`} style={{ borderRadius: '0' }} />
               </div>
             ))}
           </div>
@@ -652,21 +652,23 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
         </section>
       )}
 
-      {/* APJ Abdul Kalam Banner Section */}
+      {/* APJ Abdul Kalam Banner Section (Full Width) */}
       {kalam && kalam.imageUrl && (
-        <section className="kalam-banner-section" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+        <section className="kalam-banner-section" style={{ marginTop: '0', display: 'flex', justifyContent: 'center', width: '100%', overflow: 'hidden' }}>
           <img 
             src={kalam.imageUrl} 
             alt="Dr. APJ Abdul Kalam - Our Mentor" 
             fetchPriority="high"
             loading="eager"
-            style={{ width: '100%', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)', objectFit: 'contain' }} 
+            style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '0', boxShadow: 'none' }} 
             onError={(e) => { e.target.style.display = 'none'; }}
           />
         </section>
       )}
 
-      {/* Large Banner Intro */}
+      {/* Main homepage container wrapper */}
+      <div className="student-content-wrap" style={{ marginTop: '20px' }}>
+        {/* Large Banner Intro */}
       <section className="hero-title-section" style={{ borderBottom: 'none' }}>
         <h1 className="hero-heading">
           India's Best Coaching for<br />
@@ -992,6 +994,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
           </div>
         </div>
       </section>
+      </div>
     </div>
   );
 }
