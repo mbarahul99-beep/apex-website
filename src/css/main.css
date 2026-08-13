@@ -1438,14 +1438,13 @@
   }
 
   .header-logo-icon {
-    height: 32px !important; /* Scale down icon height */
+    height: calc(var(--logo-icon-height, 44px) * 0.75) !important; /* Scale down icon height proportionally */
     width: auto !important;
   }
 
   .header-logo-text {
-    width: 120px !important; /* Scale down name text logo width */
-    height: auto !important;
-    max-height: 28px !important;
+    width: calc(var(--logo-width, 180px) * 0.7) !important; /* Scale down name logo width proportionally */
+    height: calc(var(--logo-height, 45px) * 0.7) !important; /* Scale down height proportionally */
   }
 
   .header-right {

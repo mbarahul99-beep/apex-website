@@ -289,6 +289,14 @@ export default function App() {
   );
 }
 
+// Helper to make sure custom width/height inputs have units (e.g. px)
+const getUnitValue = (val, fallback) => {
+  if (!val) return fallback;
+  const clean = val.toString().trim();
+  if (/^\d+$/.test(clean)) return clean + 'px';
+  return clean;
+};
+
 // ---------------- STUDENT LAYOUT WRAPPER ----------------
 function StudentLayout({ children, settings, navigate, currentPath, openEnquiry }) {
   const [scrollTopVisible, setScrollTopVisible] = useState(false);
@@ -346,7 +354,8 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
                 fetchPriority="high"
                 loading="eager"
                 style={{ 
-                  height: settings.logoIconHeight || '44px',
+                  '--logo-icon-height': getUnitValue(settings.logoIconHeight, '44px'),
+                  height: 'var(--logo-icon-height)',
                   width: 'auto',
                   objectFit: 'contain'
                 }} 
@@ -361,8 +370,10 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
                 fetchPriority="high"
                 loading="eager"
                 style={{ 
-                  width: settings.logoWidth || '180px',
-                  height: settings.logoHeight || '45px',
+                  '--logo-width': getUnitValue(settings.logoWidth, '180px'),
+                  '--logo-height': getUnitValue(settings.logoHeight, '45px'),
+                  width: 'var(--logo-width)',
+                  height: 'var(--logo-height)',
                   objectFit: 'contain'
                 }} 
                 onError={(e) => { e.target.style.display = 'none'; }} 
