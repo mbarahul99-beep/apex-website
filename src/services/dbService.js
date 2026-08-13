@@ -40,7 +40,16 @@ const DEFAULT_SETTINGS = {
   logoWidth: "180px",
   logoHeight: "45px",
   examPortalUrl: "https://app.instituteapex.in?app=student",
-  showBlogImagesOnHome: false
+  showBlogImagesOnHome: false,
+  showSliders: true,
+  showKalam: true,
+  showInfoCard: true,
+  showFeaturedCourses: true,
+  showToppers: true,
+  showBlogs: true,
+  showQuickLinks: true,
+  showTestimonials: true,
+  showEnquiryInline: true
 };
 
 const DEFAULT_SLIDERS = [
@@ -253,7 +262,7 @@ export const dbService = {
   async init() {
     if (isDefault) {
       // LocalStorage mode
-      cache.settings = loadData(DB_KEYS.SETTINGS, DEFAULT_SETTINGS);
+      cache.settings = { ...DEFAULT_SETTINGS, ...loadData(DB_KEYS.SETTINGS, DEFAULT_SETTINGS) };
       cache.sliders = loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS).sort((a,b) => a.orderIndex - b.orderIndex);
       cache.kalam = loadData(DB_KEYS.KALAM, DEFAULT_KALAM);
       cache.courses = loadData(DB_KEYS.COURSES, DEFAULT_COURSES);
@@ -359,6 +368,14 @@ export const dbService = {
       }
     }
     return sliders;
+  },
+  deleteSlider(id) {
+    cache.sliders = cache.sliders.filter(s => s.id !== id);
+    if (isDefault) {
+      saveData(DB_KEYS.SLIDERS, cache.sliders);
+    } else {
+      deleteDoc(doc(db, "sliders", id)).catch(err => console.error("Firestore slider delete error:", err));
+    }
   },
 
   // Kalam Section

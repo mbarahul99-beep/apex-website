@@ -620,7 +620,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
   return (
     <div className="fade-in">
       {/* 10-Image Banner Slideshow Section (Full Width) */}
-      {sliders.length > 0 && (
+      {settings.showSliders !== false && sliders.length > 0 && (
         <section className="slider-container" style={{ borderRadius: '0', marginTop: '0', boxShadow: 'none' }}>
           <div 
             className="slider-wrapper" 
@@ -656,7 +656,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
       )}
 
       {/* APJ Abdul Kalam Banner Section (Full Width) */}
-      {kalam && kalam.imageUrl && (
+      {settings.showKalam !== false && kalam && kalam.imageUrl && (
         <section className="kalam-banner-section" style={{ marginTop: '0', display: 'flex', justifyContent: 'center', width: '100%', overflow: 'hidden' }}>
           <img 
             src={kalam.imageUrl} 
@@ -681,102 +681,106 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
       </section>
 
       {/* Value Proposition Info Card */}
-      <section className="info-section" style={{ borderRadius: 'var(--radius-lg)', borderBottom: 'none', marginBottom: '20px' }}>
-        <div className="info-card">
-          <div className="info-card-text-wrap">
-            <span className="info-card-title">24/7 Academic Study Partner</span>
-            <p className="info-card-text">Access standard practice test banks, offline subjective OMR grading, and personalized analytics for a complete competitive edge.</p>
+      {settings.showInfoCard !== false && (
+        <section className="info-section" style={{ borderRadius: 'var(--radius-lg)', borderBottom: 'none', marginBottom: '20px' }}>
+          <div className="info-card">
+            <div className="info-card-text-wrap">
+              <span className="info-card-title">24/7 Academic Study Partner</span>
+              <p className="info-card-text">Access standard practice test banks, offline subjective OMR grading, and personalized analytics for a complete competitive edge.</p>
+            </div>
+            <div className="info-card-image-wrap">
+              <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=600" className="info-card-image" alt="Apex Study Partner Portal Mockup" />
+            </div>
           </div>
-          <div className="info-card-image-wrap">
-            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=600" className="info-card-image" alt="Apex Study Partner Portal Mockup" />
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Featured Courses */}
-      <section style={{ borderBottom: '8px solid var(--border-light)', paddingBottom: '30px' }}>
-        <div className="section-header">
-          <h2 className="section-title">Featured Programs</h2>
-          <p className="section-subtitle">Explore classes tailored for CBSE, HBSE, and ICSE boards</p>
-        </div>
+      {settings.showFeaturedCourses !== false && (
+        <section style={{ borderBottom: '8px solid var(--border-light)', paddingBottom: '30px' }}>
+          <div className="section-header">
+            <h2 className="section-title">Featured Programs</h2>
+            <p className="section-subtitle">Explore classes tailored for CBSE, HBSE, and ICSE boards</p>
+          </div>
 
-        <div className="courses-container">
-          {previewCourses.map(course => (
-            <div className="course-card" key={course.id}>
-              {course.showImage !== false && (
-                <div className="course-banner">
-                  <img src={course.image} alt={course.title} />
-                  <div className="course-banner-overlay">
-                    <button className="course-detail-btn" onClick={() => setSelectedCourseDetails(course)}>View details</button>
+          <div className="courses-container">
+            {previewCourses.map(course => (
+              <div className="course-card" key={course.id}>
+                {course.showImage !== false && (
+                  <div className="course-banner">
+                    <img src={course.image} alt={course.title} />
+                    <div className="course-banner-overlay">
+                      <button className="course-detail-btn" onClick={() => setSelectedCourseDetails(course)}>View details</button>
+                    </div>
                   </div>
-                </div>
-              )}
-              <div className="course-info">
-                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
-                  <span className="testimonial-rank" style={{ backgroundColor: 'var(--navy-blue)', color: '#fff' }}>
-                    {course.category === 'class-11-12' ? 'Class 11-12' : 'Class 9-10'}
-                  </span>
-                  {course.showTarget !== false && course.target && (
-                    <span className="testimonial-rank">
-                      {course.target}
+                )}
+                <div className="course-info">
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                    <span className="testimonial-rank" style={{ backgroundColor: 'var(--navy-blue)', color: '#fff' }}>
+                      {course.category === 'class-11-12' ? 'Class 11-12' : 'Class 9-10'}
                     </span>
-                  )}
-                </div>
-                
-                <h3 className="course-title" style={{ cursor: 'pointer' }} onClick={() => setSelectedCourseDetails(course)}>{course.title}</h3>
-                
-                <div className="course-meta-list">
-                  {course.showSchedule !== false && course.schedule && (
-                    <div className="course-meta-item">
-                      <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                      <span>{course.schedule}</span>
-                    </div>
-                  )}
-                  {course.showBoards !== false && course.boards && (
-                    <div className="course-meta-item">
-                      <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M12 2.25V9.75m0-7.25c.01-.2.03-.4.07-.6M12 9.75c.01.2.03.4.07.6" /></svg>
-                      <span>{course.boards}</span>
-                    </div>
-                  )}
-                  {course.showDuration !== false && course.duration && (
-                    <div className="course-meta-item">
-                      <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                      <span>Duration: {course.duration}</span>
-                    </div>
-                  )}
-                </div>
+                    {course.showTarget !== false && course.target && (
+                      <span className="testimonial-rank">
+                        {course.target}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <h3 className="course-title" style={{ cursor: 'pointer' }} onClick={() => setSelectedCourseDetails(course)}>{course.title}</h3>
+                  
+                  <div className="course-meta-list">
+                    {course.showSchedule !== false && course.schedule && (
+                      <div className="course-meta-item">
+                        <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <span>{course.schedule}</span>
+                      </div>
+                    )}
+                    {course.showBoards !== false && course.boards && (
+                      <div className="course-meta-item">
+                        <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M12 2.25V9.75m0-7.25c.01-.2.03-.4.07-.6M12 9.75c.01.2.03.4.07.6" /></svg>
+                        <span>{course.boards}</span>
+                      </div>
+                    )}
+                    {course.showDuration !== false && course.duration && (
+                      <div className="course-meta-item">
+                        <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        <span>Duration: {course.duration}</span>
+                      </div>
+                    )}
+                  </div>
 
-                <hr className="course-divider" />
+                  <hr className="course-divider" />
 
-                <div className="course-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  {course.showFee !== false && course.fee ? (
-                    <div>
-                      <span className="course-price-label">Registration:</span>
-                      <div className="course-price-val">₹ {course.fee.toLocaleString()}</div>
+                  <div className="course-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    {course.showFee !== false && course.fee ? (
+                      <div>
+                        <span className="course-price-label">Registration:</span>
+                        <div className="course-price-val">₹ {course.fee.toLocaleString()}</div>
+                      </div>
+                    ) : (
+                      <div></div>
+                    )}
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button className="enrol-btn secondary" style={{ padding: '8px 12px', fontSize: '0.8rem', backgroundColor: '#e2e8f0', color: 'var(--navy-dark)', border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer', fontWeight: 600 }} onClick={() => setSelectedCourseDetails(course)}>View Details</button>
+                      <button className="enrol-btn" style={{ padding: '8px 12px', fontSize: '0.8rem' }} onClick={() => openEnquiry(course)}>Enrol now</button>
                     </div>
-                  ) : (
-                    <div></div>
-                  )}
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button className="enrol-btn secondary" style={{ padding: '8px 12px', fontSize: '0.8rem', backgroundColor: '#e2e8f0', color: 'var(--navy-dark)', border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer', fontWeight: 600 }} onClick={() => setSelectedCourseDetails(course)}>View Details</button>
-                    <button className="enrol-btn" style={{ padding: '8px 12px', fontSize: '0.8rem' }} onClick={() => openEnquiry(course)}>Enrol now</button>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-        <button 
-          className="admin-btn secondary" 
-          style={{ width: '100%', padding: '14px', borderRadius: 'var(--radius-lg)', fontWeight: 700 }}
-          onClick={() => navigate('/courses')}
-        >
-          View All Courses Catalog
-        </button>
-      </section>
+            ))}
+          </div>
+          <button 
+            className="admin-btn secondary" 
+            style={{ width: '100%', padding: '14px', borderRadius: 'var(--radius-lg)', fontWeight: 700 }}
+            onClick={() => navigate('/courses')}
+          >
+            View All Courses Catalog
+          </button>
+        </section>
+      )}
 
       {/* Our Excellent Results Section */}
-      {results.length > 0 && (
+      {settings.showToppers !== false && results.length > 0 && (
         <section className="results-section">
           <div className="section-header">
             <h2 className="section-title">Our Excellent Results</h2>
@@ -825,31 +829,33 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
       )}
 
       {/* Do More quick links */}
-      <section className="quick-links-section">
-        <div className="section-header">
-          <h2 className="section-title">Do More with APEX</h2>
-          <p className="section-subtitle">Access student answer keys, syllabus sheets, and dynamic announcements</p>
-        </div>
+      {settings.showQuickLinks !== false && (
+        <section className="quick-links-section">
+          <div className="section-header">
+            <h2 className="section-title">Do More with APEX</h2>
+            <p className="section-subtitle">Access student answer keys, syllabus sheets, and dynamic announcements</p>
+          </div>
 
-        <div className="links-list">
-          {resources.map(res => (
-            <div className="link-card" key={res.id} onClick={() => openEnquiry(null)}>
-              <div className="link-content">
-                <div className="link-icon-wrap">
-                  <svg fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+          <div className="links-list">
+            {resources.map(res => (
+              <div className="link-card" key={res.id} onClick={() => openEnquiry(null)}>
+                <div className="link-content">
+                  <div className="link-icon-wrap">
+                    <svg fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+                  </div>
+                  <span className="link-title">{res.title}</span>
                 </div>
-                <span className="link-title">{res.title}</span>
+                <div className="link-arrow">
+                  <IconChevronRight />
+                </div>
               </div>
-              <div className="link-arrow">
-                <IconChevronRight />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Latest News & Announcements Section */}
-      {posts.length > 0 && (
+      {settings.showBlogs !== false && posts.length > 0 && (
         <section className="news-section student-content-wrap" style={{ padding: '40px 0', borderBottom: '1px solid var(--border-light)' }}>
           <div className="section-header">
             <h2 className="section-title">Latest News & Announcements</h2>
@@ -957,7 +963,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
       )}
 
       {/* Testimonials */}
-      {testimonials.length > 0 && (
+      {settings.showTestimonials !== false && testimonials.length > 0 && (
         <section className="testimonials-section">
           <div className="section-header">
             <h2 className="section-title">What Students Say</h2>
@@ -990,13 +996,15 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
       )}
 
       {/* Enquiry Form */}
-      <section className="contact-section">
-        <div className="contact-section-inner" style={{ display: 'flex', justifyContent: 'center' }}>
-          <div style={{ width: '100%', maxWidth: '500px' }}>
-            <EnquiryInlineForm />
+      {settings.showEnquiryInline !== false && (
+        <section className="contact-section">
+          <div className="contact-section-inner" style={{ display: 'flex', justifyContent: 'center' }}>
+            <div style={{ width: '100%', maxWidth: '500px' }}>
+              <EnquiryInlineForm />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
       </div>
     </div>
   );
@@ -1958,6 +1966,49 @@ function SettingsForm() {
           Show Blog Cover Images on Homepage
         </label>
       </div>
+
+      {/* HOMEPAGE SECTIONS CONFIGURATION */}
+      <h4 style={{ margin: '20px 0 10px 0', borderBottom: '1px solid var(--border-light)', paddingBottom: '8px', color: 'var(--navy-blue)', fontSize: '0.95rem', fontWeight: 700 }}>Homepage Sections Display Control</h4>
+      <p style={{ fontSize: '0.8rem', color: 'var(--light-gray)', marginBottom: '15px' }}>Enable or disable visibility of individual sections on your home page.</p>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '15px', margin: '15px 0 25px 0', backgroundColor: '#f8fafc', padding: '15px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-light)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <input type="checkbox" name="showSliders" id="showSliders" checked={!!settings.showSliders} onChange={handleChange} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
+          <label htmlFor="showSliders" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Banner Image Slider</label>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <input type="checkbox" name="showKalam" id="showKalam" checked={!!settings.showKalam} onChange={handleChange} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
+          <label htmlFor="showKalam" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Kalam Mentor Banner</label>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <input type="checkbox" name="showInfoCard" id="showInfoCard" checked={!!settings.showInfoCard} onChange={handleChange} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
+          <label htmlFor="showInfoCard" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>24/7 Study Partner Info Card</label>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <input type="checkbox" name="showFeaturedCourses" id="showFeaturedCourses" checked={!!settings.showFeaturedCourses} onChange={handleChange} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
+          <label htmlFor="showFeaturedCourses" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Featured Programs Courses</label>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <input type="checkbox" name="showToppers" id="showToppers" checked={!!settings.showToppers} onChange={handleChange} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
+          <label htmlFor="showToppers" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Toppers Excellent Results</label>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <input type="checkbox" name="showQuickLinks" id="showQuickLinks" checked={!!settings.showQuickLinks} onChange={handleChange} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
+          <label htmlFor="showQuickLinks" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Quick Links (Do More)</label>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <input type="checkbox" name="showBlogs" id="showBlogs" checked={!!settings.showBlogs} onChange={handleChange} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
+          <label htmlFor="showBlogs" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Blogs & News Announcements</label>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <input type="checkbox" name="showTestimonials" id="showTestimonials" checked={!!settings.showTestimonials} onChange={handleChange} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
+          <label htmlFor="showTestimonials" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Video Testimonials Reviews</label>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <input type="checkbox" name="showEnquiryInline" id="showEnquiryInline" checked={!!settings.showEnquiryInline} onChange={handleChange} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
+          <label htmlFor="showEnquiryInline" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Contact Enquiry Inline Form</label>
+        </div>
+      </div>
       <button type="submit" className="admin-btn" style={{ padding: '10px 24px' }}>Save Settings</button>
     </form>
   );
@@ -1995,10 +2046,35 @@ function AdminSliders() {
     setEditingId(null);
   };
 
+  const handleAddSlide = () => {
+    if (sliders.length >= 10) {
+      alert("Maximum limit of 10 sliders reached!");
+      return;
+    }
+    const newSlide = {
+      id: 's_' + Date.now(),
+      imageUrl: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=800',
+      mobileImageUrl: '',
+      orderIndex: sliders.length,
+      active: true
+    };
+    const updated = [...sliders, newSlide];
+    dbService.saveSliders(updated);
+    setSliders(updated);
+  };
+
+  const handleDeleteSlide = (id) => {
+    if (window.confirm("Are you sure you want to delete this banner slide?")) {
+      dbService.deleteSlider(id);
+      setSliders(prev => prev.filter(s => s.id !== id));
+    }
+  };
+
   return (
     <div className="admin-card fade-in">
-      <div className="admin-card-header">
+      <div className="admin-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span className="admin-card-title">Homepage Banner Carousel (Max 10 Images)</span>
+        <button className="admin-btn" style={{ padding: '8px 16px', fontSize: '0.8rem' }} onClick={handleAddSlide}>+ Add New Slide</button>
       </div>
       <p style={{ fontSize: '0.82rem', color: 'var(--light-gray)', marginBottom: '20px' }}>Manage separate desktop and mobile banners to fit different screens cleanly.</p>
       
@@ -2066,9 +2142,14 @@ function AdminSliders() {
                   <span style={{ fontSize: '0.78rem', color: slide.active ? 'var(--accent-green)' : '#ef4444', fontWeight: 600 }}>
                     {slide.active ? '● Showing' : '○ Hidden'}
                   </span>
-                  <button className="admin-btn secondary" style={{ width: '100%', padding: '6px' }} onClick={() => handleEdit(slide)}>
-                    Edit Slide URL
-                  </button>
+                  <div style={{ display: 'flex', gap: '5px', marginTop: '5px' }}>
+                    <button className="admin-btn secondary" style={{ flex: 1, padding: '6px', fontSize: '0.75rem' }} onClick={() => handleEdit(slide)}>
+                      Edit
+                    </button>
+                    <button className="admin-btn secondary" style={{ flex: 1, padding: '6px', fontSize: '0.75rem', color: '#ef4444', borderColor: '#ef4444' }} onClick={() => handleDeleteSlide(slide.id)}>
+                      Delete
+                    </button>
+                  </div>
                 </>
               )}
             </div>
@@ -2112,8 +2193,8 @@ function AdminKalam() {
       )}
       <form onSubmit={handleSubmit}>
         <div className="admin-input-group">
-          <label>Kalam Banner Image URL / Path</label>
-          <input type="text" name="imageUrl" value={kalam.imageUrl} onChange={handleChange} required />
+          <label>Kalam Banner Image URL / Path (Leave blank to hide Kalam Quote on Homepage)</label>
+          <input type="text" name="imageUrl" value={kalam.imageUrl || ''} onChange={handleChange} />
           <ImageUploadCompress 
             value={kalam.imageUrl} 
             onChange={(val) => setKalam(prev => ({ ...prev, imageUrl: val }))} 
@@ -2125,7 +2206,17 @@ function AdminKalam() {
         </div>
         {kalam.imageUrl && (
           <div style={{ marginTop: '15px', marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, fontSize: '0.82rem' }}>Preview Banner:</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <label style={{ fontWeight: 600, fontSize: '0.82rem', margin: 0 }}>Preview Banner:</label>
+              <button 
+                type="button" 
+                className="admin-btn secondary" 
+                style={{ padding: '2px 8px', fontSize: '0.72rem', color: '#ef4444', borderColor: '#ef4444' }} 
+                onClick={() => setKalam(prev => ({ ...prev, imageUrl: '' }))}
+              >
+                Clear Image / Reset
+              </button>
+            </div>
             <img src={kalam.imageUrl} alt="Kalam Banner Preview" style={{ width: '100%', maxHeight: '200px', objectFit: 'contain', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-md)' }} />
           </div>
         )}
