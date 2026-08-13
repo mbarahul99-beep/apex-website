@@ -1571,6 +1571,18 @@ function AdminPanel({ navigate }) {
     navigate('/');
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      const success = await dbService.loginWithGoogle();
+      if (success) {
+        setIsLogged(true);
+        setLoginError('');
+      }
+    } catch (err) {
+      setLoginError(err.message || 'Google Sign-In failed.');
+    }
+  };
+
   if (!isLogged) {
     return (
       <div className="admin-login-container">
@@ -1579,6 +1591,45 @@ function AdminPanel({ navigate }) {
             <span className="admin-login-title">APEX ADMIN SYSTEM</span>
           </div>
           {loginError && <div className="admin-login-error">{loginError}</div>}
+          
+          {!isDefault && (
+            <>
+              <button 
+                type="button"
+                className="admin-btn secondary"
+                style={{ 
+                  width: '100%', 
+                  padding: '12px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  gap: '10px', 
+                  backgroundColor: '#fff', 
+                  color: '#1f2937', 
+                  border: '1px solid #d1d5db',
+                  fontWeight: '600',
+                  borderRadius: 'var(--radius-md)',
+                  cursor: 'pointer',
+                  marginBottom: '15px'
+                }}
+                onClick={handleGoogleLogin}
+              >
+                <svg style={{ width: '18px', height: '18px' }} viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.9h6.6c-.3 1.55-1.18 2.87-2.5 3.75v3.1h4c2.33-2.15 3.65-5.32 3.65-8.68z" />
+                  <path fill="#34A853" d="M12 24c3.24 0 5.97-1.07 7.96-2.92l-4-3.1c-1.12.75-2.55 1.2-3.96 1.2-3.05 0-5.63-2.06-6.55-4.83H1.3l-4 3.1A11.96 11.96 0 0012 24z" />
+                  <path fill="#FBBC05" d="M5.45 14.35A7.16 7.16 0 015 12c0-.82.15-1.62.4-2.38V6.52H1.3A11.94 11.94 0 000 12c0 2.12.55 4.12 1.5 5.85l3.95-3.5z" />
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.6 4.6 1.8l3.43-3.43C17.95 1.19 15.24 0 12 0A11.96 11.96 0 001.3 6.52l4.15 3.23c.92-2.77 3.5-4.83 6.55-4.83z" />
+                </svg>
+                Sign in with Google
+              </button>
+              <div style={{ display: 'flex', alignItems: 'center', margin: '15px 0', color: '#9ca3af' }}>
+                <hr style={{ flex: 1, borderColor: '#e5e7eb', borderStyle: 'solid', borderWidth: '1px 0 0 0' }} />
+                <span style={{ padding: '0 10px', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>or use password</span>
+                <hr style={{ flex: 1, borderColor: '#e5e7eb', borderStyle: 'solid', borderWidth: '1px 0 0 0' }} />
+              </div>
+            </>
+          )}
+          
           <form onSubmit={handleLogin}>
             <div className="admin-input-group">
               <label>{isDefault ? "Admin Username" : "Admin Email"}</label>

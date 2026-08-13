@@ -7,7 +7,7 @@ import {
   deleteDoc,
   updateDoc
 } from "firebase/firestore";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { db, auth, isDefault } from "./firebase";
 
 // Database Service using LocalStorage with Brochure details as default seed data
@@ -673,6 +673,32 @@ export const dbService = {
       return true;
     } catch (err) {
       console.error("❌ Authentication error:", err);
+      throw err;
+    }
+  },
+
+  async loginWithGoogle() {
+    if (isDefault) {
+      throw new Error("Firebase configuration not found.");
+    }
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const email = result.user.email;
+      const ALLOWED_ADMINS = [
+        "instituteapex12@gmail.com",
+        "instituteapexjind@gmail.com",
+        "mbarahul99@gmail.com"
+      ];
+      if (ALLOWED_ADMINS.includes(email.toLowerCase())) {
+        localStorage.setItem(DB_KEYS.AUTH, 'true');
+        return true;
+      } else {
+        await signOut(auth);
+        throw new Error(`Unauthorized: ${email} is not registered as an administrator.`);
+      }
+    } catch (err) {
+      console.error("❌ Google Sign-In error:", err);
       throw err;
     }
   },
