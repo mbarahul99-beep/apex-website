@@ -1581,12 +1581,12 @@ function AdminPanel({ navigate }) {
           {loginError && <div className="admin-login-error">{loginError}</div>}
           <form onSubmit={handleLogin}>
             <div className="admin-input-group">
-              <label>Admin Username</label>
+              <label>{isDefault ? "Admin Username" : "Admin Email"}</label>
               <input 
-                type="text" 
+                type={isDefault ? "text" : "email"} 
                 value={username} 
                 onChange={e => setUsername(e.target.value)}
-                placeholder="Enter username (admin)"
+                placeholder={isDefault ? "Enter username (admin)" : "Enter admin email address"}
                 required 
               />
             </div>
@@ -1596,7 +1596,7 @@ function AdminPanel({ navigate }) {
                 type="password" 
                 value={password} 
                 onChange={e => setPassword(e.target.value)}
-                placeholder="Enter password (apex2026)"
+                placeholder={isDefault ? "Enter password (apex2026)" : "Enter account password"}
                 required 
               />
             </div>
