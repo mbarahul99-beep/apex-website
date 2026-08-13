@@ -1,9 +1,9 @@
 // Firebase configuration using environment variables with a placeholder fallback for direct editing
 export const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "YOUR_API_KEY",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "YOUR_AUTH_DOMAIN",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "YOUR_PROJECT_ID",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "YOUR_STORAGE_BUCKET",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "YOUR_MESSAGING_SENDER_ID",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "YOUR_APP_ID"
+  apiKey: "AIzaSyDyc271EPbEg63vHvKMKT_pv3ixaHALd58",
+  authDomain: "apex-website-b21a0.firebaseapp.com",
+  projectId: "apex-website-b21a0",
+  storageBucket: "apex-website-b21a0.firebasestorage.app",
+  messagingSenderId: "25611385151",
+  appId: "1:25611385151:web:52d64a91b9846e17acfb8a"
 };
