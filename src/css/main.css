@@ -5,6 +5,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  padding-top: 56px; /* Sticky header spacer desktop */
   padding-bottom: 60px; /* Space for sticky nav on mobile */
   background-color: var(--white);
   overflow-x: hidden;
@@ -18,16 +19,19 @@
 
 /* Header Styles */
 .header {
-  height: 70px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 56px; /* Minimal header height */
   background-color: var(--white);
   border-bottom: 1px solid var(--border-light);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 var(--spacing-lg);
-  position: sticky;
-  top: 0;
-  z-index: 90;
+  z-index: 1000; /* Stay above slide indicators & widgets */
   box-shadow: var(--shadow-sm);
 }
 
@@ -1424,12 +1428,18 @@
 /* Mobile responsive adjustments for viewports <= 480px */
 @media (max-width: 480px) {
   /* Prevent screen horizontal overflow cutting off elements from right */
-  body, html, #root, .app-container {
+  body, html, #root {
     overflow-x: hidden;
     max-width: 100vw;
   }
+  .app-container {
+    overflow-x: hidden;
+    max-width: 100vw;
+    padding-top: 50px !important; /* Sticky header spacer mobile */
+  }
 
   .header {
+    height: 50px !important; /* Minimal mobile header height */
     padding: 0 var(--spacing-sm) !important; /* Reduce padding on mobile */
   }
   
