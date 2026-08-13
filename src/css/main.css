@@ -134,27 +134,34 @@
 .slider-container {
   position: relative;
   width: 100%;
+  aspect-ratio: 16 / 7.5; /* Mobile banner ratio */
   background-color: #e2e8f0;
   overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .slider-container {
+    aspect-ratio: 25 / 7; /* Wide and clean desktop ratio (3.57:1) matching Aakash */
+    max-height: 440px;
+  }
 }
 
 .slider-wrapper {
   display: flex;
   width: 100%;
+  height: 100%;
   transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .slide {
   min-width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 100%;
 }
 
 .slide img {
   width: 100%;
-  height: auto;
-  display: block;
+  height: 100%;
+  object-fit: cover;
 }
 
 .slider-dots {
