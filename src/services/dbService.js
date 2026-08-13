@@ -1,3 +1,15 @@
+import { 
+  collection, 
+  doc, 
+  getDoc, 
+  getDocs, 
+  setDoc, 
+  deleteDoc,
+  updateDoc
+} from "firebase/firestore";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { db, auth, isDefault } from "./firebase";
+
 // Database Service using LocalStorage with Brochure details as default seed data
 const DB_KEYS = {
   SETTINGS: 'apex_settings',
@@ -162,7 +174,6 @@ const DEFAULT_TESTIMONIALS = [
   }
 ];
 
-// Seed data for results matching the Aakash excellence list format
 const DEFAULT_RESULTS = [
   { id: "res1", studentName: "Utkarsh Khokhar", examType: "JEE Main", achievement: "Percentile 99.99%ile", location: "State Haryana", photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=200&fit=crop", year: "2025" },
   { id: "res2", studentName: "Ajaiy P", examType: "JEE Main", achievement: "Percentile 99.98%ile", location: "State Haryana", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&fit=crop", year: "2025" },
@@ -208,7 +219,22 @@ const DEFAULT_POSTS = [
   }
 ];
 
-// Database operations helper
+// Memory cache object for synchronous reads
+const cache = {
+  settings: DEFAULT_SETTINGS,
+  sliders: DEFAULT_SLIDERS,
+  kalam: DEFAULT_KALAM,
+  courses: DEFAULT_COURSES,
+  resources: DEFAULT_RESOURCES,
+  testimonials: DEFAULT_TESTIMONIALS,
+  results: DEFAULT_RESULTS,
+  enquiries: [],
+  pages: DEFAULT_PAGES,
+  posts: DEFAULT_POSTS,
+  scholarships: DEFAULT_SCHOLARSHIPS
+};
+
+// Database operations helper for LocalStorage
 const loadData = (key, fallback) => {
   const data = localStorage.getItem(key);
   if (!data) {
@@ -223,293 +249,445 @@ const saveData = (key, data) => {
 };
 
 export const dbService = {
-  // Initialize all databases
-  init() {
-    // Migrate or load settings to ensure logo keys and exam portal URL are populated
-    const storedSettings = localStorage.getItem(DB_KEYS.SETTINGS);
-    if (storedSettings) {
-      try {
-        const parsed = JSON.parse(storedSettings);
-        let updated = false;
-        if (!parsed.logoUrl) { parsed.logoUrl = "/logo.png"; updated = true; }
-        if (!parsed.logoNameUrl) { parsed.logoNameUrl = "/logo_name.png"; updated = true; }
-        if (!parsed.logoIconHeight) { parsed.logoIconHeight = "44px"; updated = true; }
-        if (!parsed.logoWidth) { parsed.logoWidth = "180px"; updated = true; }
-        if (!parsed.logoHeight) { parsed.logoHeight = "45px"; updated = true; }
-        if (!parsed.examPortalUrl) { parsed.examPortalUrl = "https://app.instituteapex.in?app=student"; updated = true; }
-        if (parsed.showBlogImagesOnHome === undefined) { parsed.showBlogImagesOnHome = false; updated = true; }
-        if (updated) {
-          localStorage.setItem(DB_KEYS.SETTINGS, JSON.stringify(parsed));
-        }
-      } catch (e) {
-        localStorage.setItem(DB_KEYS.SETTINGS, JSON.stringify(DEFAULT_SETTINGS));
-      }
-    } else {
-      loadData(DB_KEYS.SETTINGS, DEFAULT_SETTINGS);
+  // Initialize and preload databases into cache
+  async init() {
+    if (isDefault) {
+      // LocalStorage mode
+      cache.settings = loadData(DB_KEYS.SETTINGS, DEFAULT_SETTINGS);
+      cache.sliders = loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS).sort((a,b) => a.orderIndex - b.orderIndex);
+      cache.kalam = loadData(DB_KEYS.KALAM, DEFAULT_KALAM);
+      cache.courses = loadData(DB_KEYS.COURSES, DEFAULT_COURSES);
+      cache.resources = loadData(DB_KEYS.RESOURCES, DEFAULT_RESOURCES);
+      cache.testimonials = loadData(DB_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS);
+      cache.results = loadData(DB_KEYS.RESULTS, DEFAULT_RESULTS);
+      cache.enquiries = loadData(DB_KEYS.ENQUIRIES, []);
+      cache.pages = loadData(DB_KEYS.PAGES, DEFAULT_PAGES);
+      cache.posts = loadData(DB_KEYS.POSTS, DEFAULT_POSTS);
+      cache.scholarships = loadData(DB_KEYS.SCHOLARSHIPS, DEFAULT_SCHOLARSHIPS).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+      return Promise.resolve();
     }
 
-    loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS);
-    
-    // Reset/migrate stored Kalam data to use the brochure image
-    const storedKalam = localStorage.getItem(DB_KEYS.KALAM);
-    if (storedKalam) {
-      try {
-        const parsed = JSON.parse(storedKalam);
-        if (parsed.quoteText || !parsed.imageUrl || parsed.imageUrl.includes('unsplash.com')) {
-          localStorage.setItem(DB_KEYS.KALAM, JSON.stringify(DEFAULT_KALAM));
-        }
-      } catch (e) {
-        localStorage.setItem(DB_KEYS.KALAM, JSON.stringify(DEFAULT_KALAM));
+    try {
+      // Firebase mode loading
+      // 1. Settings
+      const settingsSnap = await getDoc(doc(db, "settings", "main"));
+      if (settingsSnap.exists()) {
+        cache.settings = { ...DEFAULT_SETTINGS, ...settingsSnap.data() };
+      } else {
+        await setDoc(doc(db, "settings", "main"), DEFAULT_SETTINGS);
+        cache.settings = DEFAULT_SETTINGS;
       }
-    } else {
-      loadData(DB_KEYS.KALAM, DEFAULT_KALAM);
-    }
-    loadData(DB_KEYS.SCHOLARSHIPS, DEFAULT_SCHOLARSHIPS);
-    loadData(DB_KEYS.COURSES, DEFAULT_COURSES);
-    loadData(DB_KEYS.RESOURCES, DEFAULT_RESOURCES);
-    loadData(DB_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS);
-    // Migrate or seed student results
-    const storedResults = localStorage.getItem(DB_KEYS.RESULTS);
-    if (storedResults) {
-      try {
-        const parsed = JSON.parse(storedResults);
-        const hasMissingYear = parsed.some(r => !r.year);
-        if (parsed.length < 10 || hasMissingYear) {
-          localStorage.setItem(DB_KEYS.RESULTS, JSON.stringify(DEFAULT_RESULTS));
-        }
-      } catch (e) {
-        localStorage.setItem(DB_KEYS.RESULTS, JSON.stringify(DEFAULT_RESULTS));
+
+      // 2. Kalam Quote
+      const kalamSnap = await getDoc(doc(db, "kalam", "main"));
+      if (kalamSnap.exists()) {
+        cache.kalam = kalamSnap.data();
+      } else {
+        await setDoc(doc(db, "kalam", "main"), DEFAULT_KALAM);
+        cache.kalam = DEFAULT_KALAM;
       }
-    } else {
-      loadData(DB_KEYS.RESULTS, DEFAULT_RESULTS);
+
+      // Collection loader and dynamic seeder
+      const loadCollection = async (colName, defaults) => {
+        const snap = await getDocs(collection(db, colName));
+        if (!snap.empty) {
+          return snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+        } else {
+          // Dynamic Seed data to Firestore
+          for (const item of defaults) {
+            await setDoc(doc(db, colName, item.id), item);
+          }
+          return defaults;
+        }
+      };
+
+      cache.sliders = (await loadCollection("sliders", DEFAULT_SLIDERS)).sort((a,b) => a.orderIndex - b.orderIndex);
+      cache.courses = await loadCollection("courses", DEFAULT_COURSES);
+      cache.resources = await loadCollection("resources", DEFAULT_RESOURCES);
+      cache.testimonials = await loadCollection("testimonials", DEFAULT_TESTIMONIALS);
+      cache.results = await loadCollection("results", DEFAULT_RESULTS);
+      cache.pages = await loadCollection("pages", DEFAULT_PAGES);
+      cache.posts = await loadCollection("posts", DEFAULT_POSTS);
+      cache.scholarships = (await loadCollection("scholarships", DEFAULT_SCHOLARSHIPS)).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+
+      // 3. Enquiries (No seed required)
+      const enquiriesSnap = await getDocs(collection(db, "enquiries"));
+      cache.enquiries = enquiriesSnap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+
+    } catch (err) {
+      console.error("⚠️ Firestore pre-loading failed. Reverting to LocalStorage.", err);
+      // Fail-safe fallback loading
+      cache.settings = loadData(DB_KEYS.SETTINGS, DEFAULT_SETTINGS);
+      cache.sliders = loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS);
+      cache.kalam = loadData(DB_KEYS.KALAM, DEFAULT_KALAM);
+      cache.courses = loadData(DB_KEYS.COURSES, DEFAULT_COURSES);
+      cache.resources = loadData(DB_KEYS.RESOURCES, DEFAULT_RESOURCES);
+      cache.testimonials = loadData(DB_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS);
+      cache.results = loadData(DB_KEYS.RESULTS, DEFAULT_RESULTS);
+      cache.enquiries = loadData(DB_KEYS.ENQUIRIES, []);
+      cache.pages = loadData(DB_KEYS.PAGES, DEFAULT_PAGES);
+      cache.posts = loadData(DB_KEYS.POSTS, DEFAULT_POSTS);
+      cache.scholarships = loadData(DB_KEYS.SCHOLARSHIPS, DEFAULT_SCHOLARSHIPS);
     }
-    loadData(DB_KEYS.PAGES, DEFAULT_PAGES);
-    loadData(DB_KEYS.POSTS, DEFAULT_POSTS);
-    loadData(DB_KEYS.ENQUIRIES, []);
   },
 
   // Settings
   getSettings() {
-    return loadData(DB_KEYS.SETTINGS, DEFAULT_SETTINGS);
+    return cache.settings;
   },
   saveSettings(settings) {
-    saveData(DB_KEYS.SETTINGS, settings);
+    cache.settings = settings;
+    if (isDefault) {
+      saveData(DB_KEYS.SETTINGS, settings);
+    } else {
+      setDoc(doc(db, "settings", "main"), settings).catch(err => console.error("Firestore settings save error:", err));
+    }
     return settings;
   },
 
   // Sliders
   getSliders() {
-    return loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS).sort((a,b) => a.orderIndex - b.orderIndex);
+    return cache.sliders;
   },
   saveSliders(sliders) {
-    saveData(DB_KEYS.SLIDERS, sliders);
+    cache.sliders = sliders.sort((a,b) => a.orderIndex - b.orderIndex);
+    if (isDefault) {
+      saveData(DB_KEYS.SLIDERS, sliders);
+    } else {
+      for (const s of sliders) {
+        setDoc(doc(db, "sliders", s.id), s).catch(err => console.error("Firestore slider save error:", err));
+      }
+    }
     return sliders;
   },
 
   // Kalam Section
   getKalam() {
-    return loadData(DB_KEYS.KALAM, DEFAULT_KALAM);
+    return cache.kalam;
   },
   saveKalam(kalam) {
-    saveData(DB_KEYS.KALAM, kalam);
+    cache.kalam = kalam;
+    if (isDefault) {
+      saveData(DB_KEYS.KALAM, kalam);
+    } else {
+      setDoc(doc(db, "kalam", "main"), kalam).catch(err => console.error("Firestore kalam save error:", err));
+    }
     return kalam;
   },
 
   // Courses
   getCourses() {
-    return loadData(DB_KEYS.COURSES, DEFAULT_COURSES);
+    return cache.courses;
   },
   getCourse(id) {
-    return this.getCourses().find(c => c.id === id);
+    return cache.courses.find(c => c.id === id);
   },
   saveCourse(course) {
-    const courses = this.getCourses();
-    const idx = courses.findIndex(c => c.id === course.id);
-    if (idx > -1) {
-      courses[idx] = course;
-    } else {
+    const list = [...cache.courses];
+    if (!course.id) {
       course.id = 'c_' + Date.now();
-      courses.push(course);
     }
-    saveData(DB_KEYS.COURSES, courses);
+    const idx = list.findIndex(c => c.id === course.id);
+    if (idx > -1) {
+      list[idx] = course;
+    } else {
+      list.push(course);
+    }
+    cache.courses = list;
+
+    if (isDefault) {
+      saveData(DB_KEYS.COURSES, list);
+    } else {
+      setDoc(doc(db, "courses", course.id), course).catch(err => console.error("Firestore course save error:", err));
+    }
     return course;
   },
   deleteCourse(id) {
-    const courses = this.getCourses().filter(c => c.id !== id);
-    saveData(DB_KEYS.COURSES, courses);
+    cache.courses = cache.courses.filter(c => c.id !== id);
+    if (isDefault) {
+      saveData(DB_KEYS.COURSES, cache.courses);
+    } else {
+      deleteDoc(doc(db, "courses", id)).catch(err => console.error("Firestore course delete error:", err));
+    }
   },
 
   // Results
   getResults() {
-    return loadData(DB_KEYS.RESULTS, DEFAULT_RESULTS);
+    return cache.results;
   },
   saveResult(result) {
-    const list = this.getResults();
+    const list = [...cache.results];
+    if (!result.id) {
+      result.id = 'res_' + Date.now();
+    }
     const idx = list.findIndex(r => r.id === result.id);
     if (idx > -1) {
       list[idx] = result;
     } else {
-      result.id = 'res_' + Date.now();
       list.push(result);
     }
-    saveData(DB_KEYS.RESULTS, list);
+    cache.results = list;
+
+    if (isDefault) {
+      saveData(DB_KEYS.RESULTS, list);
+    } else {
+      setDoc(doc(db, "results", result.id), result).catch(err => console.error("Firestore result save error:", err));
+    }
     return result;
   },
   deleteResult(id) {
-    const list = this.getResults().filter(r => r.id !== id);
-    saveData(DB_KEYS.RESULTS, list);
+    cache.results = cache.results.filter(r => r.id !== id);
+    if (isDefault) {
+      saveData(DB_KEYS.RESULTS, cache.results);
+    } else {
+      deleteDoc(doc(db, "results", id)).catch(err => console.error("Firestore result delete error:", err));
+    }
   },
 
   // Scholarships
   getScholarships() {
-    return loadData(DB_KEYS.SCHOLARSHIPS, DEFAULT_SCHOLARSHIPS).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+    return cache.scholarships;
   },
   saveScholarship(scholarship) {
-    const list = this.getScholarships();
+    const list = [...cache.scholarships];
+    if (!scholarship.id) {
+      scholarship.id = 'sc_' + Date.now();
+    }
     const idx = list.findIndex(s => s.id === scholarship.id);
     if (idx > -1) {
       list[idx] = scholarship;
     } else {
-      scholarship.id = 'sc_' + Date.now();
       list.push(scholarship);
     }
-    saveData(DB_KEYS.SCHOLARSHIPS, list);
+    cache.scholarships = list.sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+
+    if (isDefault) {
+      saveData(DB_KEYS.SCHOLARSHIPS, cache.scholarships);
+    } else {
+      setDoc(doc(db, "scholarships", scholarship.id), scholarship).catch(err => console.error("Firestore scholarship save error:", err));
+    }
     return scholarship;
   },
   deleteScholarship(id) {
-    const list = this.getScholarships().filter(s => s.id !== id);
-    saveData(DB_KEYS.SCHOLARSHIPS, list);
+    cache.scholarships = cache.scholarships.filter(s => s.id !== id);
+    if (isDefault) {
+      saveData(DB_KEYS.SCHOLARSHIPS, cache.scholarships);
+    } else {
+      deleteDoc(doc(db, "scholarships", id)).catch(err => console.error("Firestore scholarship delete error:", err));
+    }
   },
 
   // Resources
   getResources() {
-    return loadData(DB_KEYS.RESOURCES, DEFAULT_RESOURCES);
+    return cache.resources;
   },
   saveResource(resource) {
-    const resources = this.getResources();
-    const idx = resources.findIndex(r => r.id === resource.id);
-    if (idx > -1) {
-      resources[idx] = resource;
-    } else {
+    const list = [...cache.resources];
+    if (!resource.id) {
       resource.id = 'r_' + Date.now();
-      resources.push(resource);
     }
-    saveData(DB_KEYS.RESOURCES, resources);
+    const idx = list.findIndex(r => r.id === resource.id);
+    if (idx > -1) {
+      list[idx] = resource;
+    } else {
+      list.push(resource);
+    }
+    cache.resources = list;
+
+    if (isDefault) {
+      saveData(DB_KEYS.RESOURCES, list);
+    } else {
+      setDoc(doc(db, "resources", resource.id), resource).catch(err => console.error("Firestore resource save error:", err));
+    }
     return resource;
   },
   deleteResource(id) {
-    const resources = this.getResources().filter(r => r.id !== id);
-    saveData(DB_KEYS.RESOURCES, resources);
+    cache.resources = cache.resources.filter(r => r.id !== id);
+    if (isDefault) {
+      saveData(DB_KEYS.RESOURCES, cache.resources);
+    } else {
+      deleteDoc(doc(db, "resources", id)).catch(err => console.error("Firestore resource delete error:", err));
+    }
   },
 
   // Testimonials
   getTestimonials() {
-    return loadData(DB_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS);
+    return cache.testimonials;
   },
   saveTestimonial(testimonial) {
-    const list = this.getTestimonials();
+    const list = [...cache.testimonials];
+    if (!testimonial.id) {
+      testimonial.id = 't_' + Date.now();
+    }
     const idx = list.findIndex(t => t.id === testimonial.id);
     if (idx > -1) {
       list[idx] = testimonial;
     } else {
-      testimonial.id = 't_' + Date.now();
       list.push(testimonial);
     }
-    saveData(DB_KEYS.TESTIMONIALS, list);
+    cache.testimonials = list;
+
+    if (isDefault) {
+      saveData(DB_KEYS.TESTIMONIALS, list);
+    } else {
+      setDoc(doc(db, "testimonials", testimonial.id), testimonial).catch(err => console.error("Firestore testimonial save error:", err));
+    }
     return testimonial;
   },
   deleteTestimonial(id) {
-    const list = this.getTestimonials().filter(t => t.id !== id);
-    saveData(DB_KEYS.TESTIMONIALS, list);
+    cache.testimonials = cache.testimonials.filter(t => t.id !== id);
+    if (isDefault) {
+      saveData(DB_KEYS.TESTIMONIALS, cache.testimonials);
+    } else {
+      deleteDoc(doc(db, "testimonials", id)).catch(err => console.error("Firestore testimonial delete error:", err));
+    }
   },
 
   // Pages
   getPages() {
-    return loadData(DB_KEYS.PAGES, DEFAULT_PAGES);
+    return cache.pages;
   },
   getPageBySlug(slug) {
-    return this.getPages().find(p => p.slug === slug);
+    return cache.pages.find(p => p.slug === slug);
   },
   savePage(page) {
-    const pages = this.getPages();
-    const idx = pages.findIndex(p => p.id === page.id);
+    const list = [...cache.pages];
     page.lastUpdated = new Date().toISOString();
-    if (idx > -1) {
-      pages[idx] = page;
-    } else {
+    if (!page.id) {
       page.id = 'p_' + Date.now();
-      pages.push(page);
     }
-    saveData(DB_KEYS.PAGES, pages);
+    const idx = list.findIndex(p => p.id === page.id);
+    if (idx > -1) {
+      list[idx] = page;
+    } else {
+      list.push(page);
+    }
+    cache.pages = list;
+
+    if (isDefault) {
+      saveData(DB_KEYS.PAGES, list);
+    } else {
+      setDoc(doc(db, "pages", page.id), page).catch(err => console.error("Firestore page save error:", err));
+    }
     return page;
   },
   deletePage(id) {
-    const pages = this.getPages().filter(p => p.id !== id);
-    saveData(DB_KEYS.PAGES, pages);
+    cache.pages = cache.pages.filter(p => p.id !== id);
+    if (isDefault) {
+      saveData(DB_KEYS.PAGES, cache.pages);
+    } else {
+      deleteDoc(doc(db, "pages", id)).catch(err => console.error("Firestore page delete error:", err));
+    }
   },
 
   // Posts
   getPosts() {
-    return loadData(DB_KEYS.POSTS, DEFAULT_POSTS);
+    return cache.posts;
   },
   getPostBySlug(slug) {
-    return this.getPosts().find(p => p.slug === slug);
+    return cache.posts.find(p => p.slug === slug);
   },
   savePost(post) {
-    const posts = this.getPosts();
-    const idx = posts.findIndex(p => p.id === post.id);
-    if (idx > -1) {
-      posts[idx] = post;
-    } else {
+    const list = [...cache.posts];
+    if (!post.id) {
       post.id = 'po_' + Date.now();
       post.publishDate = new Date().toLocaleDateString();
-      posts.push(post);
     }
-    saveData(DB_KEYS.POSTS, posts);
+    const idx = list.findIndex(p => p.id === post.id);
+    if (idx > -1) {
+      list[idx] = post;
+    } else {
+      list.push(post);
+    }
+    cache.posts = list;
+
+    if (isDefault) {
+      saveData(DB_KEYS.POSTS, list);
+    } else {
+      setDoc(doc(db, "posts", post.id), post).catch(err => console.error("Firestore post save error:", err));
+    }
     return post;
   },
   deletePost(id) {
-    const posts = this.getPosts().filter(p => p.id !== id);
-    saveData(DB_KEYS.POSTS, posts);
+    cache.posts = cache.posts.filter(p => p.id !== id);
+    if (isDefault) {
+      saveData(DB_KEYS.POSTS, cache.posts);
+    } else {
+      deleteDoc(doc(db, "posts", id)).catch(err => console.error("Firestore post delete error:", err));
+    }
   },
 
   // Enquiries
   getEnquiries() {
-    return loadData(DB_KEYS.ENQUIRIES, []);
+    return cache.enquiries;
   },
   addEnquiry(enquiry) {
-    const enquiries = this.getEnquiries();
     enquiry.id = 'e_' + Date.now();
     enquiry.status = 'New';
     enquiry.timestamp = new Date().toISOString();
-    enquiries.unshift(enquiry);
-    saveData(DB_KEYS.ENQUIRIES, enquiries);
+    const list = [enquiry, ...cache.enquiries];
+    cache.enquiries = list;
+
+    if (isDefault) {
+      saveData(DB_KEYS.ENQUIRIES, list);
+    } else {
+      setDoc(doc(db, "enquiries", enquiry.id), enquiry).catch(err => console.error("Firestore enquiry save error:", err));
+    }
     return enquiry;
   },
   updateEnquiryStatus(id, status) {
-    const enquiries = this.getEnquiries();
-    const idx = enquiries.findIndex(e => e.id === id);
+    const list = [...cache.enquiries];
+    const idx = list.findIndex(e => e.id === id);
     if (idx > -1) {
-      enquiries[idx].status = status;
-      saveData(DB_KEYS.ENQUIRIES, enquiries);
+      list[idx].status = status;
+      cache.enquiries = list;
+      if (isDefault) {
+        saveData(DB_KEYS.ENQUIRIES, list);
+      } else {
+        updateDoc(doc(db, "enquiries", id), { status }).catch(err => console.error("Firestore enquiry update error:", err));
+      }
     }
   },
   deleteEnquiry(id) {
-    const enquiries = this.getEnquiries().filter(e => e.id !== id);
-    saveData(DB_KEYS.ENQUIRIES, enquiries);
+    cache.enquiries = cache.enquiries.filter(e => e.id !== id);
+    if (isDefault) {
+      saveData(DB_KEYS.ENQUIRIES, cache.enquiries);
+    } else {
+      deleteDoc(doc(db, "enquiries", id)).catch(err => console.error("Firestore enquiry delete error:", err));
+    }
   },
 
-  // Authenticate Admin locally (using a default hash or config)
-  login(username, password) {
-    if (username === 'admin' && password === 'apex2026') {
+  // Firebase Auth Login
+  async login(username, password) {
+    if (isDefault) {
+      if (username === 'admin' && password === 'apex2026') {
+        localStorage.setItem(DB_KEYS.AUTH, 'true');
+        return Promise.resolve(true);
+      }
+      return Promise.resolve(false);
+    }
+    
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, username, password);
       localStorage.setItem(DB_KEYS.AUTH, 'true');
       return true;
+    } catch (err) {
+      console.error("❌ Authentication error:", err);
+      throw err;
     }
-    return false;
   },
-  logout() {
+  
+  async logout() {
     localStorage.removeItem(DB_KEYS.AUTH);
+    if (!isDefault) {
+      try {
+        await signOut(auth);
+      } catch (err) {
+        console.error("❌ Sign out error:", err);
+      }
+    }
   },
+  
   isLoggedIn() {
     return localStorage.getItem(DB_KEYS.AUTH) === 'true';
   }

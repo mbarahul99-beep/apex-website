@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { dbService } from './services/dbService';
+import { isDefault } from './services/firebase';
 import './css/main.css';
 import './css/admin.css';
 
@@ -24,12 +25,21 @@ const IconUser = () => <svg fill="none" stroke="currentColor" strokeWidth="2.2" 
 export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [settings, setSettings] = useState(dbService.getSettings());
+  const [isInitializing, setIsInitializing] = useState(true);
   
   // Modals state
   const [enquiryModalOpen, setEnquiryModalOpen] = useState(false);
   const [selectedCourseForEnquiry, setSelectedCourseForEnquiry] = useState(null);
   const [videoModalUrl, setVideoModalUrl] = useState(null);
   const [selectedCourseDetails, setSelectedCourseDetails] = useState(null);
+
+  // Initialize database preloads at startup
+  useEffect(() => {
+    dbService.init().then(() => {
+      setSettings(dbService.getSettings());
+      setIsInitializing(false);
+    });
+  }, []);
 
   // Sync with browser navigation
   useEffect(() => {
@@ -132,6 +142,19 @@ export default function App() {
         setVideoModalUrl={setVideoModalUrl}
         setSelectedCourseDetails={setSelectedCourseDetails}
       />
+    );
+  }
+  if (isInitializing) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#0a192f', color: '#fff', fontFamily: 'sans-serif' }}>
+        <img src="/logo.png" alt="APEX" style={{ height: '70px', marginBottom: '20px', animation: 'pulse 1.5s infinite ease-in-out' }} onError={e => e.target.style.display = 'none'} />
+        <div className="spinner" style={{ border: '3px solid rgba(255,255,255,0.1)', width: '40px', height: '40px', borderRadius: '50%', borderLeftColor: '#0070f3', animation: 'spin 1s linear infinite' }}></div>
+        <p style={{ marginTop: '15px', fontSize: '0.9rem', color: '#8892b0' }}>Connecting securely to database...</p>
+        <style>{`
+          @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+          @keyframes pulse { 0%, 100% { opacity: 0.6; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1); } }
+        `}</style>
+      </div>
     );
   }
 
@@ -1527,18 +1550,23 @@ function AdminPanel({ navigate }) {
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (dbService.login(username, password)) {
-      setIsLogged(true);
-      setLoginError('');
-    } else {
-      setLoginError('Invalid Administrator credentials.');
+    try {
+      const success = await dbService.login(username, password);
+      if (success) {
+        setIsLogged(true);
+        setLoginError('');
+      } else {
+        setLoginError('Invalid Administrator credentials.');
+      }
+    } catch (err) {
+      setLoginError(err.message || 'Login failed. Please check credentials or network.');
     }
   };
 
-  const handleLogout = () => {
-    dbService.logout();
+  const handleLogout = async () => {
+    await dbService.logout();
     setIsLogged(false);
     navigate('/');
   };
@@ -1656,6 +1684,21 @@ function AdminPanel({ navigate }) {
         </header>
 
         <div className="admin-content">
+          {isDefault ? (
+            <div style={{ backgroundColor: '#fffbeb', border: '1px solid #fef3c7', padding: '12px 18px', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+              <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+              <div style={{ fontSize: '0.85rem', color: '#92400e', lineHeight: '1.4' }}>
+                <strong>Database is disconnected (using local browser storage).</strong> To save your updates permanently and sync across all devices, paste your Firebase config in <code>src/services/firebaseConfig.js</code> in your code repository.
+              </div>
+            </div>
+          ) : (
+            <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #dcfce7', padding: '12px 18px', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+              <span style={{ fontSize: '1.25rem' }}>🔥</span>
+              <div style={{ fontSize: '0.85rem', color: '#166534', lineHeight: '1.4' }}>
+                <strong>Connected to Firebase Firestore.</strong> Your data is synchronized in real-time and saved permanently in your Google Cloud account.
+              </div>
+            </div>
+          )}
           {activeTab === 'overview' && <AdminOverview setActiveTab={setActiveTab} />}
           {activeTab === 'sliders' && <AdminSliders />}
           {activeTab === 'kalam' && <AdminKalam />}
