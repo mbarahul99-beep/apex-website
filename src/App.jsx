@@ -1964,6 +1964,19 @@ function SettingsForm() {
           This links the student header icon directly to your live registered exam portal.
         </span>
       </div>
+      <div className="admin-input-group">
+        <label>Authorized Google Sign-in Admin Emails (Comma separated)</label>
+        <input 
+          type="text" 
+          name="allowedAdminEmails" 
+          value={settings.allowedAdminEmails || ''} 
+          onChange={handleChange} 
+          placeholder="e.g. instituteapex12@gmail.com, mbarahul99@gmail.com" 
+        />
+        <span style={{ fontSize: '0.72rem', color: '#666', marginTop: '4px', display: 'block' }}>
+          When signing in via Google, only these emails will be authorized to access the dashboard.
+        </span>
+      </div>
       <div className="admin-input-group" style={{ flexDirection: 'row', alignItems: 'center', gap: '10px', marginTop: '10px', marginBottom: '20px' }}>
         <input 
           type="checkbox" 

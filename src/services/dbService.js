@@ -49,7 +49,8 @@ const DEFAULT_SETTINGS = {
   showBlogs: true,
   showQuickLinks: true,
   showTestimonials: true,
-  showEnquiryInline: true
+  showEnquiryInline: true,
+  allowedAdminEmails: "instituteapex12@gmail.com, instituteapexjind@gmail.com, mbarahul99@gmail.com"
 };
 
 const DEFAULT_SLIDERS = [
@@ -702,11 +703,12 @@ export const dbService = {
     try {
       const result = await signInWithPopup(auth, provider);
       const email = result.user.email;
-      const ALLOWED_ADMINS = [
-        "instituteapex12@gmail.com",
-        "instituteapexjind@gmail.com",
-        "mbarahul99@gmail.com"
-      ];
+      const settings = cache.settings || DEFAULT_SETTINGS;
+      const emailsStr = settings.allowedAdminEmails || "instituteapex12@gmail.com, instituteapexjind@gmail.com, mbarahul99@gmail.com";
+      const ALLOWED_ADMINS = emailsStr
+        .split(",")
+        .map(e => e.trim().toLowerCase())
+        .filter(Boolean);
       if (ALLOWED_ADMINS.includes(email.toLowerCase())) {
         localStorage.setItem(DB_KEYS.AUTH, 'true');
         return true;
