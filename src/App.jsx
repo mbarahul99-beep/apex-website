@@ -253,12 +253,7 @@ export default function App() {
                       <span style={{ color: 'var(--navy-dark)', fontWeight: 500 }}>{selectedCourseDetails.schedule}</span>
                     </div>
                   )}
-                  {selectedCourseDetails.showFee !== false && selectedCourseDetails.fee && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', borderTop: '1px solid #e2e8f0', paddingTop: '8px', marginTop: '4px' }}>
-                      <span style={{ fontWeight: 700, color: 'var(--navy-dark)' }}>Registration Fee:</span>
-                      <span style={{ color: 'var(--primary-blue)', fontWeight: 800 }}>₹ {selectedCourseDetails.fee.toLocaleString()}</span>
-                    </div>
-                  )}
+                  {/* Fee system removed */}
                 </div>
 
                 <div style={{ display: 'flex', gap: '10px' }}>
@@ -762,19 +757,9 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
 
                   <hr className="course-divider" />
 
-                  <div className="course-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    {course.showFee !== false && course.fee ? (
-                      <div>
-                        <span className="course-price-label">Registration:</span>
-                        <div className="course-price-val">₹ {course.fee.toLocaleString()}</div>
-                      </div>
-                    ) : (
-                      <div></div>
-                    )}
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <button className="enrol-btn secondary" style={{ padding: '8px 12px', fontSize: '0.8rem', backgroundColor: '#e2e8f0', color: 'var(--navy-dark)', border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer', fontWeight: 600 }} onClick={() => setSelectedCourseDetails(course)}>View Details</button>
-                      <button className="enrol-btn" style={{ padding: '8px 12px', fontSize: '0.8rem' }} onClick={() => openEnquiry(course)}>Enrol now</button>
-                    </div>
+                  <div className="course-footer" style={{ display: 'flex', gap: '8px', width: '100%', marginTop: '10px' }}>
+                    <button className="enrol-btn secondary" style={{ flex: 1, padding: '10px', fontSize: '0.8rem', backgroundColor: '#e2e8f0', color: 'var(--navy-dark)', border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer', fontWeight: 600, textAlign: 'center' }} onClick={() => setSelectedCourseDetails(course)}>View Details</button>
+                    <button className="enrol-btn" style={{ flex: 1, padding: '10px', fontSize: '0.8rem', textAlign: 'center' }} onClick={() => openEnquiry(course)}>Enrol now</button>
                   </div>
                 </div>
               </div>
@@ -1123,19 +1108,9 @@ function CoursesListView({ navigate, openEnquiry, setSelectedCourseDetails }) {
 
               <hr className="course-divider" />
 
-              <div className="course-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                {course.showFee !== false && course.fee ? (
-                  <div>
-                    <span className="course-price-label">Fee Details:</span>
-                    <div className="course-price-val">₹ {course.fee.toLocaleString()}</div>
-                  </div>
-                ) : (
-                  <div></div>
-                )}
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button className="enrol-btn secondary" style={{ padding: '8px 12px', fontSize: '0.8rem', backgroundColor: '#e2e8f0', color: 'var(--navy-dark)', border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer', fontWeight: 600 }} onClick={() => setSelectedCourseDetails(course)}>View Details</button>
-                  <button className="enrol-btn" style={{ padding: '8px 12px', fontSize: '0.8rem' }} onClick={() => openEnquiry(course)}>Enrol now</button>
-                </div>
+              <div className="course-footer" style={{ display: 'flex', gap: '8px', width: '100%', marginTop: '10px' }}>
+                <button className="enrol-btn secondary" style={{ flex: 1, padding: '10px', fontSize: '0.8rem', backgroundColor: '#e2e8f0', color: 'var(--navy-dark)', border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer', fontWeight: 600, textAlign: 'center' }} onClick={() => setSelectedCourseDetails(course)}>View Details</button>
+                <button className="enrol-btn" style={{ flex: 1, padding: '10px', fontSize: '0.8rem', textAlign: 'center' }} onClick={() => openEnquiry(course)}>Enrol now</button>
               </div>
             </div>
           </div>
@@ -2345,14 +2320,14 @@ function AdminCourses() {
       boards,
       duration,
       schedule,
-      fee: Number(fee),
+      fee: 0, // Fee system removed
       image,
       details,
       showTarget,
       showBoards,
       showDuration,
       showSchedule,
-      showFee,
+      showFee: false,
       showImage,
       showDetails
     });
@@ -2427,14 +2402,6 @@ function AdminCourses() {
           </div>
           <div className="admin-form-row">
             <div className="admin-input-group">
-              <label>Registration Fee (INR) *</label>
-              <input type="number" value={fee} onChange={e => setFee(e.target.value)} required />
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
-                <input type="checkbox" id="chk-show-fee" checked={showFee} onChange={e => setShowFee(e.target.checked)} />
-                <label htmlFor="chk-show-fee" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#666', cursor: 'pointer', display: 'inline', margin: 0 }}>Show fee on website</label>
-              </div>
-            </div>
-            <div className="admin-input-group">
               <label>Cover Image Source URL</label>
               <input type="text" value={image} onChange={e => setImage(e.target.value)} />
               <ImageUploadCompress 
@@ -2469,7 +2436,6 @@ function AdminCourses() {
               <tr>
                 <th>Title</th>
                 <th>Category</th>
-                <th>Fee (INR)</th>
                 <th>Schedule</th>
                 <th>Target Boards</th>
                 <th>Actions</th>
@@ -2484,7 +2450,6 @@ function AdminCourses() {
                       {course.category === 'class-11-12' ? 'Class 11-12' : 'Class 9-10'}
                     </span>
                   </td>
-                  <td>₹ {course.fee.toLocaleString()}</td>
                   <td>{course.schedule}</td>
                   <td>{course.boards}</td>
                   <td>
