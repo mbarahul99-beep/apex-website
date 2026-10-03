@@ -347,9 +347,8 @@ export const dbService = {
   },
   saveSettings(settings) {
     cache.settings = settings;
-    if (isDefault) {
-      saveData(DB_KEYS.SETTINGS, settings);
-    } else {
+    saveData(DB_KEYS.SETTINGS, settings);
+    if (!isDefault) {
       setDoc(doc(db, "settings", "main"), settings).catch(err => console.error("Firestore settings save error:", err));
     }
     return settings;
@@ -361,9 +360,8 @@ export const dbService = {
   },
   saveSliders(sliders) {
     cache.sliders = sliders.sort((a,b) => a.orderIndex - b.orderIndex);
-    if (isDefault) {
-      saveData(DB_KEYS.SLIDERS, sliders);
-    } else {
+    saveData(DB_KEYS.SLIDERS, sliders);
+    if (!isDefault) {
       for (const s of sliders) {
         setDoc(doc(db, "sliders", s.id), s).catch(err => console.error("Firestore slider save error:", err));
       }
@@ -385,9 +383,8 @@ export const dbService = {
   },
   saveKalam(kalam) {
     cache.kalam = kalam;
-    if (isDefault) {
-      saveData(DB_KEYS.KALAM, kalam);
-    } else {
+    saveData(DB_KEYS.KALAM, kalam);
+    if (!isDefault) {
       setDoc(doc(db, "kalam", "main"), kalam).catch(err => console.error("Firestore kalam save error:", err));
     }
     return kalam;
@@ -412,19 +409,17 @@ export const dbService = {
       list.push(course);
     }
     cache.courses = list;
+    saveData(DB_KEYS.COURSES, list);
 
-    if (isDefault) {
-      saveData(DB_KEYS.COURSES, list);
-    } else {
+    if (!isDefault) {
       setDoc(doc(db, "courses", course.id), course).catch(err => console.error("Firestore course save error:", err));
     }
     return course;
   },
   deleteCourse(id) {
     cache.courses = cache.courses.filter(c => c.id !== id);
-    if (isDefault) {
-      saveData(DB_KEYS.COURSES, cache.courses);
-    } else {
+    saveData(DB_KEYS.COURSES, cache.courses);
+    if (!isDefault) {
       deleteDoc(doc(db, "courses", id)).catch(err => console.error("Firestore course delete error:", err));
     }
   },
@@ -445,19 +440,17 @@ export const dbService = {
       list.push(result);
     }
     cache.results = list;
+    saveData(DB_KEYS.RESULTS, list);
 
-    if (isDefault) {
-      saveData(DB_KEYS.RESULTS, list);
-    } else {
+    if (!isDefault) {
       setDoc(doc(db, "results", result.id), result).catch(err => console.error("Firestore result save error:", err));
     }
     return result;
   },
   deleteResult(id) {
     cache.results = cache.results.filter(r => r.id !== id);
-    if (isDefault) {
-      saveData(DB_KEYS.RESULTS, cache.results);
-    } else {
+    saveData(DB_KEYS.RESULTS, cache.results);
+    if (!isDefault) {
       deleteDoc(doc(db, "results", id)).catch(err => console.error("Firestore result delete error:", err));
     }
   },
@@ -478,19 +471,17 @@ export const dbService = {
       list.push(scholarship);
     }
     cache.scholarships = list.sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+    saveData(DB_KEYS.SCHOLARSHIPS, cache.scholarships);
 
-    if (isDefault) {
-      saveData(DB_KEYS.SCHOLARSHIPS, cache.scholarships);
-    } else {
+    if (!isDefault) {
       setDoc(doc(db, "scholarships", scholarship.id), scholarship).catch(err => console.error("Firestore scholarship save error:", err));
     }
     return scholarship;
   },
   deleteScholarship(id) {
     cache.scholarships = cache.scholarships.filter(s => s.id !== id);
-    if (isDefault) {
-      saveData(DB_KEYS.SCHOLARSHIPS, cache.scholarships);
-    } else {
+    saveData(DB_KEYS.SCHOLARSHIPS, cache.scholarships);
+    if (!isDefault) {
       deleteDoc(doc(db, "scholarships", id)).catch(err => console.error("Firestore scholarship delete error:", err));
     }
   },
