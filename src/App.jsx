@@ -356,40 +356,22 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
       {/* Navigation Header */}
       <header className="header">
         <div className="header-inner">
-          <div className="header-left" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => navigate('/')}>
-            {settings.logoUrl && settings.logoUrl !== settings.logoNameUrl && (
-              <img 
-                src={settings.logoUrl} 
-                className="header-logo-icon" 
-                alt="Logo Icon" 
-                fetchPriority="high"
-                loading="eager"
-                style={{ 
-                  '--logo-icon-height': getUnitValue(settings.logoIconHeight, '44px'),
-                  height: 'var(--logo-icon-height)',
-                  width: 'auto',
-                  objectFit: 'contain'
-                }} 
-                onError={(e) => { e.target.style.display = 'none'; }} 
-              />
-            )}
-            {settings.logoNameUrl && (
-              <img 
-                src={settings.logoNameUrl} 
-                className="header-logo-text" 
-                alt={settings.instituteName} 
-                fetchPriority="high"
-                loading="eager"
-                style={{ 
-                  '--logo-width': getUnitValue(settings.logoWidth, '220px'),
-                  '--logo-height': getUnitValue(settings.logoHeight, '48px'),
-                  width: 'var(--logo-width)',
-                  height: 'var(--logo-height)',
-                  objectFit: 'contain'
-                }} 
-                onError={(e) => { e.target.style.display = 'none'; }} 
-              />
-            )}
+          <div className="header-left" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => navigate('/')}>
+            <img 
+              src={settings.logoNameUrl || settings.logoUrl || '/logo_full.png'} 
+              className="header-logo-text" 
+              alt={settings.instituteName || "APEX INSTITUTE"} 
+              fetchPriority="high"
+              loading="eager"
+              style={{ 
+                '--logo-width': getUnitValue(settings.logoWidth, '240px'),
+                '--logo-height': getUnitValue(settings.logoHeight, '50px'),
+                width: 'var(--logo-width)',
+                height: 'var(--logo-height)',
+                objectFit: 'contain'
+              }} 
+              onError={(e) => { e.target.style.display = 'none'; }} 
+            />
           </div>
           
           <div className="header-right">
