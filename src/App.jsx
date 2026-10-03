@@ -3700,8 +3700,8 @@ function ImageUploadCompress({ value, onChange, label = "Upload Image" }) {
       img.src = event.target.result;
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 1000;
-        const MAX_HEIGHT = 1000;
+        const MAX_WIDTH = 2400;
+        const MAX_HEIGHT = 2400;
         let width = img.width;
         let height = img.height;
 
@@ -3720,9 +3720,16 @@ function ImageUploadCompress({ value, onChange, label = "Upload Image" }) {
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, width, height);
 
-        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.70);
+        // Preserve PNG format losslessly to prevent compression blurriness on logos
+        const isPng = file.type === 'image/png';
+        const outputFormat = isPng ? 'image/png' : 'image/jpeg';
+        const outputQuality = isPng ? undefined : 0.92;
+
+        const compressedDataUrl = canvas.toDataURL(outputFormat, outputQuality);
         onChange(compressedDataUrl);
         setCompressing(false);
       };
