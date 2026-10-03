@@ -1939,33 +1939,72 @@ function SettingsForm() {
           </div>
         </div>
 
-        {/* Live Realtime Header Preview */}
+        {/* Live Realtime Header Preview (Desktop & Mobile) */}
         <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px solid #e2e8f0' }}>
-          <span style={{ fontSize: '0.8rem', fontWeight: 700, display: 'block', marginBottom: '8px', color: 'var(--navy-blue)' }}>
-            Live Realtime Header Logo Preview:
+          <span style={{ fontSize: '0.8rem', fontWeight: 700, display: 'block', marginBottom: '10px', color: 'var(--navy-blue)' }}>
+            Live Realtime Header Logo Previews (Desktop & Mobile):
           </span>
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            backgroundColor: '#06101e', 
-            padding: '12px 20px', 
-            border: '1px solid #cbd5e1', 
-            borderRadius: 'var(--radius-md)',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-            overflowX: 'auto'
-          }}>
-            <img 
-              src={settings.logoUrl || settings.logoNameUrl || '/logo_full.png'} 
-              alt="Live Logo Preview" 
-              style={{ 
-                height: getUnitValue(settings.logoHeight, '56px'), 
-                maxWidth: getUnitValue(settings.logoWidth, '360px'),
-                width: 'auto', 
-                objectFit: 'contain',
-                imageRendering: '-webkit-optimize-contrast',
-                display: 'block'
-              }} 
-            />
+          
+          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+            {/* Desktop Preview */}
+            <div style={{ flex: 2, minWidth: '260px' }}>
+              <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '4px' }}>
+                Desktop Header Preview ({getUnitValue(settings.logoHeight, '56px')})
+              </span>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                backgroundColor: '#06101e', 
+                padding: '12px 20px', 
+                border: '1px solid #cbd5e1', 
+                borderRadius: 'var(--radius-md)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                overflowX: 'auto'
+              }}>
+                <img 
+                  src={settings.logoUrl || settings.logoNameUrl || '/logo_full.png'} 
+                  alt="Desktop Logo Preview" 
+                  style={{ 
+                    height: getUnitValue(settings.logoHeight, '56px'), 
+                    maxWidth: getUnitValue(settings.logoWidth, '360px'),
+                    width: 'auto', 
+                    objectFit: 'contain',
+                    imageRendering: '-webkit-optimize-contrast',
+                    display: 'block'
+                  }} 
+                />
+              </div>
+            </div>
+
+            {/* Mobile Preview */}
+            <div style={{ flex: 1, minWidth: '220px' }}>
+              <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '4px' }}>
+                Mobile Screen Preview (~{Math.round((parseInt(settings.logoHeight || '56', 10) || 56) * 0.82)}px)
+              </span>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                backgroundColor: '#06101e', 
+                padding: '8px 12px', 
+                border: '1px solid #cbd5e1', 
+                borderRadius: 'var(--radius-md)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                overflowX: 'auto'
+              }}>
+                <img 
+                  src={settings.logoUrl || settings.logoNameUrl || '/logo_full.png'} 
+                  alt="Mobile Logo Preview" 
+                  style={{ 
+                    height: `calc(${getUnitValue(settings.logoHeight, '56px')} * 0.82)`, 
+                    maxWidth: getUnitValue(settings.logoWidth, '360px'),
+                    width: 'auto', 
+                    objectFit: 'contain',
+                    imageRendering: '-webkit-optimize-contrast',
+                    display: 'block'
+                  }} 
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -3763,37 +3802,66 @@ function ImageUploadCompress({ value, onChange, label = "Upload Image" }) {
       const img = new Image();
       img.src = event.target.result;
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 2400;
-        const MAX_HEIGHT = 2400;
-        let width = img.width;
-        let height = img.height;
+        const isPng = file.type === 'image/png';
+        const TARGET_MAX_WIDTH = isPng ? 1200 : 2400;
+        const TARGET_MAX_HEIGHT = isPng ? 1200 : 2400;
 
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
+        // Multi-step anti-aliased downsampling (step-down in halves)
+        let curCanvas = document.createElement('canvas');
+        curCanvas.width = img.width;
+        curCanvas.height = img.height;
+        let curCtx = curCanvas.getContext('2d');
+        curCtx.imageSmoothingEnabled = true;
+        curCtx.imageSmoothingQuality = 'high';
+        curCtx.drawImage(img, 0, 0);
+
+        let curWidth = img.width;
+        let curHeight = img.height;
+
+        // Step down iteratively by halves if image resolution is very large to prevent aliasing
+        while (curWidth * 0.5 >= TARGET_MAX_WIDTH || curHeight * 0.5 >= TARGET_MAX_HEIGHT) {
+          const stepCanvas = document.createElement('canvas');
+          const stepWidth = Math.floor(curWidth * 0.5);
+          const stepHeight = Math.floor(curHeight * 0.5);
+          stepCanvas.width = stepWidth;
+          stepCanvas.height = stepHeight;
+          const stepCtx = stepCanvas.getContext('2d');
+          stepCtx.imageSmoothingEnabled = true;
+          stepCtx.imageSmoothingQuality = 'high';
+          stepCtx.drawImage(curCanvas, 0, 0, stepWidth, stepHeight);
+
+          curCanvas = stepCanvas;
+          curWidth = stepWidth;
+          curHeight = stepHeight;
+        }
+
+        // Final precise scale step
+        let finalWidth = curWidth;
+        let finalHeight = curHeight;
+        if (finalWidth > finalHeight) {
+          if (finalWidth > TARGET_MAX_WIDTH) {
+            finalHeight = Math.round(finalHeight * (TARGET_MAX_WIDTH / finalWidth));
+            finalWidth = TARGET_MAX_WIDTH;
           }
         } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
+          if (finalHeight > TARGET_MAX_HEIGHT) {
+            finalWidth = Math.round(finalWidth * (TARGET_MAX_HEIGHT / finalHeight));
+            finalHeight = TARGET_MAX_HEIGHT;
           }
         }
 
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(img, 0, 0, width, height);
+        const finalCanvas = document.createElement('canvas');
+        finalCanvas.width = finalWidth;
+        finalCanvas.height = finalHeight;
+        const finalCtx = finalCanvas.getContext('2d');
+        finalCtx.imageSmoothingEnabled = true;
+        finalCtx.imageSmoothingQuality = 'high';
+        finalCtx.drawImage(curCanvas, 0, 0, finalWidth, finalHeight);
 
-        // Preserve PNG format losslessly to prevent compression blurriness on logos
-        const isPng = file.type === 'image/png';
         const outputFormat = isPng ? 'image/png' : 'image/jpeg';
         const outputQuality = isPng ? undefined : 0.92;
 
-        const compressedDataUrl = canvas.toDataURL(outputFormat, outputQuality);
+        const compressedDataUrl = finalCanvas.toDataURL(outputFormat, outputQuality);
         onChange(compressedDataUrl);
         setCompressing(false);
       };

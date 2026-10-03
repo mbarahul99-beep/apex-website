@@ -1457,11 +1457,12 @@
   }
 
   .header-logo-text {
-    height: 44px !important;
-    max-height: 46px !important;
+    height: calc(var(--logo-height, 56px) * 0.82) !important;
+    max-height: 75px !important;
     width: auto !important;
-    max-width: 280px !important;
+    max-width: var(--logo-width, 360px) !important;
     object-fit: contain !important;
+    image-rendering: -webkit-optimize-contrast !important;
   }
 
   .header-right {
