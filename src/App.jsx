@@ -2045,6 +2045,22 @@ function AdminSliders() {
     setEditingId(null);
   };
 
+  const handleMoveSlide = (currentIndex, targetIndex) => {
+    if (targetIndex < 0 || targetIndex >= sliders.length || currentIndex === targetIndex) return;
+    const updated = [...sliders];
+    const [movedSlide] = updated.splice(currentIndex, 1);
+    updated.splice(targetIndex, 0, movedSlide);
+    
+    // Re-index orderIndex
+    const reindexed = updated.map((slide, idx) => ({
+      ...slide,
+      orderIndex: idx
+    }));
+    
+    dbService.saveSliders(reindexed);
+    setSliders(reindexed);
+  };
+
   const handleAddSlide = () => {
     if (sliders.length >= 10) {
       alert("Maximum limit of 10 sliders reached!");
@@ -2075,7 +2091,7 @@ function AdminSliders() {
         <span className="admin-card-title">Homepage Banner Carousel (Max 10 Images)</span>
         <button className="admin-btn" style={{ padding: '8px 16px', fontSize: '0.8rem' }} onClick={handleAddSlide}>+ Add New Slide</button>
       </div>
-      <p style={{ fontSize: '0.82rem', color: 'var(--light-gray)', marginBottom: '20px' }}>Manage separate desktop and mobile banners to fit different screens cleanly.</p>
+      <p style={{ fontSize: '0.82rem', color: 'var(--light-gray)', marginBottom: '20px' }}>Manage separate desktop and mobile banners to fit different screens cleanly. Change position using position selector or Up/Down buttons.</p>
       
       <div className="admin-sliders-grid">
         {sliders.map((slide, idx) => (
@@ -2138,14 +2154,46 @@ function AdminSliders() {
                 </>
               ) : (
                 <>
-                  <span style={{ fontSize: '0.78rem', color: slide.active ? 'var(--accent-green)' : '#ef4444', fontWeight: 600 }}>
-                    {slide.active ? '● Showing' : '○ Hidden'}
-                  </span>
-                  <div style={{ display: 'flex', gap: '5px', marginTop: '5px' }}>
-                    <button className="admin-btn secondary" style={{ flex: 1, padding: '6px', fontSize: '0.75rem' }} onClick={() => handleEdit(slide)}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '0.78rem', color: slide.active ? 'var(--accent-green)' : '#ef4444', fontWeight: 600 }}>
+                      {slide.active ? '● Showing' : '○ Hidden'}
+                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--navy-dark)', fontWeight: 600 }}>Slot:</span>
+                      <select 
+                        value={idx} 
+                        onChange={e => handleMoveSlide(idx, parseInt(e.target.value))}
+                        style={{ padding: '2px 4px', fontSize: '0.72rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontWeight: 700, backgroundColor: '#fff', cursor: 'pointer' }}
+                      >
+                        {sliders.map((_, i) => (
+                          <option key={i} value={i}>Slot {i + 1}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '4px', marginTop: '6px' }}>
+                    <button 
+                      className="admin-btn secondary" 
+                      style={{ padding: '4px 8px', fontSize: '0.72rem' }} 
+                      disabled={idx === 0} 
+                      onClick={() => handleMoveSlide(idx, idx - 1)}
+                      title="Move Up"
+                    >
+                      ▲ Up
+                    </button>
+                    <button 
+                      className="admin-btn secondary" 
+                      style={{ padding: '4px 8px', fontSize: '0.72rem' }} 
+                      disabled={idx === sliders.length - 1} 
+                      onClick={() => handleMoveSlide(idx, idx + 1)}
+                      title="Move Down"
+                    >
+                      ▼ Down
+                    </button>
+                    <button className="admin-btn secondary" style={{ flex: 1, padding: '4px 6px', fontSize: '0.72rem' }} onClick={() => handleEdit(slide)}>
                       Edit
                     </button>
-                    <button className="admin-btn secondary" style={{ flex: 1, padding: '6px', fontSize: '0.75rem', color: '#ef4444', borderColor: '#ef4444' }} onClick={() => handleDeleteSlide(slide.id)}>
+                    <button className="admin-btn secondary" style={{ padding: '4px 6px', fontSize: '0.72rem', color: '#ef4444', borderColor: '#ef4444' }} onClick={() => handleDeleteSlide(slide.id)}>
                       Delete
                     </button>
                   </div>
