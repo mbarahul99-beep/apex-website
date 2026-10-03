@@ -145,8 +145,8 @@
 
 @media (min-width: 768px) {
   .slider-container {
-    aspect-ratio: 192 / 54; /* Desktop widescreen aspect ratio (16:4.5) */
-    max-height: 440px;
+    aspect-ratio: 16 / 6.5; /* Expanded desktop aspect ratio to fit full banners without top/bottom cropping */
+    max-height: 520px;
   }
 }
 
