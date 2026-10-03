@@ -1858,52 +1858,115 @@ function SettingsForm() {
         </div>
       </div>
       
-      {/* BRANDING LOGO SIZING AND LINKS CUSTOMIZATION */}
-      <h4 style={{ margin: '20px 0 10px 0', borderBottom: '1px solid var(--border-light)', paddingBottom: '8px', color: 'var(--navy-blue)', fontSize: '0.95rem', fontWeight: 700 }}>Header Branding Customizer</h4>
+      {/* SINGLE BRANDING LOGO & SCROLLABLE ADJUSTMENTS */}
+      <h4 style={{ margin: '20px 0 10px 0', borderBottom: '1px solid var(--border-light)', paddingBottom: '8px', color: 'var(--navy-blue)', fontSize: '0.95rem', fontWeight: 700 }}>Header Logo & Size Adjustments</h4>
+      <p style={{ fontSize: '0.82rem', color: 'var(--light-gray)', marginBottom: '15px' }}>
+        Upload your main institutional logo and use the scrollable sliders below to fine-tune logo width and height for crisp, pixel-perfect display.
+      </p>
+
       <div className="admin-form-row">
-        <div className="admin-input-group">
-          <label>Logo Icon URL / Source</label>
-          <input type="text" name="logoUrl" value={settings.logoUrl || ''} onChange={handleChange} placeholder="e.g. /logo.png" />
+        <div className="admin-input-group" style={{ flex: 1 }}>
+          <label>Institute Logo File / Source URL</label>
+          <input 
+            type="text" 
+            name="logoUrl" 
+            value={settings.logoUrl || ''} 
+            onChange={(e) => {
+              const val = e.target.value;
+              setSettings(prev => ({ ...prev, logoUrl: val, logoNameUrl: val }));
+            }} 
+            placeholder="e.g. /logo_full.png" 
+          />
           <ImageUploadCompress 
             value={settings.logoUrl} 
-            onChange={(val) => setSettings(prev => ({ ...prev, logoUrl: val }))} 
-            label="Or Upload and Compress Logo Icon" 
+            onChange={(val) => setSettings(prev => ({ ...prev, logoUrl: val, logoNameUrl: val }))} 
+            label="Or Upload High-Resolution Logo Asset" 
           />
-        </div>
-        <div className="admin-input-group">
-          <label>Logo Icon Height (e.g. 44px)</label>
-          <input type="text" name="logoIconHeight" value={settings.logoIconHeight || '44px'} onChange={handleChange} placeholder="e.g. 44px" />
-        </div>
-      </div>
-      <div className="admin-form-row">
-        <div className="admin-input-group">
-          <label>Logo Name Text Image URL / Source</label>
-          <input type="text" name="logoNameUrl" value={settings.logoNameUrl || ''} onChange={handleChange} placeholder="e.g. /logo_name.png" />
-          <ImageUploadCompress 
-            value={settings.logoNameUrl} 
-            onChange={(val) => setSettings(prev => ({ ...prev, logoNameUrl: val }))} 
-            label="Or Upload and Compress Logo Text Image" 
-          />
-        </div>
-        <div className="admin-input-group">
-          <label>Logo Name Image Width (e.g. 180px)</label>
-          <input type="text" name="logoWidth" value={settings.logoWidth || '180px'} onChange={handleChange} placeholder="e.g. 180px" />
-        </div>
-        <div className="admin-input-group">
-          <label>Logo Name Image Height (e.g. 45px)</label>
-          <input type="text" name="logoHeight" value={settings.logoHeight || '45px'} onChange={handleChange} placeholder="e.g. 45px" />
         </div>
       </div>
 
-      <div className="admin-input-group" style={{ backgroundColor: '#f0f4f8', padding: '15px', borderRadius: 'var(--radius-md)', marginBottom: '20px' }}>
-        <span style={{ fontSize: '0.82rem', fontWeight: 700, display: 'block', marginBottom: '8px', color: 'var(--navy-blue)' }}>Live Header Branding Preview:</span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#fff', padding: '10px', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)' }}>
-          {settings.logoUrl && (
-            <img src={settings.logoUrl} alt="Preview Icon" style={{ height: settings.logoIconHeight || '44px', width: 'auto', objectFit: 'contain' }} />
-          )}
-          {settings.logoNameUrl && (
-            <img src={settings.logoNameUrl} alt="Preview Name" style={{ width: settings.logoWidth || '180px', height: settings.logoHeight || '45px', objectFit: 'contain' }} />
-          )}
+      <div className="admin-card" style={{ padding: '16px', backgroundColor: '#f8fafc', borderRadius: 'var(--radius-lg)', border: '1px solid #e2e8f0', margin: '15px 0 20px 0' }}>
+        <h5 style={{ margin: '0 0 12px 0', color: 'var(--navy-blue)', fontSize: '0.88rem', fontWeight: 700 }}>Scrollable Size Adjustments</h5>
+        <div className="admin-form-row" style={{ gap: '20px' }}>
+          {/* Height Range Slider */}
+          <div className="admin-input-group" style={{ flex: 1 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+              <label style={{ margin: 0 }}>Logo Display Height</label>
+              <span className="status-badge new" style={{ fontFamily: 'monospace', fontWeight: 700 }}>
+                {parseInt(settings.logoHeight || '56', 10) || 56}px
+              </span>
+            </div>
+            <input 
+              type="range" 
+              min="20" 
+              max="120" 
+              step="1"
+              value={parseInt(settings.logoHeight || '56', 10) || 56} 
+              onChange={(e) => {
+                const val = e.target.value + 'px';
+                setSettings(prev => ({ ...prev, logoHeight: val }));
+              }}
+              style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--accent-red)' }}
+            />
+            <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '4px' }}>
+              Scroll / drag slider to adjust logo height (20px to 120px)
+            </span>
+          </div>
+
+          {/* Width Range Slider */}
+          <div className="admin-input-group" style={{ flex: 1 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+              <label style={{ margin: 0 }}>Logo Max Display Width</label>
+              <span className="status-badge new" style={{ fontFamily: 'monospace', fontWeight: 700 }}>
+                {parseInt(settings.logoWidth || '360', 10) || 360}px
+              </span>
+            </div>
+            <input 
+              type="range" 
+              min="100" 
+              max="600" 
+              step="5"
+              value={parseInt(settings.logoWidth || '360', 10) || 360} 
+              onChange={(e) => {
+                const val = e.target.value + 'px';
+                setSettings(prev => ({ ...prev, logoWidth: val }));
+              }}
+              style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--navy-blue)' }}
+            />
+            <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '4px' }}>
+              Scroll / drag slider to adjust logo max-width (100px to 600px)
+            </span>
+          </div>
+        </div>
+
+        {/* Live Realtime Header Preview */}
+        <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px solid #e2e8f0' }}>
+          <span style={{ fontSize: '0.8rem', fontWeight: 700, display: 'block', marginBottom: '8px', color: 'var(--navy-blue)' }}>
+            Live Realtime Header Logo Preview:
+          </span>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            backgroundColor: '#06101e', 
+            padding: '12px 20px', 
+            border: '1px solid #cbd5e1', 
+            borderRadius: 'var(--radius-md)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+            overflowX: 'auto'
+          }}>
+            <img 
+              src={settings.logoUrl || settings.logoNameUrl || '/logo_full.png'} 
+              alt="Live Logo Preview" 
+              style={{ 
+                height: getUnitValue(settings.logoHeight, '56px'), 
+                maxWidth: getUnitValue(settings.logoWidth, '360px'),
+                width: 'auto', 
+                objectFit: 'contain',
+                imageRendering: '-webkit-optimize-contrast',
+                display: 'block'
+              }} 
+            />
+          </div>
         </div>
       </div>
 
