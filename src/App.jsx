@@ -364,10 +364,11 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
               fetchPriority="high"
               loading="eager"
               style={{ 
-                '--logo-width': getUnitValue(settings.logoWidth, '240px'),
-                '--logo-height': getUnitValue(settings.logoHeight, '50px'),
-                width: 'var(--logo-width)',
+                '--logo-width': getUnitValue(settings.logoWidth, '360px'),
+                '--logo-height': getUnitValue(settings.logoHeight, '56px'),
+                width: 'auto',
                 height: 'var(--logo-height)',
+                maxWidth: 'var(--logo-width)',
                 objectFit: 'contain'
               }} 
               onError={(e) => { e.target.style.display = 'none'; }} 
