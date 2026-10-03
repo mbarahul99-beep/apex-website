@@ -115,7 +115,7 @@ const DEFAULT_COURSES = [
     duration: "1 Year / 2 Years Integrated Course",
     schedule: "Mon - Fri (3 hrs) • Sat - Sun (3 hrs)",
     fee: 45000,
-    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=600",
+    image: "/course_neet.jpg",
     details: "Comprehensive coaching for NEET biology, chemistry, and physics along with core board syllabus coverage for both CBSE and Haryana Board."
   },
   {
