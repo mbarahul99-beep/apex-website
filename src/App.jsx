@@ -4055,8 +4055,8 @@ function ImageUploadCompress({ value, onChange, label = "Upload Image" }) {
       img.src = event.target.result;
       img.onload = () => {
         const isPng = file.type === 'image/png';
-        const TARGET_MAX_WIDTH = isPng ? 1200 : 2400;
-        const TARGET_MAX_HEIGHT = isPng ? 1200 : 2400;
+        const TARGET_MAX_WIDTH = 800;
+        const TARGET_MAX_HEIGHT = 600;
 
         // Multi-step anti-aliased downsampling (step-down in halves)
         let curCanvas = document.createElement('canvas');
@@ -4110,8 +4110,9 @@ function ImageUploadCompress({ value, onChange, label = "Upload Image" }) {
         finalCtx.imageSmoothingQuality = 'high';
         finalCtx.drawImage(curCanvas, 0, 0, finalWidth, finalHeight);
 
+        // Always output JPEG for general photos/course cards at 0.82 quality to maintain ~50KB size
         const outputFormat = isPng ? 'image/png' : 'image/jpeg';
-        const outputQuality = isPng ? undefined : 0.92;
+        const outputQuality = isPng ? 0.85 : 0.82;
 
         const compressedDataUrl = finalCanvas.toDataURL(outputFormat, outputQuality);
         onChange(compressedDataUrl);

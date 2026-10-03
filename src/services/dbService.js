@@ -402,19 +402,34 @@ export const dbService = {
     if (!course.id) {
       course.id = 'c_' + Date.now();
     }
-    const idx = list.findIndex(c => c.id === course.id);
+    
+    // Clean undefined fields for Firestore safety
+    const cleanCourse = {};
+    Object.keys(course).forEach(key => {
+      if (course[key] !== undefined) {
+        cleanCourse[key] = course[key];
+      }
+    });
+
+    const idx = list.findIndex(c => c.id === cleanCourse.id);
     if (idx > -1) {
-      list[idx] = course;
+      list[idx] = cleanCourse;
     } else {
-      list.push(course);
+      list.push(cleanCourse);
     }
     cache.courses = list;
     saveData(DB_KEYS.COURSES, list);
 
     if (!isDefault) {
-      setDoc(doc(db, "courses", course.id), course).catch(err => console.error("Firestore course save error:", err));
+      setDoc(doc(db, "courses", cleanCourse.id), cleanCourse)
+        .then(() => {
+          console.log(`✓ Course ${cleanCourse.id} saved to Firestore successfully.`);
+        })
+        .catch(err => {
+          console.error("Firestore course save error:", err);
+        });
     }
-    return course;
+    return cleanCourse;
   },
   deleteCourse(id) {
     cache.courses = cache.courses.filter(c => c.id !== id);
