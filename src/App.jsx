@@ -1864,9 +1864,33 @@ function SettingsForm() {
         Upload your main institutional logo and use the scrollable sliders below to fine-tune logo width and height for crisp, pixel-perfect display.
       </p>
 
-      <div className="admin-form-row">
-        <div className="admin-input-group" style={{ flex: 1 }}>
-          <label>Institute Logo File / Source URL</label>
+      <div className="admin-card" style={{ padding: '18px', backgroundColor: '#ffffff', borderRadius: 'var(--radius-lg)', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <div>
+            <h5 style={{ margin: 0, color: 'var(--navy-blue)', fontSize: '0.9rem', fontWeight: 700 }}>Direct Logo File Upload</h5>
+            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Upload new logo image directly from your computer or enter custom URL</span>
+          </div>
+          <button 
+            type="button" 
+            className="admin-btn secondary"
+            style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+            onClick={() => {
+              setSettings(prev => ({ ...prev, logoUrl: '/logo_full.png', logoNameUrl: '/logo_full.png' }));
+            }}
+            title="Reset to default high-res logo"
+          >
+            ↺ Reset Default Logo
+          </button>
+        </div>
+
+        <LogoUploadCompress 
+          value={settings.logoUrl} 
+          onChange={(val) => setSettings(prev => ({ ...prev, logoUrl: val, logoNameUrl: val }))} 
+          label="Click to Choose & Upload New Logo Image" 
+        />
+
+        <div style={{ marginTop: '12px' }}>
+          <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b' }}>Or Custom Logo URL Path:</label>
           <input 
             type="text" 
             name="logoUrl" 
@@ -1876,11 +1900,7 @@ function SettingsForm() {
               setSettings(prev => ({ ...prev, logoUrl: val, logoNameUrl: val }));
             }} 
             placeholder="e.g. /logo_full.png" 
-          />
-          <ImageUploadCompress 
-            value={settings.logoUrl} 
-            onChange={(val) => setSettings(prev => ({ ...prev, logoUrl: val, logoNameUrl: val }))} 
-            label="Or Upload High-Resolution Logo Asset" 
+            style={{ fontSize: '0.82rem', padding: '6px 10px', marginTop: '4px' }}
           />
         </div>
       </div>
@@ -2461,7 +2481,7 @@ function AdminCourses() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dbService.saveCourse({
+    const saved = dbService.saveCourse({
       id: editingCourse ? editingCourse.id : undefined,
       title,
       category,
@@ -2469,7 +2489,7 @@ function AdminCourses() {
       boards,
       duration,
       schedule,
-      fee: 0, // Fee system removed
+      fee: 0,
       image,
       details,
       showTarget,
@@ -2477,7 +2497,7 @@ function AdminCourses() {
       showDuration,
       showSchedule,
       showFee: false,
-      showImage,
+      showImage: showImage !== false,
       showDetails
     });
     setFormOpen(false);
@@ -2549,21 +2569,57 @@ function AdminCourses() {
               </div>
             </div>
           </div>
+
           <div className="admin-form-row">
-            <div className="admin-input-group">
-              <label>Cover Image Source URL</label>
-              <input type="text" value={image} onChange={e => setImage(e.target.value)} />
+            <div className="admin-input-group" style={{ flex: 1 }}>
+              <label>Course Card Cover Image URL / Upload</label>
+              <input 
+                type="text" 
+                value={image} 
+                onChange={e => {
+                  setImage(e.target.value);
+                  if (e.target.value) setShowImage(true);
+                }} 
+                placeholder="Paste image URL or click below to upload image file"
+              />
               <ImageUploadCompress 
                 value={image} 
-                onChange={setImage} 
-                label="Or Upload and Compress File" 
+                onChange={(val) => {
+                  setImage(val);
+                  setShowImage(true);
+                }} 
+                label="Click or Drag File to Upload Course Cover Image" 
               />
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
                 <input type="checkbox" id="chk-show-image" checked={showImage} onChange={e => setShowImage(e.target.checked)} />
-                <label htmlFor="chk-show-image" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#666', cursor: 'pointer', display: 'inline', margin: 0 }}>Show cover image on website</label>
+                <label htmlFor="chk-show-image" style={{ fontSize: '0.78rem', fontWeight: 600, color: '#475569', cursor: 'pointer', display: 'inline', margin: 0 }}>
+                  Show cover image banner on course card
+                </label>
               </div>
+
+              {image && (
+                <div style={{ marginTop: '12px', padding: '12px', backgroundColor: '#f8fafc', borderRadius: 'var(--radius-md)', border: '1px solid #cbd5e1' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--navy-blue)' }}>Live Course Banner Preview:</span>
+                    <button 
+                      type="button" 
+                      className="admin-btn secondary"
+                      style={{ padding: '2px 8px', fontSize: '0.72rem', color: '#ef4444', borderColor: '#ef4444' }}
+                      onClick={() => setImage('')}
+                    >
+                      Clear Image
+                    </button>
+                  </div>
+                  <img 
+                    src={image} 
+                    alt="Course Card Cover Preview" 
+                    style={{ width: '100%', maxHeight: '180px', objectFit: 'cover', borderRadius: 'var(--radius-sm)', border: '1px solid #e2e8f0' }} 
+                  />
+                </div>
+              )}
             </div>
           </div>
+
           <div className="admin-input-group">
             <label>Course Details / Description *</label>
             <textarea value={details} onChange={e => setDetails(e.target.value)} rows="3" required></textarea>
@@ -2583,6 +2639,7 @@ function AdminCourses() {
           <table className="admin-table">
             <thead>
               <tr>
+                <th>Cover Image</th>
                 <th>Title</th>
                 <th>Category</th>
                 <th>Schedule</th>
@@ -2593,6 +2650,17 @@ function AdminCourses() {
             <tbody>
               {courses.map(course => (
                 <tr key={course.id}>
+                  <td>
+                    {course.image ? (
+                      <img 
+                        src={course.image} 
+                        alt={course.title} 
+                        style={{ width: '55px', height: '40px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #cbd5e1' }} 
+                      />
+                    ) : (
+                      <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>No Image</span>
+                    )}
+                  </td>
                   <td style={{ fontWeight: 600 }}>{course.title}</td>
                   <td>
                     <span className="status-badge new">
@@ -3773,6 +3841,190 @@ function AllBlogsView({ navigate }) {
               </div>
             );
           })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------- DEDICATED LOGO UPLOAD COMPONENT ----------------
+function LogoUploadCompress({ value, onChange, label = "Upload & Apply New Logo File" }) {
+  const [compressing, setCompressing] = useState(false);
+  const [error, setError] = useState(null);
+  const [imageInfo, setImageInfo] = useState(null);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setError('Selected file is not a valid image.');
+      return;
+    }
+
+    setCompressing(true);
+    setError(null);
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const isPng = file.type === 'image/png';
+        const TARGET_MAX_WIDTH = isPng ? 1400 : 2400;
+        const TARGET_MAX_HEIGHT = isPng ? 1400 : 2400;
+
+        let curCanvas = document.createElement('canvas');
+        curCanvas.width = img.width;
+        curCanvas.height = img.height;
+        let curCtx = curCanvas.getContext('2d');
+        curCtx.imageSmoothingEnabled = true;
+        curCtx.imageSmoothingQuality = 'high';
+        curCtx.drawImage(img, 0, 0);
+
+        let curWidth = img.width;
+        let curHeight = img.height;
+
+        while (curWidth * 0.5 >= TARGET_MAX_WIDTH || curHeight * 0.5 >= TARGET_MAX_HEIGHT) {
+          const stepCanvas = document.createElement('canvas');
+          const stepWidth = Math.floor(curWidth * 0.5);
+          const stepHeight = Math.floor(curHeight * 0.5);
+          stepCanvas.width = stepWidth;
+          stepCanvas.height = stepHeight;
+          const stepCtx = stepCanvas.getContext('2d');
+          stepCtx.imageSmoothingEnabled = true;
+          stepCtx.imageSmoothingQuality = 'high';
+          stepCtx.drawImage(curCanvas, 0, 0, stepWidth, stepHeight);
+
+          curCanvas = stepCanvas;
+          curWidth = stepWidth;
+          curHeight = stepHeight;
+        }
+
+        let finalWidth = curWidth;
+        let finalHeight = curHeight;
+        if (finalWidth > finalHeight) {
+          if (finalWidth > TARGET_MAX_WIDTH) {
+            finalHeight = Math.round(finalHeight * (TARGET_MAX_WIDTH / finalWidth));
+            finalWidth = TARGET_MAX_WIDTH;
+          }
+        } else {
+          if (finalHeight > TARGET_MAX_HEIGHT) {
+            finalWidth = Math.round(finalWidth * (TARGET_MAX_HEIGHT / finalHeight));
+            finalHeight = TARGET_MAX_HEIGHT;
+          }
+        }
+
+        const finalCanvas = document.createElement('canvas');
+        finalCanvas.width = finalWidth;
+        finalCanvas.height = finalHeight;
+        const finalCtx = finalCanvas.getContext('2d');
+        finalCtx.imageSmoothingEnabled = true;
+        finalCtx.imageSmoothingQuality = 'high';
+        finalCtx.drawImage(curCanvas, 0, 0, finalWidth, finalHeight);
+
+        const outputFormat = isPng ? 'image/png' : 'image/jpeg';
+        const outputQuality = isPng ? undefined : 0.92;
+
+        const compressedDataUrl = finalCanvas.toDataURL(outputFormat, outputQuality);
+        
+        setImageInfo({
+          origWidth: img.width,
+          origHeight: img.height,
+          finalWidth,
+          finalHeight,
+          format: isPng ? 'PNG (High Resolution Lossless)' : 'JPEG (High Quality)'
+        });
+
+        onChange(compressedDataUrl);
+        setCompressing(false);
+      };
+      img.onerror = () => {
+        setError('Failed to process logo image file.');
+        setCompressing(false);
+      };
+    };
+    reader.onerror = () => {
+      setError('Failed to read logo image file.');
+      setCompressing(false);
+    };
+  };
+
+  return (
+    <div style={{ marginTop: '10px' }}>
+      <label 
+        htmlFor="admin-logo-file-input"
+        style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          padding: '24px 16px', 
+          border: '2px dashed var(--navy-blue)', 
+          borderRadius: 'var(--radius-lg)', 
+          backgroundColor: '#f8fafc', 
+          cursor: 'pointer',
+          transition: 'all 0.2s ease-in-out',
+          textAlign: 'center'
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f0f4f8'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc'; }}
+      >
+        <div style={{ 
+          width: '46px', 
+          height: '46px', 
+          borderRadius: '50%', 
+          backgroundColor: 'rgba(225, 29, 72, 0.1)', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          marginBottom: '10px',
+          color: 'var(--accent-red)'
+        }}>
+          <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ width: '24px', height: '24px' }}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+          </svg>
+        </div>
+        <span style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--navy-dark)' }}>
+          {compressing ? 'Processing & Downsampling Logo...' : label}
+        </span>
+        <span style={{ fontSize: '0.76rem', color: '#64748b', marginTop: '4px' }}>
+          Click or drop your logo file directly from your computer (PNG, JPG, WebP)
+        </span>
+        <input 
+          id="admin-logo-file-input"
+          type="file" 
+          accept="image/*" 
+          onChange={handleFileChange} 
+          style={{ display: 'none' }}
+        />
+      </label>
+
+      {compressing && (
+        <div style={{ fontSize: '0.78rem', color: 'var(--navy-blue)', marginTop: '8px', fontWeight: 600 }}>
+          ⏳ Resampling logo image with multi-step anti-aliasing...
+        </div>
+      )}
+
+      {error && (
+        <div style={{ fontSize: '0.78rem', color: '#ef4444', marginTop: '6px', fontWeight: 600 }}>
+          ⚠️ {error}
+        </div>
+      )}
+
+      {imageInfo && (
+        <div style={{ 
+          fontSize: '0.78rem', 
+          backgroundColor: '#f0fdf4', 
+          color: 'var(--accent-green)', 
+          padding: '10px 14px', 
+          borderRadius: 'var(--radius-md)', 
+          marginTop: '10px', 
+          fontWeight: 600,
+          border: '1px solid #bbf7d0'
+        }}>
+          ✓ New Logo Applied: Original {imageInfo.origWidth}x{imageInfo.origHeight}px → Optimized {imageInfo.finalWidth}x{imageInfo.finalHeight}px ({imageInfo.format})
         </div>
       )}
     </div>
