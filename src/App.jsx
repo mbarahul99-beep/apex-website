@@ -146,13 +146,29 @@ export default function App() {
   }
   if (isInitializing) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#0a192f', color: '#fff', fontFamily: 'sans-serif' }}>
-        <img src="/logo.png" alt="APEX" style={{ height: '70px', marginBottom: '20px', animation: 'pulse 1.5s infinite ease-in-out' }} onError={e => e.target.style.display = 'none'} />
-        <div className="spinner" style={{ border: '3px solid rgba(255,255,255,0.1)', width: '40px', height: '40px', borderRadius: '50%', borderLeftColor: '#0070f3', animation: 'spin 1s linear infinite' }}></div>
-        <p style={{ marginTop: '15px', fontSize: '0.9rem', color: '#8892b0' }}>Connecting securely to database...</p>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh', 
+        width: '100vw',
+        background: 'linear-gradient(135deg, #06101e 0%, #0a192f 50%, #0d213a 100%)', 
+        color: '#fff', 
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        zIndex: 99999 
+      }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '16px 28px', borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', marginBottom: '25px', animation: 'splashPulse 2s infinite ease-in-out' }}>
+          <img src="/logo_full.png" alt="APEX INSTITUTE" style={{ height: '75px', width: 'auto', objectFit: 'contain', display: 'block' }} />
+        </div>
+        <div className="spinner" style={{ border: '3px solid rgba(255,255,255,0.15)', width: '38px', height: '38px', borderRadius: '50%', borderTopColor: '#e11d48', borderRightColor: '#0284c7', animation: 'spin 0.8s linear infinite' }}></div>
+        <p style={{ marginTop: '18px', fontSize: '0.92rem', color: '#94a3b8', fontWeight: 500, letterSpacing: '0.5px' }}>Loading APEX Institute Portal...</p>
         <style>{`
           @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-          @keyframes pulse { 0%, 100% { opacity: 0.6; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1); } }
+          @keyframes splashPulse { 0%, 100% { transform: scale(0.98); box-shadow: 0 10px 30px rgba(0,0,0,0.3); } 50% { transform: scale(1.02); box-shadow: 0 20px 45px rgba(225, 29, 72, 0.25); } }
         `}</style>
       </div>
     );
@@ -340,8 +356,8 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
       {/* Navigation Header */}
       <header className="header">
         <div className="header-inner">
-          <div className="header-left" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
-            {settings.logoUrl && (
+          <div className="header-left" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => navigate('/')}>
+            {settings.logoUrl && settings.logoUrl !== settings.logoNameUrl && (
               <img 
                 src={settings.logoUrl} 
                 className="header-logo-icon" 
@@ -365,8 +381,8 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
                 fetchPriority="high"
                 loading="eager"
                 style={{ 
-                  '--logo-width': getUnitValue(settings.logoWidth, '180px'),
-                  '--logo-height': getUnitValue(settings.logoHeight, '45px'),
+                  '--logo-width': getUnitValue(settings.logoWidth, '220px'),
+                  '--logo-height': getUnitValue(settings.logoHeight, '48px'),
                   width: 'var(--logo-width)',
                   height: 'var(--logo-height)',
                   objectFit: 'contain'
