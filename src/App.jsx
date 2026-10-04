@@ -132,7 +132,7 @@ export default function App() {
     viewComponent = <DynamicPostView slug={slug} navigate={navigate} />;
   } else if (currentPath.startsWith('/admin')) {
     isStudentView = false;
-    viewComponent = <AdminPanel navigate={navigate} />;
+    viewComponent = <AdminPanel navigate={navigate} onUpdateSettings={setSettings} />;
   } else {
     viewComponent = (
       <HomeView 
@@ -368,7 +368,6 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
                 '--logo-height': getUnitValue(settings.logoHeight, '52px'),
                 width: 'auto',
                 height: 'var(--logo-height, 52px)',
-                maxHeight: '54px',
                 maxWidth: 'var(--logo-width, 360px)',
                 objectFit: 'contain',
                 padding: '2px 0'
@@ -1544,7 +1543,7 @@ function EnquiryInlineForm() {
 // =========================================================================
 // ========================== ADMINISTRATIVE PANEL =========================
 // =========================================================================
-function AdminPanel({ navigate }) {
+function AdminPanel({ navigate, onUpdateSettings }) {
   const [isLogged, setIsLogged] = useState(dbService.isLoggedIn());
   const [activeTab, setActiveTab] = useState('overview');
   const [username, setUsername] = useState('');
@@ -1751,7 +1750,7 @@ function AdminPanel({ navigate }) {
               </div>
             </div>
           )}
-          {activeTab === 'overview' && <AdminOverview setActiveTab={setActiveTab} />}
+          {activeTab === 'overview' && <AdminOverview setActiveTab={setActiveTab} onUpdateSettings={onUpdateSettings} />}
           {activeTab === 'sliders' && <AdminSliders />}
           {activeTab === 'kalam' && <AdminKalam />}
           {activeTab === 'courses' && <AdminCourses />}
@@ -1769,7 +1768,7 @@ function AdminPanel({ navigate }) {
 }
 
 // ---------------- ADMIN OVERVIEW SUB-VIEW ----------------
-function AdminOverview({ setActiveTab }) {
+function AdminOverview({ setActiveTab, onUpdateSettings }) {
   const [stats, setStats] = useState({ courses: 0, enquiries: 0, pages: 0, posts: 0 });
 
   useEffect(() => {
@@ -1813,28 +1812,34 @@ function AdminOverview({ setActiveTab }) {
         <h3 className="admin-card-title" style={{ marginBottom: '14px' }}>Brochure Configuration Settings</h3>
         <p style={{ fontSize: '0.82rem', color: 'var(--light-gray)', marginBottom: '20px' }}>These settings reflect in headers, contact boxes, and WhatsApp dynamic redirections.</p>
         
-        <SettingsForm />
+        <SettingsForm onUpdateSettings={onUpdateSettings} />
       </div>
     </div>
   );
 }
 
 // ---------------- ADMIN SETTINGS FORM ----------------
-function SettingsForm() {
+function SettingsForm({ onUpdateSettings }) {
   const [settings, setSettings] = useState(dbService.getSettings());
   const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setSettings(prev => ({ 
-      ...prev, 
+    const updated = { 
+      ...settings, 
       [name]: type === 'checkbox' ? checked : value 
-    }));
+    };
+    setSettings(updated);
+    if (name === 'logoHeight' || name === 'logoWidth') {
+      dbService.saveSettings(updated);
+      if (onUpdateSettings) onUpdateSettings(updated);
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dbService.saveSettings(settings);
+    const saved = dbService.saveSettings(settings);
+    if (onUpdateSettings) onUpdateSettings(saved);
     setSuccess(true);
     setTimeout(() => {
       setSuccess(false);
@@ -1926,7 +1931,12 @@ function SettingsForm() {
               value={parseInt(settings.logoHeight || '56', 10) || 56} 
               onChange={(e) => {
                 const val = e.target.value + 'px';
-                setSettings(prev => ({ ...prev, logoHeight: val }));
+                setSettings(prev => {
+                  const updated = { ...prev, logoHeight: val };
+                  dbService.saveSettings(updated);
+                  if (onUpdateSettings) onUpdateSettings(updated);
+                  return updated;
+                });
               }}
               style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--accent-red)' }}
             />
@@ -1951,7 +1961,12 @@ function SettingsForm() {
               value={parseInt(settings.logoWidth || '360', 10) || 360} 
               onChange={(e) => {
                 const val = e.target.value + 'px';
-                setSettings(prev => ({ ...prev, logoWidth: val }));
+                setSettings(prev => {
+                  const updated = { ...prev, logoWidth: val };
+                  dbService.saveSettings(updated);
+                  if (onUpdateSettings) onUpdateSettings(updated);
+                  return updated;
+                });
               }}
               style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--navy-blue)' }}
             />

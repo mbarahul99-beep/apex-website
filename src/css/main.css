@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding-top: 68px; /* Sticky header spacer desktop */
+  padding-top: max(64px, calc(var(--logo-height, 52px) + 12px)); /* Dynamic sticky header spacer */
   padding-bottom: 60px; /* Space for sticky nav on mobile */
   background-color: var(--white);
   overflow-x: hidden;
@@ -24,7 +24,8 @@
   left: 0;
   right: 0;
   width: 100%;
-  height: 68px; /* Increased header height for comfortable logo breathing room */
+  min-height: 64px;
+  height: max(64px, calc(var(--logo-height, 52px) + 12px)); /* Dynamic header height fitting logo slider */
   background-color: var(--white);
   border-bottom: 1px solid var(--border-light);
   display: flex;
@@ -59,7 +60,6 @@
 
 .header-logo-text {
   height: var(--logo-height, 52px);
-  max-height: 54px;
   width: auto;
   max-width: var(--logo-width, 360px);
   object-fit: contain;
