@@ -364,11 +364,11 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
               fetchPriority="high"
               loading="eager"
               style={{ 
-                '--logo-width': getUnitValue(settings.logoWidth, '360px'),
-                '--logo-height': getUnitValue(settings.logoHeight, '52px'),
+                '--logo-width': getUnitValue(settings.logoWidth, '260px'),
+                '--logo-height': getUnitValue(settings.logoHeight, '34px'),
                 width: 'auto',
-                height: 'var(--logo-height, 52px)',
-                maxWidth: 'var(--logo-width, 360px)',
+                height: 'var(--logo-height, 34px)',
+                maxWidth: 'var(--logo-width, 260px)',
                 objectFit: 'contain',
                 padding: '2px 0'
               }} 
@@ -1920,15 +1920,15 @@ function SettingsForm({ onUpdateSettings }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
               <label style={{ margin: 0 }}>Logo Display Height</label>
               <span className="status-badge new" style={{ fontFamily: 'monospace', fontWeight: 700 }}>
-                {parseInt(settings.logoHeight || '56', 10) || 56}px
+                {parseInt(settings.logoHeight || '34', 10) || 34}px
               </span>
             </div>
             <input 
               type="range" 
-              min="20" 
+              min="15" 
               max="120" 
               step="1"
-              value={parseInt(settings.logoHeight || '56', 10) || 56} 
+              value={parseInt(settings.logoHeight || '34', 10) || 34} 
               onChange={(e) => {
                 const val = e.target.value + 'px';
                 setSettings(prev => {
@@ -1941,7 +1941,7 @@ function SettingsForm({ onUpdateSettings }) {
               style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--accent-red)' }}
             />
             <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '4px' }}>
-              Scroll / drag slider to adjust logo height (20px to 120px)
+              Scroll / drag slider to adjust logo height (15px to 120px)
             </span>
           </div>
 
@@ -1950,15 +1950,15 @@ function SettingsForm({ onUpdateSettings }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
               <label style={{ margin: 0 }}>Logo Max Display Width</label>
               <span className="status-badge new" style={{ fontFamily: 'monospace', fontWeight: 700 }}>
-                {parseInt(settings.logoWidth || '360', 10) || 360}px
+                {parseInt(settings.logoWidth || '260', 10) || 260}px
               </span>
             </div>
             <input 
               type="range" 
-              min="100" 
+              min="80" 
               max="600" 
               step="5"
-              value={parseInt(settings.logoWidth || '360', 10) || 360} 
+              value={parseInt(settings.logoWidth || '260', 10) || 260} 
               onChange={(e) => {
                 const val = e.target.value + 'px';
                 setSettings(prev => {
