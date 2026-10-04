@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding-top: 56px; /* Sticky header spacer desktop */
+  padding-top: 68px; /* Sticky header spacer desktop */
   padding-bottom: 60px; /* Space for sticky nav on mobile */
   background-color: var(--white);
   overflow-x: hidden;
@@ -24,7 +24,7 @@
   left: 0;
   right: 0;
   width: 100%;
-  height: 56px; /* Minimal header height */
+  height: 68px; /* Increased header height for comfortable logo breathing room */
   background-color: var(--white);
   border-bottom: 1px solid var(--border-light);
   display: flex;
@@ -54,16 +54,17 @@
   height: 44px;
   width: auto;
   object-fit: contain;
-  image-rendering: -webkit-optimize-contrast;
+  image-rendering: auto;
 }
 
 .header-logo-text {
-  height: var(--logo-height, 56px);
-  max-height: 120px;
+  height: var(--logo-height, 52px);
+  max-height: 56px;
   width: auto;
   max-width: var(--logo-width, 360px);
   object-fit: contain;
-  image-rendering: -webkit-optimize-contrast;
+  padding: 3px 0; /* Vertical breathing room padding */
+  image-rendering: auto; /* Smooth bicubic anti-aliasing for razor sharp text without zoom */
 }
 
 .header-right {
@@ -1439,11 +1440,11 @@
   .app-container {
     overflow-x: hidden;
     max-width: 100vw;
-    padding-top: 50px !important; /* Sticky header spacer mobile */
+    padding-top: 58px !important; /* Sticky header spacer mobile */
   }
 
   .header {
-    height: 50px !important; /* Minimal mobile header height */
+    height: 58px !important; /* Mobile header height with logo margin breathing room */
     padding: 0 var(--spacing-sm) !important; /* Reduce padding on mobile */
   }
   
@@ -1457,12 +1458,13 @@
   }
 
   .header-logo-text {
-    height: calc(var(--logo-height, 56px) * 0.82) !important;
-    max-height: 75px !important;
+    height: calc(var(--logo-height, 52px) * 0.85) !important;
+    max-height: 52px !important;
     width: auto !important;
     max-width: var(--logo-width, 360px) !important;
     object-fit: contain !important;
-    image-rendering: -webkit-optimize-contrast !important;
+    padding: 2px 0 !important;
+    image-rendering: auto !important;
   }
 
   .header-right {

@@ -365,11 +365,13 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
               loading="eager"
               style={{ 
                 '--logo-width': getUnitValue(settings.logoWidth, '360px'),
-                '--logo-height': getUnitValue(settings.logoHeight, '56px'),
+                '--logo-height': getUnitValue(settings.logoHeight, '52px'),
                 width: 'auto',
                 height: 'var(--logo-height)',
                 maxWidth: 'var(--logo-width)',
-                objectFit: 'contain'
+                objectFit: 'contain',
+                padding: '3px 0',
+                imageRendering: 'auto'
               }} 
               onError={(e) => { e.target.style.display = 'none'; }} 
             />
