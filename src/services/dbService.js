@@ -324,6 +324,18 @@ export const dbService = {
       const enquiriesSnap = await getDocs(collection(db, "enquiries"));
       cache.enquiries = enquiriesSnap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
 
+      // Fallback merge: Preserve local course image edits if local cache has fresher custom images
+      const localCourses = loadData(DB_KEYS.COURSES, null);
+      if (localCourses && Array.isArray(localCourses) && cache.courses) {
+        cache.courses = cache.courses.map(remoteItem => {
+          const localItem = localCourses.find(l => l.id === remoteItem.id);
+          if (localItem && localItem.image && (!remoteItem.image || remoteItem.image.includes('unsplash.com'))) {
+            return { ...remoteItem, image: localItem.image, showImage: localItem.showImage !== false };
+          }
+          return remoteItem;
+        });
+      }
+
     } catch (err) {
       console.error("⚠️ Firestore pre-loading failed. Reverting to LocalStorage.", err);
       // Fail-safe fallback loading

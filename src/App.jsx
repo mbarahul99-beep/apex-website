@@ -4106,15 +4106,14 @@ function ImageUploadCompress({ value, onChange, label = "Upload Image" }) {
         finalCanvas.width = finalWidth;
         finalCanvas.height = finalHeight;
         const finalCtx = finalCanvas.getContext('2d');
+        finalCtx.fillStyle = '#ffffff';
+        finalCtx.fillRect(0, 0, finalWidth, finalHeight);
         finalCtx.imageSmoothingEnabled = true;
         finalCtx.imageSmoothingQuality = 'high';
         finalCtx.drawImage(curCanvas, 0, 0, finalWidth, finalHeight);
 
-        // Always output JPEG for general photos/course cards at 0.82 quality to maintain ~50KB size
-        const outputFormat = isPng ? 'image/png' : 'image/jpeg';
-        const outputQuality = isPng ? 0.85 : 0.82;
-
-        const compressedDataUrl = finalCanvas.toDataURL(outputFormat, outputQuality);
+        // Always output JPEG format at 0.80 quality to guarantee lightweight ~40KB - 60KB data URLs that stay well under Firestore's 1MB limit
+        const compressedDataUrl = finalCanvas.toDataURL('image/jpeg', 0.80);
         onChange(compressedDataUrl);
         setCompressing(false);
       };
