@@ -59,12 +59,16 @@
 
 .header-logo-text {
   height: var(--logo-height, 52px);
-  max-height: 56px;
+  max-height: 54px;
   width: auto;
   max-width: var(--logo-width, 360px);
   object-fit: contain;
-  padding: 3px 0; /* Vertical breathing room padding */
-  image-rendering: auto; /* Smooth bicubic anti-aliasing for razor sharp text without zoom */
+  padding: 2px 0;
+  image-rendering: high-quality;
+  image-rendering: -webkit-optimize-contrast;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .header-right {

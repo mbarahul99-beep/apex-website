@@ -247,15 +247,29 @@ const cache = {
 // Database operations helper for LocalStorage
 const loadData = (key, fallback) => {
   const data = localStorage.getItem(key);
-  if (!data) {
-    localStorage.setItem(key, JSON.stringify(fallback));
+  if (!data || data === "null") {
+    if (fallback !== null && fallback !== undefined) {
+      try {
+        localStorage.setItem(key, JSON.stringify(fallback));
+      } catch (e) {
+        console.warn("LocalStorage save warning:", e);
+      }
+    }
     return fallback;
   }
-  return JSON.parse(data);
+  try {
+    return JSON.parse(data);
+  } catch (e) {
+    return fallback;
+  }
 };
 
 const saveData = (key, data) => {
-  localStorage.setItem(key, JSON.stringify(data));
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (e) {
+    console.warn("LocalStorage saveData error:", e);
+  }
 };
 
 export const dbService = {
@@ -301,7 +315,17 @@ export const dbService = {
       const loadCollection = async (colName, defaults) => {
         const snap = await getDocs(collection(db, colName));
         if (!snap.empty) {
-          return snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+          const loaded = snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+          // Ensure missing default items get merged if missing
+          if (defaults && Array.isArray(defaults)) {
+            for (const defItem of defaults) {
+              if (!loaded.some(item => item.id === defItem.id)) {
+                await setDoc(doc(db, colName, defItem.id), defItem);
+                loaded.push(defItem);
+              }
+            }
+          }
+          return loaded;
         } else {
           // Dynamic Seed data to Firestore
           for (const item of defaults) {
@@ -324,17 +348,21 @@ export const dbService = {
       const enquiriesSnap = await getDocs(collection(db, "enquiries"));
       cache.enquiries = enquiriesSnap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
 
-      // Fallback merge: Preserve local course image edits if local cache has fresher custom images
+      // Fallback merge & double sync: Preserve local course image edits if local storage has custom images
       const localCourses = loadData(DB_KEYS.COURSES, null);
       if (localCourses && Array.isArray(localCourses) && cache.courses) {
         cache.courses = cache.courses.map(remoteItem => {
           const localItem = localCourses.find(l => l.id === remoteItem.id);
-          if (localItem && localItem.image && (!remoteItem.image || remoteItem.image.includes('unsplash.com'))) {
-            return { ...remoteItem, image: localItem.image, showImage: localItem.showImage !== false };
+          if (localItem && localItem.image && localItem.image !== remoteItem.image) {
+            const merged = { ...remoteItem, image: localItem.image, showImage: localItem.showImage !== false };
+            setDoc(doc(db, "courses", merged.id), merged, { merge: true }).catch(err => console.error("Course Firestore sync error:", err));
+            return merged;
           }
           return remoteItem;
         });
       }
+      // Always keep LocalStorage in sync with cache.courses
+      saveData(DB_KEYS.COURSES, cache.courses);
 
     } catch (err) {
       console.error("⚠️ Firestore pre-loading failed. Reverting to LocalStorage.", err);

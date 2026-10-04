@@ -367,11 +367,11 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
                 '--logo-width': getUnitValue(settings.logoWidth, '360px'),
                 '--logo-height': getUnitValue(settings.logoHeight, '52px'),
                 width: 'auto',
-                height: 'var(--logo-height)',
-                maxWidth: 'var(--logo-width)',
+                height: 'var(--logo-height, 52px)',
+                maxHeight: '54px',
+                maxWidth: 'var(--logo-width, 360px)',
                 objectFit: 'contain',
-                padding: '3px 0',
-                imageRendering: 'auto'
+                padding: '2px 0'
               }} 
               onError={(e) => { e.target.style.display = 'none'; }} 
             />
