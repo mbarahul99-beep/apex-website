@@ -583,6 +583,8 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
   const [resources, setResources] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
   const [results, setResults] = useState([]); // Results state
+  const [alumni, setAlumni] = useState([]); // Alumni state
+  const [showAllAlumni, setShowAllAlumni] = useState(false);
   const [posts, setPosts] = useState([]); // Posts state
   const [currentSlide, setCurrentSlide] = useState(0);
   
@@ -596,6 +598,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
     setResources(dbService.getResources());
     setTestimonials(dbService.getTestimonials());
     setResults(dbService.getResults());
+    setAlumni(dbService.getAlumni());
     setPosts(dbService.getPosts());
   }, []);
 
@@ -818,6 +821,71 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                 style={{ padding: '12px 30px', fontWeight: 700 }}
               >
                 View More Results
+              </button>
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* Our Proud Alumni Network Section */}
+      {settings.showAlumni !== false && alumni.length > 0 && (
+        <section className="alumni-section">
+          <div className="section-header">
+            <h2 className="section-title">Our Proud Alumni Network</h2>
+            <p className="section-subtitle">Inspiring journeys of Apex stars studying and graduating from India's premier institutes</p>
+          </div>
+
+          <div className="alumni-grid">
+            {(showAllAlumni ? alumni : alumni.slice(0, 5)).map(alm => (
+              <div className="alumni-card" key={alm.id}>
+                <div className="alumni-photo-wrap">
+                  <img 
+                    src={alm.photo || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400"} 
+                    className="alumni-photo" 
+                    alt={alm.name} 
+                    loading="lazy"
+                  />
+                </div>
+                <span className="alumni-name">{alm.name}</span>
+                {alm.college && (
+                  <span className="alumni-college-badge">{alm.college}</span>
+                )}
+                {alm.course && (
+                  <span className="alumni-course">{alm.course}</span>
+                )}
+                {alm.achievement && (
+                  <span className="alumni-achievement">{alm.achievement}</span>
+                )}
+                {alm.batch && (
+                  <span className="alumni-batch">Batch {alm.batch}</span>
+                )}
+                {alm.currentRole && (
+                  <span className="alumni-role">{alm.currentRole}</span>
+                )}
+                {alm.quote && (
+                  <p className="alumni-quote">"{alm.quote}"</p>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {alumni.length > 5 && (
+            <div className="view-more-container">
+              <button 
+                className="view-more-btn"
+                onClick={() => setShowAllAlumni(!showAllAlumni)}
+              >
+                {showAllAlumni ? (
+                  <>
+                    Show Top 5 Alumni
+                    <svg fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ width: 16, height: 16 }}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" /></svg>
+                  </>
+                ) : (
+                  <>
+                    View More Alumni ({alumni.length - 5} More)
+                    <svg fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ width: 16, height: 16 }}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+                  </>
+                )}
               </button>
             </div>
           )}
@@ -1693,6 +1761,10 @@ function AdminPanel({ navigate, onUpdateSettings }) {
             <IconStar />
             Results Manager
           </div>
+          <div className={`admin-nav-item ${activeTab === 'alumni' ? 'active' : ''}`} onClick={() => setActiveTab('alumni')}>
+            <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M12 2.25V9.75m0-7.25c.01-.2.03-.4.07-.6M12 9.75c.01.2.03.4.07.6" /></svg>
+            Alumni Network
+          </div>
           <div className={`admin-nav-item ${activeTab === 'pages' ? 'active' : ''}`} onClick={() => setActiveTab('pages')}>
             <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
             Custom Pages
@@ -1755,6 +1827,7 @@ function AdminPanel({ navigate, onUpdateSettings }) {
           {activeTab === 'kalam' && <AdminKalam />}
           {activeTab === 'courses' && <AdminCourses />}
           {activeTab === 'results' && <AdminResults />}
+          {activeTab === 'alumni' && <AdminAlumni />}
           {activeTab === 'pages' && <AdminPages />}
           {activeTab === 'posts' && <AdminPosts />}
           {activeTab === 'resources' && <AdminResources />}
@@ -1769,14 +1842,15 @@ function AdminPanel({ navigate, onUpdateSettings }) {
 
 // ---------------- ADMIN OVERVIEW SUB-VIEW ----------------
 function AdminOverview({ setActiveTab, onUpdateSettings }) {
-  const [stats, setStats] = useState({ courses: 0, enquiries: 0, pages: 0, posts: 0 });
+  const [stats, setStats] = useState({ courses: 0, enquiries: 0, pages: 0, posts: 0, alumni: 0 });
 
   useEffect(() => {
     setStats({
       courses: dbService.getCourses().length,
       enquiries: dbService.getEnquiries().length,
       pages: dbService.getPages().length,
-      posts: dbService.getPosts().length
+      posts: dbService.getPosts().length,
+      alumni: dbService.getAlumni().length
     });
   }, []);
 
@@ -1797,6 +1871,15 @@ function AdminOverview({ setActiveTab, onUpdateSettings }) {
           <div className="admin-stat-info">
             <span className="admin-stat-val">{stats.enquiries}</span>
             <span className="admin-stat-lbl">Leads Collected</span>
+          </div>
+        </div>
+        <div className="admin-stat-card" style={{ cursor: 'pointer' }} onClick={() => setActiveTab('alumni')}>
+          <div className="admin-stat-icon-wrap" style={{ backgroundColor: '#f0fdf4', color: '#16a34a' }}>
+            <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ width: 24, height: 24 }}><path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M12 2.25V9.75m0-7.25c.01-.2.03-.4.07-.6M12 9.75c.01.2.03.4.07.6" /></svg>
+          </div>
+          <div className="admin-stat-info">
+            <span className="admin-stat-val">{stats.alumni}</span>
+            <span className="admin-stat-lbl">Alumni Network</span>
           </div>
         </div>
         <div className="admin-stat-card">
@@ -2128,6 +2211,10 @@ function SettingsForm({ onUpdateSettings }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <input type="checkbox" name="showToppers" id="showToppers" checked={!!settings.showToppers} onChange={handleChange} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
           <label htmlFor="showToppers" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Toppers Excellent Results</label>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <input type="checkbox" name="showAlumni" id="showAlumni" checked={!!settings.showAlumni} onChange={handleChange} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
+          <label htmlFor="showAlumni" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Alumni Network Section</label>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <input type="checkbox" name="showQuickLinks" id="showQuickLinks" checked={!!settings.showQuickLinks} onChange={handleChange} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
@@ -2899,6 +2986,227 @@ function AdminResults() {
                     <div className="table-actions">
                       <button className="table-action-btn" onClick={() => handleEdit(res)}><IconEdit /></button>
                       <button className="table-action-btn delete" onClick={() => handleDelete(res.id)}><IconTrash /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------- ADMIN ALUMNI SUB-VIEW ----------------
+function AdminAlumni() {
+  const [alumni, setAlumni] = useState([]);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingAlumni, setEditingAlumni] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const [name, setName] = useState('');
+  const [college, setCollege] = useState('');
+  const [course, setCourse] = useState('');
+  const [batch, setBatch] = useState('');
+  const [achievement, setAchievement] = useState('');
+  const [currentRole, setCurrentRole] = useState('');
+  const [photo, setPhoto] = useState('');
+  const [quote, setQuote] = useState('');
+
+  const loadAlumniList = () => setAlumni(dbService.getAlumni());
+
+  useEffect(() => {
+    loadAlumniList();
+  }, []);
+
+  const handleEdit = (alm) => {
+    setEditingAlumni(alm);
+    setName(alm.name || '');
+    setCollege(alm.college || '');
+    setCourse(alm.course || '');
+    setBatch(alm.batch || '');
+    setAchievement(alm.achievement || '');
+    setCurrentRole(alm.currentRole || '');
+    setPhoto(alm.photo || '');
+    setQuote(alm.quote || '');
+    setFormOpen(true);
+  };
+
+  const handleCreateNew = () => {
+    setEditingAlumni(null);
+    setName('');
+    setCollege('');
+    setCourse('MBBS');
+    setBatch('2023-2024');
+    setAchievement('');
+    setCurrentRole('');
+    setPhoto('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400');
+    setQuote('');
+    setFormOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (confirm('Delete this alumni record?')) {
+      try {
+        await dbService.deleteAlumni(id);
+        loadAlumniList();
+      } catch (err) {
+        alert('Failed to delete alumni: ' + (err.message || err));
+      }
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSaving(true);
+    try {
+      await dbService.saveAlumni({
+        id: editingAlumni ? editingAlumni.id : undefined,
+        name,
+        college,
+        course,
+        batch,
+        achievement,
+        currentRole,
+        photo,
+        quote
+      });
+      setFormOpen(false);
+      loadAlumniList();
+    } catch (err) {
+      alert('Failed to save alumni: ' + (err.message || err));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <div className="admin-card fade-in">
+      <div className="admin-card-header">
+        <span className="admin-card-title">Manage Alumni Network</span>
+        {!formOpen && (
+          <button className="admin-btn" onClick={handleCreateNew}>
+            <IconPlus /> Add Alumni Profile
+          </button>
+        )}
+      </div>
+
+      {formOpen ? (
+        <form onSubmit={handleSubmit} style={{ border: '1px solid #e2e8f0', padding: '20px', borderRadius: 'var(--radius-lg)' }}>
+          <h4 style={{ marginBottom: '15px' }}>{editingAlumni ? `Edit Profile: ${editingAlumni.name}` : 'Add New Alumni Profile'}</h4>
+          
+          <div className="admin-form-row">
+            <div className="admin-input-group">
+              <label>Alumni Full Name *</label>
+              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Dr. Aman Sharma" required />
+            </div>
+            <div className="admin-input-group">
+              <label>Premier College / University *</label>
+              <input type="text" value={college} onChange={e => setCollege(e.target.value)} placeholder="e.g. AIIMS New Delhi / IIT Bombay" required />
+            </div>
+          </div>
+
+          <div className="admin-form-row">
+            <div className="admin-input-group">
+              <label>Degree / Course Studied</label>
+              <input type="text" value={course} onChange={e => setCourse(e.target.value)} placeholder="e.g. MBBS / B.Tech Computer Science" />
+            </div>
+            <div className="admin-input-group">
+              <label>Apex Batch Year</label>
+              <input type="text" value={batch} onChange={e => setBatch(e.target.value)} placeholder="e.g. 2021-2022" />
+            </div>
+          </div>
+
+          <div className="admin-form-row">
+            <div className="admin-input-group">
+              <label>Entrance Exam Achievement / Rank</label>
+              <input type="text" value={achievement} onChange={e => setAchievement(e.target.value)} placeholder="e.g. NEET AIR 42 / JEE Advanced AIR 89" />
+            </div>
+            <div className="admin-input-group">
+              <label>Current Role / Designation</label>
+              <input type="text" value={currentRole} onChange={e => setCurrentRole(e.target.value)} placeholder="e.g. Resident Doctor, AIIMS / Software Engineer, Google" />
+            </div>
+          </div>
+
+          <div className="admin-form-row">
+            <div className="admin-input-group" style={{ flex: 1 }}>
+              <label>Alumni Photo URL / Upload</label>
+              <input type="text" value={photo} onChange={e => setPhoto(e.target.value)} placeholder="Paste image link or upload below" />
+              <ImageUploadCompress 
+                value={photo} 
+                onChange={setPhoto} 
+                label="Click or Drag File to Upload & Compress Alumni Photo" 
+              />
+              {photo && (
+                <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  <img src={photo} alt="Preview" style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '3px solid #eff6ff' }} />
+                  <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Live Photo Preview</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="admin-input-group">
+            <label>Testimonial / Inspirational Quote</label>
+            <textarea 
+              value={quote} 
+              onChange={e => setQuote(e.target.value)} 
+              rows="3" 
+              placeholder="e.g. Apex Institute provided the rigorous concept clarity and test series that made cracking AIIMS possible!"
+            ></textarea>
+          </div>
+
+          <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+            <button type="submit" className="admin-btn" disabled={isSaving}>{isSaving ? 'Saving...' : 'Save Alumni Profile'}</button>
+            <button type="button" className="admin-btn secondary" onClick={() => setFormOpen(false)}>Cancel</button>
+          </div>
+        </form>
+      ) : (
+        <div className="admin-table-container">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>College / Institute</th>
+                <th>Degree</th>
+                <th>Batch</th>
+                <th>Achievement</th>
+                <th>Current Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {alumni.map(alm => (
+                <tr key={alm.id}>
+                  <td>
+                    {alm.photo ? (
+                      <img 
+                        src={alm.photo} 
+                        alt={alm.name} 
+                        style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #cbd5e1' }} 
+                      />
+                    ) : (
+                      <div style={{ width: '45px', height: '45px', borderRadius: '50%', backgroundColor: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', color: '#64748b' }}>
+                        👤
+                      </div>
+                    )}
+                  </td>
+                  <td style={{ fontWeight: 600 }}>{alm.name}</td>
+                  <td>
+                    <span className="alumni-college-badge" style={{ margin: 0 }}>
+                      {alm.college}
+                    </span>
+                  </td>
+                  <td>{alm.course || '-'}</td>
+                  <td>{alm.batch ? `Batch ${alm.batch}` : '-'}</td>
+                  <td style={{ color: '#16a34a', fontWeight: 700 }}>{alm.achievement || '-'}</td>
+                  <td>{alm.currentRole || '-'}</td>
+                  <td>
+                    <div className="table-actions">
+                      <button className="table-action-btn" onClick={() => handleEdit(alm)} title="Edit"><IconEdit /></button>
+                      <button className="table-action-btn delete" onClick={() => handleDelete(alm.id)} title="Delete"><IconTrash /></button>
                     </div>
                   </td>
                 </tr>

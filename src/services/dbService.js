@@ -19,6 +19,7 @@ const DB_KEYS = {
   RESOURCES: 'apex_resources',
   TESTIMONIALS: 'apex_testimonials',
   RESULTS: 'apex_results',
+  ALUMNI: 'apex_alumni',
   ENQUIRIES: 'apex_enquiries',
   PAGES: 'apex_pages',
   POSTS: 'apex_posts',
@@ -46,6 +47,7 @@ const DEFAULT_SETTINGS = {
   showInfoCard: true,
   showFeaturedCourses: true,
   showToppers: true,
+  showAlumni: true,
   showBlogs: true,
   showQuickLinks: true,
   showTestimonials: true,
@@ -201,6 +203,86 @@ const DEFAULT_RESULTS = [
   { id: "res14", studentName: "Pooja Sharma", examType: "Olympiads", achievement: "Silver Medalist", location: "INChO (Chemistry)", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&fit=crop", year: "2025" }
 ];
 
+const DEFAULT_ALUMNI = [
+  {
+    id: "alm1",
+    name: "Dr. Aman Sharma",
+    college: "AIIMS New Delhi",
+    course: "MBBS",
+    batch: "2019-2020",
+    achievement: "NEET AIR 42",
+    currentRole: "Resident Doctor, AIIMS",
+    photo: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=400",
+    quote: "Apex Institute provided the rigorous concept clarity and test series that made cracking AIIMS possible!"
+  },
+  {
+    id: "alm2",
+    name: "Rohan Verma",
+    college: "IIT Bombay",
+    course: "B.Tech Computer Science",
+    batch: "2020-2021",
+    achievement: "JEE Advanced AIR 89",
+    currentRole: "Software Engineer, Google",
+    photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=400",
+    quote: "The personalized doubt-solving sessions and problem sets at Apex were a game-changer for my JEE rank."
+  },
+  {
+    id: "alm3",
+    name: "Dr. Priya Gupta",
+    college: "Maulana Azad Medical College (MAMC)",
+    course: "MBBS",
+    batch: "2021-2022",
+    achievement: "NEET AIR 115",
+    currentRole: "Medical Intern, Lok Nayak Hospital",
+    photo: "https://images.unsplash.com/photo-1594824813501-48c081921381?q=80&w=400",
+    quote: "Continuous motivation and NCERT-centric teaching at Apex gave me the confidence to secure a top Delhi medical seat."
+  },
+  {
+    id: "alm4",
+    name: "Sahil Deshmukh",
+    college: "IIT Delhi",
+    course: "B.Tech Electrical Engineering",
+    batch: "2021-2022",
+    achievement: "JEE Advanced AIR 164",
+    currentRole: "Hardware Systems Engineer",
+    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400",
+    quote: "The faculty at Apex made physics and math feel intuitive. Their mock exam environment mirrored the real test."
+  },
+  {
+    id: "alm5",
+    name: "Dr. Ananya Malik",
+    college: "PGIMS Rohtak",
+    course: "MBBS",
+    batch: "2022-2023",
+    achievement: "NEET Score 685/720",
+    currentRole: "Medical Student",
+    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400",
+    quote: "Studying at Apex transformed my weak areas in biology and chemistry into my strongest scoring subjects."
+  },
+  {
+    id: "alm6",
+    name: "Kunal Bansal",
+    college: "BITS Pilani",
+    course: "B.E. Computer Science",
+    batch: "2022-2023",
+    achievement: "BITSAT 352/390 & JEE Main 99.7%ile",
+    currentRole: "Analyst, Quantitative Finance",
+    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400",
+    quote: "Apex Institute is by far the best coaching in Jind. The teachers mentor you through every challenge."
+  },
+  {
+    id: "alm7",
+    name: "Dr. Simran Kaur",
+    college: "Lady Hardinge Medical College (LHMC)",
+    course: "MBBS",
+    batch: "2023-2024",
+    achievement: "NEET Score 690/720",
+    currentRole: "Medical Student",
+    photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400",
+    quote: "The weekly tests and in-depth analytical reviews helped me identify and fix silly mistakes before NEET."
+  }
+];
+
 const DEFAULT_PAGES = [
   {
     id: "p1",
@@ -238,6 +320,7 @@ const cache = {
   resources: DEFAULT_RESOURCES,
   testimonials: DEFAULT_TESTIMONIALS,
   results: DEFAULT_RESULTS,
+  alumni: DEFAULT_ALUMNI,
   enquiries: [],
   pages: DEFAULT_PAGES,
   posts: DEFAULT_POSTS,
@@ -284,6 +367,7 @@ export const dbService = {
       cache.resources = loadData(DB_KEYS.RESOURCES, DEFAULT_RESOURCES);
       cache.testimonials = loadData(DB_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS);
       cache.results = loadData(DB_KEYS.RESULTS, DEFAULT_RESULTS);
+      cache.alumni = loadData(DB_KEYS.ALUMNI, DEFAULT_ALUMNI);
       cache.enquiries = loadData(DB_KEYS.ENQUIRIES, []);
       cache.pages = loadData(DB_KEYS.PAGES, DEFAULT_PAGES);
       cache.posts = loadData(DB_KEYS.POSTS, DEFAULT_POSTS);
@@ -356,6 +440,7 @@ export const dbService = {
       cache.resources = await loadCollection("resources", DEFAULT_RESOURCES);
       cache.testimonials = await loadCollection("testimonials", DEFAULT_TESTIMONIALS);
       cache.results = await loadCollection("results", DEFAULT_RESULTS);
+      cache.alumni = await loadCollection("alumni", DEFAULT_ALUMNI);
       cache.pages = await loadCollection("pages", DEFAULT_PAGES);
       cache.posts = await loadCollection("posts", DEFAULT_POSTS);
       cache.scholarships = (await loadCollection("scholarships", DEFAULT_SCHOLARSHIPS)).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
@@ -372,6 +457,7 @@ export const dbService = {
       saveData(DB_KEYS.RESOURCES, cache.resources);
       saveData(DB_KEYS.TESTIMONIALS, cache.testimonials);
       saveData(DB_KEYS.RESULTS, cache.results);
+      saveData(DB_KEYS.ALUMNI, cache.alumni);
       saveData(DB_KEYS.PAGES, cache.pages);
       saveData(DB_KEYS.POSTS, cache.posts);
       saveData(DB_KEYS.SCHOLARSHIPS, cache.scholarships);
@@ -387,6 +473,7 @@ export const dbService = {
       cache.resources = loadData(DB_KEYS.RESOURCES, DEFAULT_RESOURCES);
       cache.testimonials = loadData(DB_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS);
       cache.results = loadData(DB_KEYS.RESULTS, DEFAULT_RESULTS);
+      cache.alumni = loadData(DB_KEYS.ALUMNI, DEFAULT_ALUMNI);
       cache.enquiries = loadData(DB_KEYS.ENQUIRIES, []);
       cache.pages = loadData(DB_KEYS.PAGES, DEFAULT_PAGES);
       cache.posts = loadData(DB_KEYS.POSTS, DEFAULT_POSTS);
@@ -516,6 +603,40 @@ export const dbService = {
     saveData(DB_KEYS.RESULTS, cache.results);
     if (!isDefault) {
       await deleteDoc(doc(db, "results", id));
+    }
+  },
+
+  // Alumni
+  getAlumni() {
+    return cache.alumni;
+  },
+  getAlumniById(id) {
+    return cache.alumni.find(a => a.id === id);
+  },
+  async saveAlumni(alumniItem) {
+    const list = [...cache.alumni];
+    if (!alumniItem.id) {
+      alumniItem.id = 'alm_' + Date.now();
+    }
+    const idx = list.findIndex(a => a.id === alumniItem.id);
+    if (idx > -1) {
+      list[idx] = alumniItem;
+    } else {
+      list.push(alumniItem);
+    }
+    cache.alumni = list;
+    saveData(DB_KEYS.ALUMNI, list);
+
+    if (!isDefault) {
+      await setDoc(doc(db, "alumni", alumniItem.id), alumniItem);
+    }
+    return alumniItem;
+  },
+  async deleteAlumni(id) {
+    cache.alumni = cache.alumni.filter(a => a.id !== id);
+    saveData(DB_KEYS.ALUMNI, cache.alumni);
+    if (!isDefault) {
+      await deleteDoc(doc(db, "alumni", id));
     }
   },
 

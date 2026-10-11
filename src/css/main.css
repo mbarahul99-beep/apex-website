@@ -658,19 +658,20 @@
 }
 
 .result-photo-wrap {
-  width: 90px;
-  height: 90px;
+  width: 130px;
+  height: 130px;
   border-radius: var(--radius-full);
   overflow: hidden;
   margin-bottom: var(--spacing-sm);
-  border: 3px solid #eff6ff;
-  box-shadow: var(--shadow-sm);
+  border: 4px solid #eff6ff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
 }
 
 @media (min-width: 768px) {
   .result-photo-wrap {
-    width: 100px;
-    height: 100px;
+    width: 155px;
+    height: 155px;
   }
 }
 
@@ -698,6 +699,162 @@
   font-size: 0.72rem;
   color: var(--light-gray);
   font-weight: 500;
+}
+
+/* Alumni Network Section */
+.alumni-section {
+  padding-bottom: var(--spacing-xl);
+  border-bottom: 8px solid var(--border-light);
+}
+
+.alumni-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+  .alumni-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .alumni-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--spacing-lg);
+  }
+}
+
+.alumni-card {
+  background-color: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg) var(--spacing-md);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.alumni-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: #cbd5e1;
+}
+
+.alumni-photo-wrap {
+  width: 130px;
+  height: 130px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--spacing-sm);
+  border: 4px solid #eff6ff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .alumni-photo-wrap {
+    width: 155px;
+    height: 155px;
+  }
+}
+
+.alumni-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.alumni-name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--navy-dark);
+  margin-bottom: 4px;
+}
+
+.alumni-college-badge {
+  display: inline-block;
+  background: #eff6ff;
+  color: var(--primary-blue);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  margin-bottom: 6px;
+  border: 1px solid #bfdbfe;
+}
+
+.alumni-course {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--dark-gray);
+  margin-bottom: 2px;
+}
+
+.alumni-achievement {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #16a34a;
+  margin-bottom: 3px;
+}
+
+.alumni-batch {
+  font-size: 0.72rem;
+  color: var(--light-gray);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.alumni-role {
+  font-size: 0.74rem;
+  color: var(--navy-blue);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.alumni-quote {
+  font-size: 0.74rem;
+  font-style: italic;
+  color: #64748b;
+  line-height: 1.4;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border-light);
+}
+
+.view-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--spacing-lg);
+}
+
+.view-more-btn {
+  background: var(--white);
+  color: var(--primary-blue);
+  border: 2px solid var(--primary-blue);
+  padding: 10px 24px;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+
+.view-more-btn:hover {
+  background: var(--primary-blue);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 /* Quick links ("Do More") list styling */
