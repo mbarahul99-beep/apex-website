@@ -22,6 +22,15 @@ const IconCheck = () => <svg fill="none" stroke="currentColor" strokeWidth="3" v
 const IconStar = () => <svg fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499c.195-.561.97-.561 1.165 0l2.22 6.47a.75.75 0 00.713.518h6.82c.594 0 .84.766.36 1.137l-5.518 4.01a.75.75 0 00-.273.84l2.22 6.47c.196.56-.445 1.028-.941.666l-5.518-4.01a.75.75 0 00-.882 0l-5.518 4.01c-.496.362-1.137-.166-.941-.666l2.22-6.47a.75.75 0 00-.273-.84l-5.518-4.01c-.48-.37-.234-1.137.36-1.137h6.82a.75.75 0 00.713-.518l2.22-6.47z" /></svg>;
 const IconUser = () => <svg fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>;
 
+// Helper for logo URL resolution with cache-busting for default assets
+export const getLogoSrc = (url) => {
+  if (!url) return '/logo_full.png?v=2';
+  if (url === '/logo_full.png' || url === '/logo_name.png' || url === '/logo.png') {
+    return url + '?v=2';
+  }
+  return url;
+};
+
 export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [settings, setSettings] = useState(dbService.getSettings());
@@ -162,7 +171,7 @@ export default function App() {
         zIndex: 99999 
       }}>
         <div style={{ backgroundColor: '#ffffff', padding: '16px 28px', borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', marginBottom: '25px', animation: 'splashPulse 2s infinite ease-in-out' }}>
-          <img src="/logo_full.png" alt="APEX INSTITUTE" style={{ height: '75px', width: 'auto', objectFit: 'contain', display: 'block' }} />
+          <img src={getLogoSrc(settings?.logoUrl || settings?.logoNameUrl || '/logo_full.png')} alt="APEX INSTITUTE" style={{ height: '75px', width: 'auto', objectFit: 'contain', display: 'block' }} />
         </div>
         <div className="spinner" style={{ border: '3px solid rgba(255,255,255,0.15)', width: '38px', height: '38px', borderRadius: '50%', borderTopColor: '#e11d48', borderRightColor: '#0284c7', animation: 'spin 0.8s linear infinite' }}></div>
         <p style={{ marginTop: '18px', fontSize: '0.92rem', color: '#94a3b8', fontWeight: 500, letterSpacing: '0.5px' }}>Loading APEX Institute Portal...</p>
@@ -358,7 +367,7 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
         <div className="header-inner">
           <div className="header-left" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => navigate('/')}>
             <img 
-              src={settings.logoNameUrl || settings.logoUrl || '/logo_full.png'} 
+              src={getLogoSrc(settings.logoUrl || settings.logoNameUrl || '/logo_full.png')} 
               className="header-logo-text" 
               alt={settings.instituteName || "APEX INSTITUTE"} 
               fetchPriority="high"
@@ -372,7 +381,11 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
                 objectFit: 'contain',
                 padding: '2px 0'
               }} 
-              onError={(e) => { e.target.style.display = 'none'; }} 
+              onError={(e) => { 
+                if (!e.target.src.includes('/logo_full.png')) {
+                  e.target.src = '/logo_full.png?v=2';
+                }
+              }} 
             />
           </div>
           
@@ -489,8 +502,8 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
           <div className="footer-grid">
             <div className="footer-col">
               <div className="footer-logo-title" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
-                <img src="/logo.png" alt="APEX Logo" onError={(e) => e.target.style.display = 'none'} />
-                <span>APEX INSTITUTE</span>
+                <img src={getLogoSrc(settings.logoUrl || settings.logoNameUrl || '/logo.png')} alt="APEX Logo" onError={(e) => { if (!e.target.src.includes('/logo.png')) { e.target.src = '/logo.png?v=2'; } }} />
+                <span>{settings.instituteName || "APEX INSTITUTE"}</span>
               </div>
               <p className="footer-desc">
                 Jind's premium classroom tutoring center providing highly structured coaching for NEET (Medical), IIT-JEE (Engineering) and Junior Foundations (Class 9th-10th, NTSE & Olympiads).
@@ -1905,6 +1918,8 @@ function AdminOverview({ setActiveTab, onUpdateSettings }) {
 function SettingsForm({ onUpdateSettings }) {
   const [settings, setSettings] = useState(dbService.getSettings());
   const [success, setSuccess] = useState(false);
+  const [saveError, setSaveError] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -1914,27 +1929,45 @@ function SettingsForm({ onUpdateSettings }) {
     };
     setSettings(updated);
     if (name === 'logoHeight' || name === 'logoWidth') {
-      dbService.saveSettings(updated);
+      dbService.saveSettings(updated).catch(err => console.warn("Slider save error:", err));
       if (onUpdateSettings) onUpdateSettings(updated);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const saved = dbService.saveSettings(settings);
-    if (onUpdateSettings) onUpdateSettings(saved);
-    setSuccess(true);
-    setTimeout(() => {
-      setSuccess(false);
-      window.location.reload();
-    }, 1500);
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      const payload = {
+        ...settings,
+        logoUrl: settings.logoUrl || settings.logoNameUrl || '/logo_full.png',
+        logoNameUrl: settings.logoUrl || settings.logoNameUrl || '/logo_full.png'
+      };
+      const saved = await dbService.saveSettings(payload);
+      if (onUpdateSettings) onUpdateSettings(saved);
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+      }, 3500);
+    } catch (err) {
+      console.error("Save settings error:", err);
+      setSaveError(err.message || 'Failed to save settings. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       {success && (
-        <div style={{ backgroundColor: '#f0fdf4', color: 'var(--accent-green)', padding: '10px', borderRadius: 'var(--radius-md)', fontSize: '0.82rem', marginBottom: '15px', fontWeight: 600 }}>
-          System Settings Saved Successfully! (Header will reload...)
+        <div style={{ backgroundColor: '#f0fdf4', color: 'var(--accent-green)', padding: '12px', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', marginBottom: '15px', fontWeight: 600, border: '1px solid #bbf7d0' }}>
+          ✓ System Settings & Header Logo Saved Successfully!
+        </div>
+      )}
+      {saveError && (
+        <div style={{ backgroundColor: '#fef2f2', color: '#dc2626', padding: '12px', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', marginBottom: '15px', fontWeight: 600, border: '1px solid #fecaca' }}>
+          ⚠️ {saveError}
         </div>
       )}
       <div className="admin-form-row">
@@ -1964,8 +1997,13 @@ function SettingsForm({ onUpdateSettings }) {
             type="button" 
             className="admin-btn secondary"
             style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-            onClick={() => {
-              setSettings(prev => ({ ...prev, logoUrl: '/logo_full.png', logoNameUrl: '/logo_full.png' }));
+            onClick={async () => {
+              const resetObj = { ...settings, logoUrl: '/logo_full.png', logoNameUrl: '/logo_full.png' };
+              setSettings(resetObj);
+              if (onUpdateSettings) onUpdateSettings(resetObj);
+              await dbService.saveSettings(resetObj).catch(() => {});
+              setSuccess(true);
+              setTimeout(() => setSuccess(false), 3000);
             }}
             title="Reset to default high-res logo"
           >
@@ -1975,7 +2013,19 @@ function SettingsForm({ onUpdateSettings }) {
 
         <LogoUploadCompress 
           value={settings.logoUrl} 
-          onChange={(val) => setSettings(prev => ({ ...prev, logoUrl: val, logoNameUrl: val }))} 
+          onChange={async (val) => {
+            const updated = { ...settings, logoUrl: val, logoNameUrl: val };
+            setSettings(updated);
+            if (onUpdateSettings) onUpdateSettings(updated);
+            try {
+              await dbService.saveSettings(updated);
+              setSuccess(true);
+              setTimeout(() => setSuccess(false), 3500);
+            } catch (err) {
+              console.error("Auto-save logo error:", err);
+              setSaveError("Failed to save logo to database: " + (err.message || err));
+            }
+          }} 
           label="Click to Choose & Upload New Logo Image" 
         />
 
@@ -2082,11 +2132,11 @@ function SettingsForm({ onUpdateSettings }) {
                 overflowX: 'auto'
               }}>
                 <img 
-                  src={settings.logoUrl || settings.logoNameUrl || '/logo_full.png'} 
+                  src={getLogoSrc(settings.logoUrl || settings.logoNameUrl || '/logo_full.png')} 
                   alt="Desktop Logo Preview" 
                   style={{ 
                     height: getUnitValue(settings.logoHeight, '56px'), 
-                    maxWidth: getUnitValue(settings.logoWidth, '360px'),
+                    maxWidth: getUnitValue(settings.logoWidth, '360px'), 
                     width: 'auto', 
                     objectFit: 'contain',
                     imageRendering: '-webkit-optimize-contrast',
@@ -2112,11 +2162,11 @@ function SettingsForm({ onUpdateSettings }) {
                 overflowX: 'auto'
               }}>
                 <img 
-                  src={settings.logoUrl || settings.logoNameUrl || '/logo_full.png'} 
+                  src={getLogoSrc(settings.logoUrl || settings.logoNameUrl || '/logo_full.png')} 
                   alt="Mobile Logo Preview" 
                   style={{ 
                     height: `calc(${getUnitValue(settings.logoHeight, '56px')} * 0.82)`, 
-                    maxWidth: getUnitValue(settings.logoWidth, '360px'),
+                    maxWidth: getUnitValue(settings.logoWidth, '360px'), 
                     width: 'auto', 
                     objectFit: 'contain',
                     imageRendering: '-webkit-optimize-contrast',
@@ -2233,7 +2283,9 @@ function SettingsForm({ onUpdateSettings }) {
           <label htmlFor="showEnquiryInline" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Contact Enquiry Inline Form</label>
         </div>
       </div>
-      <button type="submit" className="admin-btn" style={{ padding: '10px 24px' }}>Save Settings</button>
+      <button type="submit" className="admin-btn" style={{ padding: '10px 24px' }} disabled={isSaving}>
+        {isSaving ? 'Saving to Database...' : 'Save Settings'}
+      </button>
     </form>
   );
 }
@@ -4268,9 +4320,9 @@ function LogoUploadCompress({ value, onChange, label = "Upload & Apply New Logo 
       const img = new Image();
       img.src = event.target.result;
       img.onload = () => {
-        const isPng = file.type === 'image/png';
-        const TARGET_MAX_WIDTH = isPng ? 1400 : 2400;
-        const TARGET_MAX_HEIGHT = isPng ? 1400 : 2400;
+        // Optimal crisp resolution for header logos across Retina/High-DPI displays (3x device-pixel-ratio)
+        const TARGET_MAX_WIDTH = 800;
+        const TARGET_MAX_HEIGHT = 240;
 
         let curCanvas = document.createElement('canvas');
         curCanvas.width = img.width;
@@ -4299,19 +4351,15 @@ function LogoUploadCompress({ value, onChange, label = "Upload & Apply New Logo 
           curHeight = stepHeight;
         }
 
+        // Calculate final constrained dimensions while preserving aspect ratio
         let finalWidth = curWidth;
         let finalHeight = curHeight;
-        if (finalWidth > finalHeight) {
-          if (finalWidth > TARGET_MAX_WIDTH) {
-            finalHeight = Math.round(finalHeight * (TARGET_MAX_WIDTH / finalWidth));
-            finalWidth = TARGET_MAX_WIDTH;
-          }
-        } else {
-          if (finalHeight > TARGET_MAX_HEIGHT) {
-            finalWidth = Math.round(finalWidth * (TARGET_MAX_HEIGHT / finalHeight));
-            finalHeight = TARGET_MAX_HEIGHT;
-          }
-        }
+        const widthRatio = TARGET_MAX_WIDTH / curWidth;
+        const heightRatio = TARGET_MAX_HEIGHT / curHeight;
+        const scale = Math.min(1, widthRatio, heightRatio);
+
+        finalWidth = Math.max(1, Math.round(curWidth * scale));
+        finalHeight = Math.max(1, Math.round(curHeight * scale));
 
         const finalCanvas = document.createElement('canvas');
         finalCanvas.width = finalWidth;
@@ -4321,17 +4369,35 @@ function LogoUploadCompress({ value, onChange, label = "Upload & Apply New Logo 
         finalCtx.imageSmoothingQuality = 'high';
         finalCtx.drawImage(curCanvas, 0, 0, finalWidth, finalHeight);
 
+        const isPng = file.type === 'image/png';
         const outputFormat = isPng ? 'image/png' : 'image/jpeg';
         const outputQuality = isPng ? undefined : 0.92;
 
-        const compressedDataUrl = finalCanvas.toDataURL(outputFormat, outputQuality);
+        let compressedDataUrl = finalCanvas.toDataURL(outputFormat, outputQuality);
+
+        // Safeguard for Firestore 1MB document limit: if base64 string is still over 350KB, scale down slightly further
+        if (compressedDataUrl.length > 350000) {
+          const safeCanvas = document.createElement('canvas');
+          safeCanvas.width = Math.round(finalWidth * 0.75);
+          safeCanvas.height = Math.round(finalHeight * 0.75);
+          const safeCtx = safeCanvas.getContext('2d');
+          safeCtx.imageSmoothingEnabled = true;
+          safeCtx.imageSmoothingQuality = 'high';
+          safeCtx.drawImage(finalCanvas, 0, 0, safeCanvas.width, safeCanvas.height);
+          compressedDataUrl = isPng 
+            ? safeCanvas.toDataURL('image/png') 
+            : safeCanvas.toDataURL('image/jpeg', 0.88);
+          finalWidth = safeCanvas.width;
+          finalHeight = safeCanvas.height;
+        }
         
         setImageInfo({
           origWidth: img.width,
           origHeight: img.height,
           finalWidth,
           finalHeight,
-          format: isPng ? 'PNG (High Resolution Lossless)' : 'JPEG (High Quality)'
+          format: isPng ? 'PNG (Lossless Alpha)' : 'JPEG (High Quality)',
+          sizeKb: Math.round(compressedDataUrl.length * 0.75 / 1024)
         });
 
         onChange(compressedDataUrl);

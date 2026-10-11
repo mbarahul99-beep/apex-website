@@ -486,12 +486,17 @@ export const dbService = {
     return cache.settings;
   },
   async saveSettings(settings) {
-    cache.settings = settings;
-    saveData(DB_KEYS.SETTINGS, settings);
+    const cleanSettings = {
+      ...settings,
+      logoUrl: settings.logoUrl || settings.logoNameUrl || '/logo_full.png',
+      logoNameUrl: settings.logoUrl || settings.logoNameUrl || '/logo_full.png'
+    };
+    cache.settings = cleanSettings;
+    saveData(DB_KEYS.SETTINGS, cleanSettings);
     if (!isDefault) {
-      await setDoc(doc(db, "settings", "main"), settings);
+      await setDoc(doc(db, "settings", "main"), cleanSettings);
     }
-    return settings;
+    return cleanSettings;
   },
 
   // Sliders
