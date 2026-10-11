@@ -311,28 +311,44 @@ export const dbService = {
         cache.kalam = DEFAULT_KALAM;
       }
 
-      // Collection loader and dynamic seeder
+      // 3. Read seed status tracking doc from Firestore settings/seed_status
+      let seedStatus = {};
+      try {
+        const seedSnap = await getDoc(doc(db, "settings", "seed_status"));
+        if (seedSnap.exists()) {
+          seedStatus = seedSnap.data() || {};
+        }
+      } catch (e) {
+        console.warn("Could not read seed_status, assuming initialized:", e);
+      }
+
+      // Safe Collection loader: NEVER resurrects deleted items once seeded!
       const loadCollection = async (colName, defaults) => {
         const snap = await getDocs(collection(db, colName));
-        if (!snap.empty) {
-          const loaded = snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
-          // Ensure missing default items get merged if missing
-          if (defaults && Array.isArray(defaults)) {
-            for (const defItem of defaults) {
-              if (!loaded.some(item => item.id === defItem.id)) {
-                await setDoc(doc(db, colName, defItem.id), defItem);
-                loaded.push(defItem);
-              }
-            }
+        
+        // If collection was already seeded in the past OR already contains documents:
+        if (seedStatus[colName] || !snap.empty) {
+          // Ensure seedStatus records it as initialized
+          if (!seedStatus[colName]) {
+            seedStatus[colName] = true;
+            setDoc(doc(db, "settings", "seed_status"), { [colName]: true }, { merge: true }).catch(() => {});
           }
-          return loaded;
-        } else {
-          // Dynamic Seed data to Firestore
+          // The database documents are the master truth. Deleted items STAY deleted!
+          return snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+        }
+
+        // Only on a 100% brand new, uninitialized database:
+        if (defaults && Array.isArray(defaults) && defaults.length > 0) {
+          console.log(`Initial one-time seeding for ${colName}...`);
           for (const item of defaults) {
             await setDoc(doc(db, colName, item.id), item);
           }
+          seedStatus[colName] = true;
+          await setDoc(doc(db, "settings", "seed_status"), { [colName]: true }, { merge: true });
           return defaults;
         }
+
+        return [];
       };
 
       cache.sliders = (await loadCollection("sliders", DEFAULT_SLIDERS)).sort((a,b) => a.orderIndex - b.orderIndex);
@@ -344,25 +360,22 @@ export const dbService = {
       cache.posts = await loadCollection("posts", DEFAULT_POSTS);
       cache.scholarships = (await loadCollection("scholarships", DEFAULT_SCHOLARSHIPS)).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
-      // 3. Enquiries (No seed required)
+      // 4. Enquiries (No seed required)
       const enquiriesSnap = await getDocs(collection(db, "enquiries"));
       cache.enquiries = enquiriesSnap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
 
-      // Fallback merge & double sync: Preserve local course image edits if local storage has custom images
-      const localCourses = loadData(DB_KEYS.COURSES, null);
-      if (localCourses && Array.isArray(localCourses) && cache.courses) {
-        cache.courses = cache.courses.map(remoteItem => {
-          const localItem = localCourses.find(l => l.id === remoteItem.id);
-          if (localItem && localItem.image && localItem.image !== remoteItem.image) {
-            const merged = { ...remoteItem, image: localItem.image, showImage: localItem.showImage !== false };
-            setDoc(doc(db, "courses", merged.id), merged, { merge: true }).catch(err => console.error("Course Firestore sync error:", err));
-            return merged;
-          }
-          return remoteItem;
-        });
-      }
-      // Always keep LocalStorage in sync with cache.courses
+      // Keep LocalStorage in sync as offline cache for all collections
+      saveData(DB_KEYS.SETTINGS, cache.settings);
+      saveData(DB_KEYS.SLIDERS, cache.sliders);
+      saveData(DB_KEYS.KALAM, cache.kalam);
       saveData(DB_KEYS.COURSES, cache.courses);
+      saveData(DB_KEYS.RESOURCES, cache.resources);
+      saveData(DB_KEYS.TESTIMONIALS, cache.testimonials);
+      saveData(DB_KEYS.RESULTS, cache.results);
+      saveData(DB_KEYS.PAGES, cache.pages);
+      saveData(DB_KEYS.POSTS, cache.posts);
+      saveData(DB_KEYS.SCHOLARSHIPS, cache.scholarships);
+      saveData(DB_KEYS.ENQUIRIES, cache.enquiries);
 
     } catch (err) {
       console.error("⚠️ Firestore pre-loading failed. Reverting to LocalStorage.", err);
@@ -385,11 +398,11 @@ export const dbService = {
   getSettings() {
     return cache.settings;
   },
-  saveSettings(settings) {
+  async saveSettings(settings) {
     cache.settings = settings;
     saveData(DB_KEYS.SETTINGS, settings);
     if (!isDefault) {
-      setDoc(doc(db, "settings", "main"), settings).catch(err => console.error("Firestore settings save error:", err));
+      await setDoc(doc(db, "settings", "main"), settings);
     }
     return settings;
   },
@@ -398,22 +411,22 @@ export const dbService = {
   getSliders() {
     return cache.sliders;
   },
-  saveSliders(sliders) {
-    cache.sliders = sliders.sort((a,b) => a.orderIndex - b.orderIndex);
-    saveData(DB_KEYS.SLIDERS, sliders);
+  async saveSliders(sliders) {
+    const sorted = [...sliders].sort((a,b) => a.orderIndex - b.orderIndex);
+    cache.sliders = sorted;
+    saveData(DB_KEYS.SLIDERS, sorted);
     if (!isDefault) {
-      for (const s of sliders) {
-        setDoc(doc(db, "sliders", s.id), s).catch(err => console.error("Firestore slider save error:", err));
+      for (const s of sorted) {
+        await setDoc(doc(db, "sliders", s.id), s);
       }
     }
-    return sliders;
+    return sorted;
   },
-  deleteSlider(id) {
+  async deleteSlider(id) {
     cache.sliders = cache.sliders.filter(s => s.id !== id);
-    if (isDefault) {
-      saveData(DB_KEYS.SLIDERS, cache.sliders);
-    } else {
-      deleteDoc(doc(db, "sliders", id)).catch(err => console.error("Firestore slider delete error:", err));
+    saveData(DB_KEYS.SLIDERS, cache.sliders);
+    if (!isDefault) {
+      await deleteDoc(doc(db, "sliders", id));
     }
   },
 
@@ -421,11 +434,11 @@ export const dbService = {
   getKalam() {
     return cache.kalam;
   },
-  saveKalam(kalam) {
+  async saveKalam(kalam) {
     cache.kalam = kalam;
     saveData(DB_KEYS.KALAM, kalam);
     if (!isDefault) {
-      setDoc(doc(db, "kalam", "main"), kalam).catch(err => console.error("Firestore kalam save error:", err));
+      await setDoc(doc(db, "kalam", "main"), kalam);
     }
     return kalam;
   },
@@ -437,7 +450,7 @@ export const dbService = {
   getCourse(id) {
     return cache.courses.find(c => c.id === id);
   },
-  saveCourse(course) {
+  async saveCourse(course) {
     const list = [...cache.courses];
     if (!course.id) {
       course.id = 'c_' + Date.now();
@@ -461,21 +474,17 @@ export const dbService = {
     saveData(DB_KEYS.COURSES, list);
 
     if (!isDefault) {
-      setDoc(doc(db, "courses", cleanCourse.id), cleanCourse)
-        .then(() => {
-          console.log(`✓ Course ${cleanCourse.id} saved to Firestore successfully.`);
-        })
-        .catch(err => {
-          console.error("Firestore course save error:", err);
-        });
+      await setDoc(doc(db, "courses", cleanCourse.id), cleanCourse);
+      console.log(`✓ Course ${cleanCourse.id} saved to Firestore successfully.`);
     }
     return cleanCourse;
   },
-  deleteCourse(id) {
+  async deleteCourse(id) {
     cache.courses = cache.courses.filter(c => c.id !== id);
     saveData(DB_KEYS.COURSES, cache.courses);
     if (!isDefault) {
-      deleteDoc(doc(db, "courses", id)).catch(err => console.error("Firestore course delete error:", err));
+      await deleteDoc(doc(db, "courses", id));
+      console.log(`✓ Course ${id} deleted from Firestore successfully.`);
     }
   },
 
@@ -483,7 +492,7 @@ export const dbService = {
   getResults() {
     return cache.results;
   },
-  saveResult(result) {
+  async saveResult(result) {
     const list = [...cache.results];
     if (!result.id) {
       result.id = 'res_' + Date.now();
@@ -498,15 +507,15 @@ export const dbService = {
     saveData(DB_KEYS.RESULTS, list);
 
     if (!isDefault) {
-      setDoc(doc(db, "results", result.id), result).catch(err => console.error("Firestore result save error:", err));
+      await setDoc(doc(db, "results", result.id), result);
     }
     return result;
   },
-  deleteResult(id) {
+  async deleteResult(id) {
     cache.results = cache.results.filter(r => r.id !== id);
     saveData(DB_KEYS.RESULTS, cache.results);
     if (!isDefault) {
-      deleteDoc(doc(db, "results", id)).catch(err => console.error("Firestore result delete error:", err));
+      await deleteDoc(doc(db, "results", id));
     }
   },
 
@@ -514,7 +523,7 @@ export const dbService = {
   getScholarships() {
     return cache.scholarships;
   },
-  saveScholarship(scholarship) {
+  async saveScholarship(scholarship) {
     const list = [...cache.scholarships];
     if (!scholarship.id) {
       scholarship.id = 'sc_' + Date.now();
@@ -529,15 +538,15 @@ export const dbService = {
     saveData(DB_KEYS.SCHOLARSHIPS, cache.scholarships);
 
     if (!isDefault) {
-      setDoc(doc(db, "scholarships", scholarship.id), scholarship).catch(err => console.error("Firestore scholarship save error:", err));
+      await setDoc(doc(db, "scholarships", scholarship.id), scholarship);
     }
     return scholarship;
   },
-  deleteScholarship(id) {
+  async deleteScholarship(id) {
     cache.scholarships = cache.scholarships.filter(s => s.id !== id);
     saveData(DB_KEYS.SCHOLARSHIPS, cache.scholarships);
     if (!isDefault) {
-      deleteDoc(doc(db, "scholarships", id)).catch(err => console.error("Firestore scholarship delete error:", err));
+      await deleteDoc(doc(db, "scholarships", id));
     }
   },
 
@@ -545,7 +554,7 @@ export const dbService = {
   getResources() {
     return cache.resources;
   },
-  saveResource(resource) {
+  async saveResource(resource) {
     const list = [...cache.resources];
     if (!resource.id) {
       resource.id = 'r_' + Date.now();
@@ -557,20 +566,18 @@ export const dbService = {
       list.push(resource);
     }
     cache.resources = list;
+    saveData(DB_KEYS.RESOURCES, list);
 
-    if (isDefault) {
-      saveData(DB_KEYS.RESOURCES, list);
-    } else {
-      setDoc(doc(db, "resources", resource.id), resource).catch(err => console.error("Firestore resource save error:", err));
+    if (!isDefault) {
+      await setDoc(doc(db, "resources", resource.id), resource);
     }
     return resource;
   },
-  deleteResource(id) {
+  async deleteResource(id) {
     cache.resources = cache.resources.filter(r => r.id !== id);
-    if (isDefault) {
-      saveData(DB_KEYS.RESOURCES, cache.resources);
-    } else {
-      deleteDoc(doc(db, "resources", id)).catch(err => console.error("Firestore resource delete error:", err));
+    saveData(DB_KEYS.RESOURCES, cache.resources);
+    if (!isDefault) {
+      await deleteDoc(doc(db, "resources", id));
     }
   },
 
@@ -578,7 +585,7 @@ export const dbService = {
   getTestimonials() {
     return cache.testimonials;
   },
-  saveTestimonial(testimonial) {
+  async saveTestimonial(testimonial) {
     const list = [...cache.testimonials];
     if (!testimonial.id) {
       testimonial.id = 't_' + Date.now();
@@ -590,20 +597,18 @@ export const dbService = {
       list.push(testimonial);
     }
     cache.testimonials = list;
+    saveData(DB_KEYS.TESTIMONIALS, list);
 
-    if (isDefault) {
-      saveData(DB_KEYS.TESTIMONIALS, list);
-    } else {
-      setDoc(doc(db, "testimonials", testimonial.id), testimonial).catch(err => console.error("Firestore testimonial save error:", err));
+    if (!isDefault) {
+      await setDoc(doc(db, "testimonials", testimonial.id), testimonial);
     }
     return testimonial;
   },
-  deleteTestimonial(id) {
+  async deleteTestimonial(id) {
     cache.testimonials = cache.testimonials.filter(t => t.id !== id);
-    if (isDefault) {
-      saveData(DB_KEYS.TESTIMONIALS, cache.testimonials);
-    } else {
-      deleteDoc(doc(db, "testimonials", id)).catch(err => console.error("Firestore testimonial delete error:", err));
+    saveData(DB_KEYS.TESTIMONIALS, cache.testimonials);
+    if (!isDefault) {
+      await deleteDoc(doc(db, "testimonials", id));
     }
   },
 
@@ -614,7 +619,7 @@ export const dbService = {
   getPageBySlug(slug) {
     return cache.pages.find(p => p.slug === slug);
   },
-  savePage(page) {
+  async savePage(page) {
     const list = [...cache.pages];
     page.lastUpdated = new Date().toISOString();
     if (!page.id) {
@@ -627,20 +632,18 @@ export const dbService = {
       list.push(page);
     }
     cache.pages = list;
+    saveData(DB_KEYS.PAGES, list);
 
-    if (isDefault) {
-      saveData(DB_KEYS.PAGES, list);
-    } else {
-      setDoc(doc(db, "pages", page.id), page).catch(err => console.error("Firestore page save error:", err));
+    if (!isDefault) {
+      await setDoc(doc(db, "pages", page.id), page);
     }
     return page;
   },
-  deletePage(id) {
+  async deletePage(id) {
     cache.pages = cache.pages.filter(p => p.id !== id);
-    if (isDefault) {
-      saveData(DB_KEYS.PAGES, cache.pages);
-    } else {
-      deleteDoc(doc(db, "pages", id)).catch(err => console.error("Firestore page delete error:", err));
+    saveData(DB_KEYS.PAGES, cache.pages);
+    if (!isDefault) {
+      await deleteDoc(doc(db, "pages", id));
     }
   },
 
@@ -651,7 +654,7 @@ export const dbService = {
   getPostBySlug(slug) {
     return cache.posts.find(p => p.slug === slug);
   },
-  savePost(post) {
+  async savePost(post) {
     const list = [...cache.posts];
     if (!post.id) {
       post.id = 'po_' + Date.now();
@@ -664,20 +667,18 @@ export const dbService = {
       list.push(post);
     }
     cache.posts = list;
+    saveData(DB_KEYS.POSTS, list);
 
-    if (isDefault) {
-      saveData(DB_KEYS.POSTS, list);
-    } else {
-      setDoc(doc(db, "posts", post.id), post).catch(err => console.error("Firestore post save error:", err));
+    if (!isDefault) {
+      await setDoc(doc(db, "posts", post.id), post);
     }
     return post;
   },
-  deletePost(id) {
+  async deletePost(id) {
     cache.posts = cache.posts.filter(p => p.id !== id);
-    if (isDefault) {
-      saveData(DB_KEYS.POSTS, cache.posts);
-    } else {
-      deleteDoc(doc(db, "posts", id)).catch(err => console.error("Firestore post delete error:", err));
+    saveData(DB_KEYS.POSTS, cache.posts);
+    if (!isDefault) {
+      await deleteDoc(doc(db, "posts", id));
     }
   },
 
@@ -685,39 +686,36 @@ export const dbService = {
   getEnquiries() {
     return cache.enquiries;
   },
-  addEnquiry(enquiry) {
+  async addEnquiry(enquiry) {
     enquiry.id = 'e_' + Date.now();
     enquiry.status = 'New';
     enquiry.timestamp = new Date().toISOString();
     const list = [enquiry, ...cache.enquiries];
     cache.enquiries = list;
+    saveData(DB_KEYS.ENQUIRIES, list);
 
-    if (isDefault) {
-      saveData(DB_KEYS.ENQUIRIES, list);
-    } else {
-      setDoc(doc(db, "enquiries", enquiry.id), enquiry).catch(err => console.error("Firestore enquiry save error:", err));
+    if (!isDefault) {
+      await setDoc(doc(db, "enquiries", enquiry.id), enquiry);
     }
     return enquiry;
   },
-  updateEnquiryStatus(id, status) {
+  async updateEnquiryStatus(id, status) {
     const list = [...cache.enquiries];
     const idx = list.findIndex(e => e.id === id);
     if (idx > -1) {
       list[idx].status = status;
       cache.enquiries = list;
-      if (isDefault) {
-        saveData(DB_KEYS.ENQUIRIES, list);
-      } else {
-        updateDoc(doc(db, "enquiries", id), { status }).catch(err => console.error("Firestore enquiry update error:", err));
+      saveData(DB_KEYS.ENQUIRIES, list);
+      if (!isDefault) {
+        await updateDoc(doc(db, "enquiries", id), { status });
       }
     }
   },
-  deleteEnquiry(id) {
+  async deleteEnquiry(id) {
     cache.enquiries = cache.enquiries.filter(e => e.id !== id);
-    if (isDefault) {
-      saveData(DB_KEYS.ENQUIRIES, cache.enquiries);
-    } else {
-      deleteDoc(doc(db, "enquiries", id)).catch(err => console.error("Firestore enquiry delete error:", err));
+    saveData(DB_KEYS.ENQUIRIES, cache.enquiries);
+    if (!isDefault) {
+      await deleteDoc(doc(db, "enquiries", id));
     }
   },
 

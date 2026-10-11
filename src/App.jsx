@@ -2170,7 +2170,7 @@ function AdminSliders() {
     setEditActive(slide.active);
   };
 
-  const handleSave = (id) => {
+  const handleSave = async (id) => {
     if (!editUrl) return;
     const updated = sliders.map(s => {
       if (s.id === id) {
@@ -2178,12 +2178,12 @@ function AdminSliders() {
       }
       return s;
     });
-    dbService.saveSliders(updated);
+    await dbService.saveSliders(updated);
     setSliders(updated);
     setEditingId(null);
   };
 
-  const handleMoveSlide = (currentIndex, targetIndex) => {
+  const handleMoveSlide = async (currentIndex, targetIndex) => {
     if (targetIndex < 0 || targetIndex >= sliders.length || currentIndex === targetIndex) return;
     const updated = [...sliders];
     const [movedSlide] = updated.splice(currentIndex, 1);
@@ -2195,11 +2195,11 @@ function AdminSliders() {
       orderIndex: idx
     }));
     
-    dbService.saveSliders(reindexed);
+    await dbService.saveSliders(reindexed);
     setSliders(reindexed);
   };
 
-  const handleAddSlide = () => {
+  const handleAddSlide = async () => {
     if (sliders.length >= 10) {
       alert("Maximum limit of 10 sliders reached!");
       return;
@@ -2212,13 +2212,13 @@ function AdminSliders() {
       active: true
     };
     const updated = [...sliders, newSlide];
-    dbService.saveSliders(updated);
+    await dbService.saveSliders(updated);
     setSliders(updated);
   };
 
-  const handleDeleteSlide = (id) => {
+  const handleDeleteSlide = async (id) => {
     if (window.confirm("Are you sure you want to delete this banner slide?")) {
-      dbService.deleteSlider(id);
+      await dbService.deleteSlider(id);
       setSliders(prev => prev.filter(s => s.id !== id));
     }
   };
@@ -2416,6 +2416,7 @@ function AdminCourses() {
   const [courses, setCourses] = useState([]);
   const [formOpen, setFormOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('class-11-12');
@@ -2489,36 +2490,47 @@ function AdminCourses() {
     setFormOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (confirm('Are you sure you want to delete this course from catalog?')) {
-      dbService.deleteCourse(id);
-      loadCoursesList();
+      try {
+        await dbService.deleteCourse(id);
+        loadCoursesList();
+      } catch (err) {
+        alert('Failed to delete course: ' + (err.message || err));
+      }
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const saved = dbService.saveCourse({
-      id: editingCourse ? editingCourse.id : undefined,
-      title,
-      category,
-      target,
-      boards,
-      duration,
-      schedule,
-      fee: 0,
-      image,
-      details,
-      showTarget,
-      showBoards,
-      showDuration,
-      showSchedule,
-      showFee: false,
-      showImage: showImage !== false,
-      showDetails
-    });
-    setFormOpen(false);
-    loadCoursesList();
+    setIsSaving(true);
+    try {
+      await dbService.saveCourse({
+        id: editingCourse ? editingCourse.id : undefined,
+        title,
+        category,
+        target,
+        boards,
+        duration,
+        schedule,
+        fee: parseInt(fee) || 0,
+        image,
+        details,
+        showTarget,
+        showBoards,
+        showDuration,
+        showSchedule,
+        showFee: showFee !== false,
+        showImage: showImage !== false,
+        showDetails
+      });
+      setFormOpen(false);
+      loadCoursesList();
+    } catch (err) {
+      alert('Failed to save course: ' + (err.message || err));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -2647,7 +2659,7 @@ function AdminCourses() {
           </div>
           
           <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-            <button type="submit" className="admin-btn">Save Course Offer</button>
+            <button type="submit" className="admin-btn" disabled={isSaving}>{isSaving ? 'Saving...' : 'Save Course Offer'}</button>
             <button type="button" className="admin-btn secondary" onClick={() => setFormOpen(false)}>Cancel</button>
           </div>
         </form>
@@ -2707,6 +2719,7 @@ function AdminResults() {
   const [results, setResults] = useState([]);
   const [formOpen, setFormOpen] = useState(false);
   const [editingResult, setEditingResult] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [studentName, setStudentName] = useState('');
   const [examTypeSelect, setExamTypeSelect] = useState('JEE Main');
@@ -2754,26 +2767,37 @@ function AdminResults() {
     setFormOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (confirm('Delete student results record?')) {
-      dbService.deleteResult(id);
-      loadResultsList();
+      try {
+        await dbService.deleteResult(id);
+        loadResultsList();
+      } catch (err) {
+        alert('Failed to delete result: ' + (err.message || err));
+      }
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dbService.saveResult({
-      id: editingResult ? editingResult.id : undefined,
-      studentName,
-      examType: examTypeSelect === 'Custom' ? customExamType : examTypeSelect,
-      achievement,
-      location,
-      photo,
-      year
-    });
-    setFormOpen(false);
-    loadResultsList();
+    setIsSaving(true);
+    try {
+      await dbService.saveResult({
+        id: editingResult ? editingResult.id : undefined,
+        studentName,
+        examType: examTypeSelect === 'Custom' ? customExamType : examTypeSelect,
+        achievement,
+        location,
+        photo,
+        year
+      });
+      setFormOpen(false);
+      loadResultsList();
+    } catch (err) {
+      alert('Failed to save result: ' + (err.message || err));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const defaultPresets = ['JEE Main', 'NEET', 'Olympiads', 'GUJ-CET'];
@@ -2846,7 +2870,7 @@ function AdminResults() {
           </div>
 
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button type="submit" className="admin-btn">Save Record</button>
+            <button type="submit" className="admin-btn" disabled={isSaving}>{isSaving ? 'Saving...' : 'Save Record'}</button>
             <button type="button" className="admin-btn secondary" onClick={() => setFormOpen(false)}>Cancel</button>
           </div>
         </form>
@@ -2892,6 +2916,7 @@ function AdminPages() {
   const [pages, setPages] = useState([]);
   const [formOpen, setFormOpen] = useState(false);
   const [editingPage, setEditingPage] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
@@ -2935,26 +2960,37 @@ function AdminPages() {
     setFormOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (confirm('Are you sure you want to delete this custom page? It will stop ranking on google.')) {
-      dbService.deletePage(id);
-      loadPagesList();
+      try {
+        await dbService.deletePage(id);
+        loadPagesList();
+      } catch (err) {
+        alert('Failed to delete page: ' + (err.message || err));
+      }
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dbService.savePage({
-      id: editingPage ? editingPage.id : undefined,
-      title,
-      slug,
-      content,
-      metaTitle,
-      metaDescription,
-      keywords
-    });
-    setFormOpen(false);
-    loadPagesList();
+    setIsSaving(true);
+    try {
+      await dbService.savePage({
+        id: editingPage ? editingPage.id : undefined,
+        title,
+        slug,
+        content,
+        metaTitle,
+        metaDescription,
+        keywords
+      });
+      setFormOpen(false);
+      loadPagesList();
+    } catch (err) {
+      alert('Failed to save page: ' + (err.message || err));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -3014,7 +3050,7 @@ function AdminPages() {
           </div>
 
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button type="submit" className="admin-btn">Save Custom Page</button>
+            <button type="submit" className="admin-btn" disabled={isSaving}>{isSaving ? 'Saving...' : 'Save Custom Page'}</button>
             <button type="button" className="admin-btn secondary" onClick={() => setFormOpen(false)}>Cancel</button>
           </div>
         </form>
@@ -3064,6 +3100,7 @@ function AdminPosts() {
   const [posts, setPosts] = useState([]);
   const [formOpen, setFormOpen] = useState(false);
   const [editingPost, setEditingPost] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
@@ -3124,28 +3161,39 @@ function AdminPosts() {
     setFormOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (confirm('Are you sure you want to delete this blog post/announcement?')) {
-      dbService.deletePost(id);
-      loadPostsList();
+      try {
+        await dbService.deletePost(id);
+        loadPostsList();
+      } catch (err) {
+        alert('Failed to delete post: ' + (err.message || err));
+      }
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dbService.savePost({
-      id: editingPost ? editingPost.id : undefined,
-      title,
-      slug,
-      content,
-      coverImage,
-      metaTitle,
-      metaDescription,
-      keywords,
-      category: categorySelect === 'Custom' ? customCategory : categorySelect
-    });
-    setFormOpen(false);
-    loadPostsList();
+    setIsSaving(true);
+    try {
+      await dbService.savePost({
+        id: editingPost ? editingPost.id : undefined,
+        title,
+        slug,
+        content,
+        coverImage,
+        metaTitle,
+        metaDescription,
+        keywords,
+        category: categorySelect === 'Custom' ? customCategory : categorySelect
+      });
+      setFormOpen(false);
+      loadPostsList();
+    } catch (err) {
+      alert('Failed to save post: ' + (err.message || err));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const defaultBlogPresets = ['JEE', 'NEET', 'Olympiads', 'Announcements', 'Academic Guides', 'Admission Alerts'];
@@ -3238,7 +3286,7 @@ function AdminPosts() {
           </div>
 
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button type="submit" className="admin-btn">Publish Update</button>
+            <button type="submit" className="admin-btn" disabled={isSaving}>{isSaving ? 'Publishing...' : 'Publish Update'}</button>
             <button type="button" className="admin-btn secondary" onClick={() => setFormOpen(false)}>Cancel</button>
           </div>
         </form>
@@ -3289,6 +3337,7 @@ function AdminPosts() {
 function AdminResources() {
   const [resources, setResources] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [title, setTitle] = useState('');
   const [type, setType] = useState('answer-key');
   const [linkUrl, setLinkUrl] = useState('');
@@ -3313,24 +3362,35 @@ function AdminResources() {
     setLinkUrl('#');
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (confirm('Delete this download link?')) {
-      dbService.deleteResource(id);
-      loadResources();
+      try {
+        await dbService.deleteResource(id);
+        loadResources();
+      } catch (err) {
+        alert('Failed to delete resource: ' + (err.message || err));
+      }
     }
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     if (!title || !linkUrl) return;
-    dbService.saveResource({
-      id: editingId === 'new' ? undefined : editingId,
-      title,
-      type,
-      linkUrl
-    });
-    setEditingId(null);
-    loadResources();
+    setIsSaving(true);
+    try {
+      await dbService.saveResource({
+        id: editingId === 'new' ? undefined : editingId,
+        title,
+        type,
+        linkUrl
+      });
+      setEditingId(null);
+      loadResources();
+    } catch (err) {
+      alert('Failed to save resource: ' + (err.message || err));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -3366,7 +3426,7 @@ function AdminResources() {
             <input type="text" value={linkUrl} onChange={e => setLinkUrl(e.target.value)} required />
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
-            <button type="submit" className="admin-btn">Save Resource Link</button>
+            <button type="submit" className="admin-btn" disabled={isSaving}>{isSaving ? 'Saving...' : 'Save Resource Link'}</button>
             <button type="button" className="admin-btn secondary" onClick={() => setEditingId(null)}>Cancel</button>
           </div>
         </form>
@@ -3504,6 +3564,7 @@ function AdminScholarships() {
   const [scholarships, setScholarships] = useState([]);
   const [formOpen, setFormOpen] = useState(false);
   const [editingSlab, setEditingSlab] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [title, setTitle] = useState('');
   const [criteria, setCriteria] = useState('');
@@ -3529,10 +3590,14 @@ function AdminScholarships() {
     setFormOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this scholarship slab?")) {
-      dbService.deleteScholarship(id);
-      loadList();
+      try {
+        await dbService.deleteScholarship(id);
+        loadList();
+      } catch (err) {
+        alert('Failed to delete scholarship: ' + (err.message || err));
+      }
     }
   };
 
@@ -3546,19 +3611,26 @@ function AdminScholarships() {
     setFormOpen(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const payload = {
-      id: editingSlab ? editingSlab.id : undefined,
-      title,
-      criteria,
-      discount,
-      description,
-      orderIndex: parseInt(orderIndex) || 0
-    };
-    dbService.saveScholarship(payload);
-    setFormOpen(false);
-    loadList();
+    setIsSaving(true);
+    try {
+      const payload = {
+        id: editingSlab ? editingSlab.id : undefined,
+        title,
+        criteria,
+        discount,
+        description,
+        orderIndex: parseInt(orderIndex) || 0
+      };
+      await dbService.saveScholarship(payload);
+      setFormOpen(false);
+      loadList();
+    } catch (err) {
+      alert('Failed to save scholarship: ' + (err.message || err));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -3604,8 +3676,8 @@ function AdminScholarships() {
               <label>Slab Description / Terms</label>
               <textarea value={description} onChange={e => setDescription(e.target.value)} rows="3" placeholder="Provide detailed guidelines about required documents or eligibility criteria..." required></textarea>
             </div>
-            <button type="submit" className="admin-btn" style={{ padding: '10px 24px' }}>
-              {editingSlab ? 'Update Scholarship' : 'Create Scholarship'}
+            <button type="submit" className="admin-btn" style={{ padding: '10px 24px' }} disabled={isSaving}>
+              {isSaving ? 'Saving...' : (editingSlab ? 'Update Scholarship' : 'Create Scholarship')}
             </button>
           </form>
         </div>
@@ -4178,6 +4250,7 @@ function AdminTestimonials() {
   const [testimonials, setTestimonials] = useState([]);
   const [formOpen, setFormOpen] = useState(false);
   const [editingTestimonial, setEditingTestimonial] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [studentName, setStudentName] = useState('');
   const [examType, setExamType] = useState('JEE');
@@ -4214,26 +4287,37 @@ function AdminTestimonials() {
     setFormOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (confirm('Are you sure you want to delete this student review?')) {
-      dbService.deleteTestimonial(id);
-      loadList();
+      try {
+        await dbService.deleteTestimonial(id);
+        loadList();
+      } catch (err) {
+        alert('Failed to delete testimonial: ' + (err.message || err));
+      }
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dbService.saveTestimonial({
-      id: editingTestimonial ? editingTestimonial.id : undefined,
-      studentName,
-      examType,
-      rankBadge,
-      photo,
-      videoUrl,
-      textReview
-    });
-    setFormOpen(false);
-    loadList();
+    setIsSaving(true);
+    try {
+      await dbService.saveTestimonial({
+        id: editingTestimonial ? editingTestimonial.id : undefined,
+        studentName,
+        examType,
+        rankBadge,
+        photo,
+        videoUrl,
+        textReview
+      });
+      setFormOpen(false);
+      loadList();
+    } catch (err) {
+      alert('Failed to save testimonial: ' + (err.message || err));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -4302,7 +4386,7 @@ function AdminTestimonials() {
           </div>
 
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button type="submit" className="admin-btn">Save Review</button>
+            <button type="submit" className="admin-btn" disabled={isSaving}>{isSaving ? 'Saving...' : 'Save Review'}</button>
             <button type="button" className="admin-btn secondary" onClick={() => setFormOpen(false)}>Cancel</button>
           </div>
         </form>
