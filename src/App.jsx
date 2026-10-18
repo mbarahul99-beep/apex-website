@@ -2398,7 +2398,11 @@ function AdminSliders() {
                     <ImageUploadCompress 
                       value={editUrl} 
                       onChange={setEditUrl} 
-                      label="Upload Desktop Banner" 
+                      label="Upload Desktop Banner (High Quality)" 
+                      maxWidth={2048}
+                      maxHeight={800}
+                      quality={0.92}
+                      preserveOriginal={true}
                     />
                   </div>
                   <div className="admin-input-group" style={{ marginBottom: '8px' }}>
@@ -2412,7 +2416,11 @@ function AdminSliders() {
                     <ImageUploadCompress 
                       value={editMobileUrl} 
                       onChange={setEditMobileUrl} 
-                      label="Upload Mobile Banner" 
+                      label="Upload Mobile Banner (High Quality)" 
+                      maxWidth={1200}
+                      maxHeight={1200}
+                      quality={0.90}
+                      preserveOriginal={true}
                     />
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', margin: '8px 0' }}>
@@ -4495,9 +4503,18 @@ function LogoUploadCompress({ value, onChange, label = "Upload & Apply New Logo 
 }
 
 // ---------------- IMAGE UPLOAD & FRONTEND CANVAS COMPRESSION COMPONENT ----------------
-function ImageUploadCompress({ value, onChange, label = "Upload Image" }) {
+function ImageUploadCompress({ 
+  value, 
+  onChange, 
+  label = "Upload Image", 
+  maxWidth = 800, 
+  maxHeight = 600, 
+  quality = 0.82,
+  preserveOriginal = false
+}) {
   const [compressing, setCompressing] = useState(false);
   const [error, setError] = useState(null);
+  const [info, setInfo] = useState(null);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -4514,12 +4531,40 @@ function ImageUploadCompress({ value, onChange, label = "Upload Image" }) {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = (event) => {
+      const rawDataUrl = event.target.result;
+
+      // If file is already reasonably sized (< 350KB) and preserveOriginal is allowed:
+      // Keep original byte-exact file without re-compressing or touching pixels!
+      if (preserveOriginal && file.size < 380000) {
+        onChange(rawDataUrl);
+        setInfo({
+          origWidth: null,
+          origHeight: null,
+          sizeKb: Math.round(file.size / 1024),
+          original: true
+        });
+        setCompressing(false);
+        return;
+      }
+
       const img = new Image();
-      img.src = event.target.result;
+      img.src = rawDataUrl;
       img.onload = () => {
-        const isPng = file.type === 'image/png';
-        const TARGET_MAX_WIDTH = 800;
-        const TARGET_MAX_HEIGHT = 600;
+        const TARGET_MAX_WIDTH = maxWidth;
+        const TARGET_MAX_HEIGHT = maxHeight;
+
+        // If preserveOriginal is requested and image already fits within dimensions and safe file size
+        if (preserveOriginal && img.width <= TARGET_MAX_WIDTH && img.height <= TARGET_MAX_HEIGHT && file.size < 400000) {
+          onChange(rawDataUrl);
+          setInfo({
+            origWidth: img.width,
+            origHeight: img.height,
+            sizeKb: Math.round(file.size / 1024),
+            original: true
+          });
+          setCompressing(false);
+          return;
+        }
 
         // Multi-step anti-aliased downsampling (step-down in halves)
         let curCanvas = document.createElement('canvas');
@@ -4550,20 +4595,10 @@ function ImageUploadCompress({ value, onChange, label = "Upload Image" }) {
           curHeight = stepHeight;
         }
 
-        // Final precise scale step
-        let finalWidth = curWidth;
-        let finalHeight = curHeight;
-        if (finalWidth > finalHeight) {
-          if (finalWidth > TARGET_MAX_WIDTH) {
-            finalHeight = Math.round(finalHeight * (TARGET_MAX_WIDTH / finalWidth));
-            finalWidth = TARGET_MAX_WIDTH;
-          }
-        } else {
-          if (finalHeight > TARGET_MAX_HEIGHT) {
-            finalWidth = Math.round(finalWidth * (TARGET_MAX_HEIGHT / finalHeight));
-            finalHeight = TARGET_MAX_HEIGHT;
-          }
-        }
+        // Calculate aspect ratio scale
+        const scale = Math.min(1, TARGET_MAX_WIDTH / curWidth, TARGET_MAX_HEIGHT / curHeight);
+        const finalWidth = Math.max(1, Math.round(curWidth * scale));
+        const finalHeight = Math.max(1, Math.round(curHeight * scale));
 
         const finalCanvas = document.createElement('canvas');
         finalCanvas.width = finalWidth;
@@ -4575,8 +4610,24 @@ function ImageUploadCompress({ value, onChange, label = "Upload Image" }) {
         finalCtx.imageSmoothingQuality = 'high';
         finalCtx.drawImage(curCanvas, 0, 0, finalWidth, finalHeight);
 
-        // Always output JPEG format at 0.80 quality to guarantee lightweight ~40KB - 60KB data URLs that stay well under Firestore's 1MB limit
-        const compressedDataUrl = finalCanvas.toDataURL('image/jpeg', 0.80);
+        // High quality JPEG output
+        let outQuality = quality;
+        let compressedDataUrl = finalCanvas.toDataURL('image/jpeg', outQuality);
+
+        // Ensure string stays below 380KB for Firestore safe storage
+        if (compressedDataUrl.length > 400000) {
+          compressedDataUrl = finalCanvas.toDataURL('image/jpeg', 0.80);
+        }
+
+        setInfo({
+          origWidth: img.width,
+          origHeight: img.height,
+          finalWidth,
+          finalHeight,
+          sizeKb: Math.round(compressedDataUrl.length * 0.75 / 1024),
+          original: false
+        });
+
         onChange(compressedDataUrl);
         setCompressing(false);
       };
@@ -4606,11 +4657,16 @@ function ImageUploadCompress({ value, onChange, label = "Upload Image" }) {
           className="admin-btn secondary" 
           style={{ cursor: 'pointer', padding: '6px 12px', fontSize: '0.76rem', display: 'inline-flex', alignItems: 'center', margin: 0 }}
         >
-          {compressing ? '⌛ Compressing Image...' : label}
+          {compressing ? '⌛ Processing Image...' : label}
         </label>
-        {value && value.startsWith('data:image') && (
+        {info && (
           <span style={{ fontSize: '0.74rem', color: 'var(--accent-green)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-            ✓ Compressed (Ready)
+            ✓ {info.original ? 'Original Quality Preserved' : `High-Res (${info.finalWidth}x${info.finalHeight}px, ${info.sizeKb}KB)`}
+          </span>
+        )}
+        {!info && value && value.startsWith('data:image') && (
+          <span style={{ fontSize: '0.74rem', color: 'var(--accent-green)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+            ✓ Ready
           </span>
         )}
       </div>
