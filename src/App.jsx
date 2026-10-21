@@ -503,7 +503,6 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
             <div className="footer-col">
               <div className="footer-logo-title" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
                 <img src={getLogoSrc(settings.logoUrl || settings.logoNameUrl || '/logo.png')} alt="APEX Logo" onError={(e) => { if (!e.target.src.includes('/logo.png')) { e.target.src = '/logo.png?v=2'; } }} />
-                <span>{settings.instituteName || "APEX INSTITUTE"}</span>
               </div>
               <p className="footer-desc">
                 Jind's premium classroom tutoring center providing highly structured coaching for NEET (Medical), IIT-JEE (Engineering) and Junior Foundations (Class 9th-10th, NTSE & Olympiads).
