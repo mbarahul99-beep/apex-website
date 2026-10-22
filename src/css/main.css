@@ -688,22 +688,55 @@
   border-radius: var(--radius-full);
   overflow: hidden;
   margin-bottom: var(--spacing-sm);
-  border: 4px solid #eff6ff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  border: 4px solid #ec4899;
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.22);
   flex-shrink: 0;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  box-sizing: border-box;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 @media (min-width: 768px) {
   .result-photo-wrap {
     width: 155px;
     height: 155px;
+    padding: 5px;
   }
+}
+
+.result-card:hover .result-photo-wrap {
+  border-color: #f43f5e;
+  transform: scale(1.03);
+  box-shadow: 0 6px 18px rgba(236, 72, 153, 0.35);
 }
 
 .result-photo {
   width: 100%;
   height: 100%;
+  object-fit: contain;
+  object-position: center;
+  border-radius: var(--radius-full);
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.result-photo.fit-contain {
+  object-fit: contain;
+  object-position: center;
+}
+
+.result-photo.fit-cover {
   object-fit: cover;
+  object-position: center;
+}
+
+.result-photo.fit-cover-top {
+  object-fit: cover;
+  object-position: top center;
 }
 
 .result-name {

@@ -952,7 +952,12 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
             {filteredResults.slice(0, 8).map(res => (
               <div className="result-card" key={res.id}>
                 <div className="result-photo-wrap">
-                  <img src={res.photo} className="result-photo" alt={res.studentName} />
+                  <img 
+                    src={res.photo} 
+                    className={`result-photo ${res.photoFit ? `fit-${res.photoFit}` : 'fit-contain'}`} 
+                    alt={res.studentName} 
+                    loading="lazy"
+                  />
                 </div>
                 <span className="result-name">{res.studentName}</span>
                 <span className="result-achievement">{res.achievement}</span>
@@ -2996,6 +3001,7 @@ function AdminResults() {
   const [achievement, setAchievement] = useState('');
   const [location, setLocation] = useState('');
   const [photo, setPhoto] = useState('');
+  const [photoFit, setPhotoFit] = useState('contain');
   const [year, setYear] = useState('2025');
 
   const loadResultsList = () => setResults(dbService.getResults());
@@ -3020,6 +3026,7 @@ function AdminResults() {
     setAchievement(res.achievement);
     setLocation(res.location);
     setPhoto(res.photo);
+    setPhotoFit(res.photoFit || 'contain');
     setYear(res.year || '2025');
     setFormOpen(true);
   };
@@ -3032,6 +3039,7 @@ function AdminResults() {
     setAchievement('');
     setLocation('State Haryana');
     setPhoto('https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=200');
+    setPhotoFit('contain');
     setYear('2025');
     setFormOpen(true);
   };
@@ -3058,6 +3066,7 @@ function AdminResults() {
         achievement,
         location,
         photo,
+        photoFit,
         year
       });
       setFormOpen(false);
@@ -3132,11 +3141,42 @@ function AdminResults() {
                 label="Or Upload and Compress File" 
               />
             </div>
-            <div className="admin-input-group" style={{ maxWidth: '150px' }}>
+            <div className="admin-input-group">
+              <label>Photo Display Mode</label>
+              <select value={photoFit} onChange={e => setPhotoFit(e.target.value)}>
+                <option value="contain">Full Image (Fit / No Upper Cropping) - Recommended</option>
+                <option value="cover-top">Top Focus (Show Full Head / Hair)</option>
+                <option value="cover">Fill Circle (Crop to fill)</option>
+              </select>
+              <small style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '4px', display: 'block' }}>
+                "Full Image" guarantees the student's head and hair are never cropped at the top.
+              </small>
+            </div>
+            <div className="admin-input-group" style={{ maxWidth: '140px' }}>
               <label>Academic Year *</label>
               <input type="text" value={year} onChange={e => setYear(e.target.value)} required />
             </div>
           </div>
+
+          {photo && (
+            <div style={{ margin: '15px 0', display: 'flex', alignItems: 'center', gap: '15px', background: '#fff5f8', padding: '12px 18px', borderRadius: '12px', border: '1px solid #fbcfe8' }}>
+              <div className="result-photo-wrap" style={{ width: '90px', height: '90px', margin: 0, flexShrink: 0 }}>
+                <img 
+                  src={photo} 
+                  className={`result-photo fit-${photoFit}`} 
+                  alt="Live Preview" 
+                />
+              </div>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: '0.88rem', color: '#9d174d' }}>
+                  Live Preview (Pink Circle)
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '2px' }}>
+                  Verify that the student's full head, hair, and face are completely visible before saving.
+                </div>
+              </div>
+            </div>
+          )}
 
           <div style={{ display: 'flex', gap: '10px' }}>
             <button type="submit" className="admin-btn" disabled={isSaving}>{isSaving ? 'Saving...' : 'Save Record'}</button>
@@ -3148,6 +3188,7 @@ function AdminResults() {
           <table className="admin-table">
             <thead>
               <tr>
+                <th>Photo</th>
                 <th>Student Name</th>
                 <th>Exam Category</th>
                 <th>Year</th>
@@ -3159,6 +3200,15 @@ function AdminResults() {
             <tbody>
               {results.map(res => (
                 <tr key={res.id}>
+                  <td>
+                    <div className="result-photo-wrap" style={{ width: '44px', height: '44px', margin: 0, borderWidth: '2px', padding: '2px' }}>
+                      <img 
+                        src={res.photo} 
+                        className={`result-photo ${res.photoFit ? `fit-${res.photoFit}` : 'fit-contain'}`} 
+                        alt={res.studentName} 
+                      />
+                    </div>
+                  </td>
                   <td style={{ fontWeight: 600 }}>{res.studentName}</td>
                   <td><span className="status-badge new">{res.examType}</span></td>
                   <td><strong>{res.year || '2025'}</strong></td>
@@ -3166,8 +3216,8 @@ function AdminResults() {
                   <td>{res.location}</td>
                   <td>
                     <div className="table-actions">
-                      <button className="table-action-btn" onClick={() => handleEdit(res)}><IconEdit /></button>
-                      <button className="table-action-btn delete" onClick={() => handleDelete(res.id)}><IconTrash /></button>
+                      <button className="table-action-btn" onClick={() => handleEdit(res)} title="Edit Record"><IconEdit /></button>
+                      <button className="table-action-btn delete" onClick={() => handleDelete(res.id)} title="Delete Record"><IconTrash /></button>
                     </div>
                   </td>
                 </tr>
@@ -4284,7 +4334,12 @@ function AllResultsView({ navigate }) {
                 {studentsToRender.map(res => (
                   <div className="result-card" key={res.id}>
                     <div className="result-photo-wrap">
-                      <img src={res.photo} className="result-photo" alt={res.studentName} />
+                      <img 
+                        src={res.photo} 
+                        className={`result-photo ${res.photoFit ? `fit-${res.photoFit}` : 'fit-contain'}`} 
+                        alt={res.studentName} 
+                        loading="lazy"
+                      />
                     </div>
                     <span className="result-name">{res.studentName}</span>
                     <span className="result-achievement">{res.achievement}</span>
