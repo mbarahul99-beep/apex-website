@@ -154,10 +154,10 @@
 
 @media (min-width: 768px) {
   .slider-container {
-    aspect-ratio: auto;
+    aspect-ratio: 1920 / 540;
+    width: 100%;
+    max-height: 540px;
     height: auto;
-    min-height: 240px;
-    max-height: 600px;
   }
 }
 

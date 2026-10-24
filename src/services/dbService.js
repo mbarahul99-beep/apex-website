@@ -311,36 +311,20 @@ const DEFAULT_POSTS = [
   }
 ];
 
-// Memory cache object for synchronous reads
-const cache = {
-  settings: DEFAULT_SETTINGS,
-  sliders: DEFAULT_SLIDERS,
-  kalam: DEFAULT_KALAM,
-  courses: DEFAULT_COURSES,
-  resources: DEFAULT_RESOURCES,
-  testimonials: DEFAULT_TESTIMONIALS,
-  results: DEFAULT_RESULTS,
-  alumni: DEFAULT_ALUMNI,
-  enquiries: [],
-  pages: DEFAULT_PAGES,
-  posts: DEFAULT_POSTS,
-  scholarships: DEFAULT_SCHOLARSHIPS
-};
-
 // Database operations helper for LocalStorage
 const loadData = (key, fallback) => {
-  const data = localStorage.getItem(key);
-  if (!data || data === "null") {
-    if (fallback !== null && fallback !== undefined) {
-      try {
-        localStorage.setItem(key, JSON.stringify(fallback));
-      } catch (e) {
-        console.warn("LocalStorage save warning:", e);
-      }
-    }
-    return fallback;
-  }
   try {
+    const data = localStorage.getItem(key);
+    if (!data || data === "null") {
+      if (fallback !== null && fallback !== undefined) {
+        try {
+          localStorage.setItem(key, JSON.stringify(fallback));
+        } catch (e) {
+          console.warn("LocalStorage save warning:", e);
+        }
+      }
+      return fallback;
+    }
     return JSON.parse(data);
   } catch (e) {
     return fallback;
@@ -353,6 +337,34 @@ const saveData = (key, data) => {
   } catch (e) {
     console.warn("LocalStorage saveData error:", e);
   }
+};
+
+// Listeners for silent background database sync (Stale-While-Revalidate)
+const dbListeners = new Set();
+export const subscribeDbUpdates = (callback) => {
+  dbListeners.add(callback);
+  return () => dbListeners.delete(callback);
+};
+const notifyDbUpdates = () => {
+  dbListeners.forEach(cb => {
+    try { cb(); } catch (e) { console.error('Error notifying db listener:', e); }
+  });
+};
+
+// Memory cache object for synchronous reads (Pre-seeded immediately from LocalStorage on Frame 0)
+const cache = {
+  settings: { ...DEFAULT_SETTINGS, ...loadData(DB_KEYS.SETTINGS, DEFAULT_SETTINGS) },
+  sliders: loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0)),
+  kalam: loadData(DB_KEYS.KALAM, DEFAULT_KALAM),
+  courses: loadData(DB_KEYS.COURSES, DEFAULT_COURSES),
+  resources: loadData(DB_KEYS.RESOURCES, DEFAULT_RESOURCES),
+  testimonials: loadData(DB_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS),
+  results: loadData(DB_KEYS.RESULTS, DEFAULT_RESULTS),
+  alumni: loadData(DB_KEYS.ALUMNI, DEFAULT_ALUMNI),
+  enquiries: loadData(DB_KEYS.ENQUIRIES, []),
+  pages: loadData(DB_KEYS.PAGES, DEFAULT_PAGES),
+  posts: loadData(DB_KEYS.POSTS, DEFAULT_POSTS),
+  scholarships: loadData(DB_KEYS.SCHOLARSHIPS, DEFAULT_SCHOLARSHIPS).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0))
 };
 
 export const dbService = {
@@ -463,6 +475,9 @@ export const dbService = {
       saveData(DB_KEYS.SCHOLARSHIPS, cache.scholarships);
       saveData(DB_KEYS.ENQUIRIES, cache.enquiries);
 
+      // Notify UI subscribers of fresh background data
+      notifyDbUpdates();
+
     } catch (err) {
       console.error("⚠️ Firestore pre-loading failed. Reverting to LocalStorage.", err);
       // Fail-safe fallback loading
@@ -478,7 +493,12 @@ export const dbService = {
       cache.pages = loadData(DB_KEYS.PAGES, DEFAULT_PAGES);
       cache.posts = loadData(DB_KEYS.POSTS, DEFAULT_POSTS);
       cache.scholarships = loadData(DB_KEYS.SCHOLARSHIPS, DEFAULT_SCHOLARSHIPS);
+      notifyDbUpdates();
     }
+  },
+
+  subscribe(callback) {
+    return subscribeDbUpdates(callback);
   },
 
   // Settings
