@@ -9,6 +9,7 @@ import {
 } from "firebase/firestore";
 import { signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { db, auth, isDefault } from "./firebase";
+import snapshot from "./firestoreSnapshot.json";
 
 // Database Service using LocalStorage with Brochure details as default seed data
 const DB_KEYS = {
@@ -26,6 +27,23 @@ const DB_KEYS = {
   AUTH: 'apex_admin_auth',
   SCHOLARSHIPS: 'apex_scholarships'
 };
+
+// Automatic cache migration: invalidate any stale browser cache holding deleted demo data
+const CACHE_VERSION = 'apex_live_v4';
+if (typeof window !== 'undefined' && window.localStorage) {
+  try {
+    if (localStorage.getItem('apex_data_version') !== CACHE_VERSION) {
+      Object.values(DB_KEYS).forEach(k => {
+        if (k !== DB_KEYS.AUTH) {
+          localStorage.removeItem(k);
+        }
+      });
+      localStorage.setItem('apex_data_version', CACHE_VERSION);
+    }
+  } catch (e) {
+    console.warn("Storage version check warning:", e);
+  }
+}
 
 const DEFAULT_SETTINGS = {
   instituteName: "APEX INSTITUTE",
@@ -52,236 +70,23 @@ const DEFAULT_SETTINGS = {
   showQuickLinks: true,
   showTestimonials: true,
   showEnquiryInline: true,
-  allowedAdminEmails: "instituteapex12@gmail.com, instituteapexjind@gmail.com, mbarahul99@gmail.com"
+  allowedAdminEmails: "instituteapex12@gmail.com, instituteapexjind@gmail.com, mbarahul99@gmail.com",
+  ...(snapshot.settings || {})
 };
 
-const DEFAULT_SLIDERS = [
-  { id: "s1", imageUrl: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=800", orderIndex: 0, active: true },
-  { id: "s2", imageUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=800", orderIndex: 1, active: true },
-  { id: "s3", imageUrl: "https://images.unsplash.com/photo-1532187643603-ba119ca4109e?q=80&w=800", orderIndex: 2, active: true },
-  { id: "s4", imageUrl: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800", orderIndex: 3, active: true },
-  { id: "s5", imageUrl: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=800", orderIndex: 4, active: true },
-  { id: "s6", imageUrl: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=800", orderIndex: 5, active: true },
-  { id: "s7", imageUrl: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800", orderIndex: 6, active: true },
-  { id: "s8", imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=800", orderIndex: 7, active: true },
-  { id: "s9", imageUrl: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=800", orderIndex: 8, active: true },
-  { id: "s10", imageUrl: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800", orderIndex: 9, active: true }
-];
-
-const DEFAULT_KALAM = {
-  imageUrl: "/kalam.jpg"
-};
-
-const DEFAULT_SCHOLARSHIPS = [
-  { 
-    id: "sc1", 
-    title: "APEX AASAT Entrance Scholarship", 
-    criteria: "Top 1-10 ranks in AASAT (APEX Admission Cum Scholarship Test)", 
-    discount: "80% Tuition Fee Waiver", 
-    description: "Applicable to classroom integration coaching programs for NEET/JEE. Requires qualifying test verification.", 
-    orderIndex: 0 
-  },
-  { 
-    id: "sc2", 
-    title: "Board Examination Merit Award", 
-    criteria: ">= 95% aggregate marks in 10th or 12th Board Examinations", 
-    discount: "50% Tuition Fee Waiver", 
-    description: "Applies to CBSE and Haryana Board toppers residing in Jind district. High academic records support standard tuition waivers.", 
-    orderIndex: 1 
-  },
-  { 
-    id: "sc3", 
-    title: "National Olympiad & NTSE Scholars Program", 
-    criteria: "NTSE Stage-2 qualifiers or National Olympiad Medalists", 
-    discount: "100% Tuition Fee Waiver", 
-    description: "Full scholarship program covering academic study sheets, tests, and mock coaching fees to support exceptional talent.", 
-    orderIndex: 2 
-  },
-  { 
-    id: "sc4", 
-    title: "Sibling Education Assistance", 
-    criteria: "Siblings of active or graduated APEX students", 
-    discount: "10% Tuition Fee Waiver", 
-    description: "Family assistance discount on tuition fee, valid throughout the duration of concurrent course enrollment.", 
-    orderIndex: 3 
-  }
-];
-
-const DEFAULT_COURSES = [
-  {
-    id: "c1",
-    title: "NEET Integrated Classroom Program",
-    category: "class-11-12",
-    target: "11th & 12th Classes (Medical Entrance Exams & Tuitions)",
-    boards: "CBSE & HBSE Board Students",
-    duration: "1 Year / 2 Years Integrated Course",
-    schedule: "Mon - Fri (3 hrs) • Sat - Sun (3 hrs)",
-    fee: 45000,
-    image: "/course_neet.jpg",
-    details: "Comprehensive coaching for NEET biology, chemistry, and physics along with core board syllabus coverage for both CBSE and Haryana Board."
-  },
-  {
-    id: "c2",
-    title: "IIT-JEE Entrance & Board Preparation",
-    category: "class-11-12",
-    target: "11th & 12th Classes (JEE Main, Advanced & Board Tuitions)",
-    boards: "CBSE & HBSE Board Students",
-    duration: "1 Year / 2 Years Integrated Course",
-    schedule: "Mon - Fri (3 hrs) • Sat - Sun (3.5 hrs)",
-    fee: 50000,
-    image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=600",
-    details: "In-depth engineering prep covering physics, chemistry, and mathematics with rigour, mock test series, and structured notes matching CBSE and HBSE."
-  },
-  {
-    id: "c3",
-    title: "Junior Science & Maths Foundation",
-    category: "class-9-10",
-    target: "9th & 10th Classes (Tuition, NTSE & Olympiads Prep)",
-    boards: "ICSE, CBSE & HBSE Board Students",
-    duration: "1 Year Foundation",
-    schedule: "Tue - Thu - Sat (2.5 hrs)",
-    fee: 25000,
-    image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=600",
-    details: "Covers Core Mathematics, Physics, Chemistry, and Biology, custom-tailored to trigger logical thinking for NTSE, Olympiads, and school toppers."
-  },
-  {
-    id: "c4",
-    title: "Olympiad & NTSE Excellence Prep",
-    category: "class-9-10",
-    target: "9th & 10th Classes (Tuition & Competition Focus)",
-    boards: "ICSE, CBSE & HBSE Board Students",
-    duration: "1 Year Intensive Course",
-    schedule: "Wed - Fri - Sun (3 hrs)",
-    fee: 28000,
-    image: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=600",
-    details: "Advanced conceptual tutoring in Math and Science subjects. Boosts analytical and problem-solving capabilities required for national competitive exams."
-  }
-];
-
+const DEFAULT_SLIDERS = snapshot.sliders || [];
+const DEFAULT_KALAM = snapshot.kalam || { imageUrl: "/kalam.jpg" };
+const DEFAULT_SCHOLARSHIPS = snapshot.scholarships || [];
+const DEFAULT_COURSES = snapshot.courses || [];
 const DEFAULT_RESOURCES = [
   { id: "r1", title: "JEE Main Answer Key & Detailed Solutions", type: "answer-key", linkUrl: "#" },
   { id: "r2", title: "NEET 2026 Question Paper & Solution Keys", type: "answer-key", linkUrl: "#" },
   { id: "r3", title: "Haryana Board (HBSE) Class 12 Date Sheet 2027", type: "news", linkUrl: "#" },
   { id: "r4", title: "Class 10th NTSE Mock Papers & Answer Guides", type: "answer-key", linkUrl: "#" }
 ];
-
-const DEFAULT_TESTIMONIALS = [
-  {
-    id: "t1",
-    studentName: "Aarav Sharma",
-    examType: "IIT-JEE Main",
-    rankBadge: "Percentile 99.98%ile",
-    photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=200&fit=crop",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    textReview: "The support I got from Apex classes was unparalleled. The regular test feedback enabled me to identify weaker conceptual sections in Physics and Maths."
-  },
-  {
-    id: "t2",
-    studentName: "Priyanka Jindal",
-    examType: "NEET UG",
-    rankBadge: "AIR 124",
-    photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&fit=crop",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    textReview: "Personalized attention and detailed worksheets helped me crack NEET biology with high scoring confidence. Highly recommend Apex Jind!"
-  }
-];
-
-const DEFAULT_RESULTS = [
-  { id: "res1", studentName: "Utkarsh Khokhar", examType: "JEE Main", achievement: "Percentile 99.99%ile", location: "State Haryana", photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=200&fit=crop", year: "2025" },
-  { id: "res2", studentName: "Ajaiy P", examType: "JEE Main", achievement: "Percentile 99.98%ile", location: "State Haryana", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&fit=crop", year: "2025" },
-  { id: "res3", studentName: "Aarav Gupta", examType: "NEET", achievement: "AIR 45", location: "Marks 715/720", photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=200&fit=crop", year: "2025" },
-  { id: "res4", studentName: "R Jayanth Shekhar", examType: "NEET", achievement: "AIR 112", location: "Marks 705/720", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&fit=crop", year: "2025" },
-  { id: "res5", studentName: "Krishang Joshi", examType: "Olympiads", achievement: "Gold Medalist", location: "INBO (Biology)", photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=200&fit=crop", year: "2024" },
-  { id: "res6", studentName: "Nisha Hooda", examType: "GUJ-CET", achievement: "AIR 23", location: "Percentile 99.95%ile", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&fit=crop", year: "2024" },
-  { id: "res7", studentName: "Amit Malik", examType: "NEET", achievement: "AIR 180", location: "Marks 698/720", photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=200&fit=crop", year: "2025" },
-  { id: "res8", studentName: "Divya Sharma", examType: "NEET", achievement: "AIR 210", location: "Marks 695/720", photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&fit=crop", year: "2025" },
-  { id: "res9", studentName: "Sahil Verma", examType: "JEE Main", achievement: "AIR 450", location: "Percentile 99.5%ile", photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&fit=crop", year: "2024" },
-  { id: "res10", studentName: "Kavita Rani", examType: "JEE Main", achievement: "AIR 612", location: "Percentile 99.3%ile", photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&fit=crop", year: "2023" },
-  { id: "res11", studentName: "Rahul Verma", examType: "NEET", achievement: "AIR 320", location: "Marks 685/720", photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=200&fit=crop", year: "2025" },
-  { id: "res12", studentName: "Neha Singhal", examType: "NEET", achievement: "AIR 402", location: "Marks 680/720", photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&fit=crop", year: "2025" },
-  { id: "res13", studentName: "Saurabh Garg", examType: "JEE Main", achievement: "Percentile 99.1%ile", location: "State Haryana", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&fit=crop", year: "2025" },
-  { id: "res14", studentName: "Pooja Sharma", examType: "Olympiads", achievement: "Silver Medalist", location: "INChO (Chemistry)", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&fit=crop", year: "2025" }
-];
-
-const DEFAULT_ALUMNI = [
-  {
-    id: "alm1",
-    name: "Dr. Aman Sharma",
-    college: "AIIMS New Delhi",
-    course: "MBBS",
-    batch: "2019-2020",
-    achievement: "NEET AIR 42",
-    currentRole: "Resident Doctor, AIIMS",
-    photo: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=400",
-    quote: "Apex Institute provided the rigorous concept clarity and test series that made cracking AIIMS possible!"
-  },
-  {
-    id: "alm2",
-    name: "Rohan Verma",
-    college: "IIT Bombay",
-    course: "B.Tech Computer Science",
-    batch: "2020-2021",
-    achievement: "JEE Advanced AIR 89",
-    currentRole: "Software Engineer, Google",
-    photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=400",
-    quote: "The personalized doubt-solving sessions and problem sets at Apex were a game-changer for my JEE rank."
-  },
-  {
-    id: "alm3",
-    name: "Dr. Priya Gupta",
-    college: "Maulana Azad Medical College (MAMC)",
-    course: "MBBS",
-    batch: "2021-2022",
-    achievement: "NEET AIR 115",
-    currentRole: "Medical Intern, Lok Nayak Hospital",
-    photo: "https://images.unsplash.com/photo-1594824813501-48c081921381?q=80&w=400",
-    quote: "Continuous motivation and NCERT-centric teaching at Apex gave me the confidence to secure a top Delhi medical seat."
-  },
-  {
-    id: "alm4",
-    name: "Sahil Deshmukh",
-    college: "IIT Delhi",
-    course: "B.Tech Electrical Engineering",
-    batch: "2021-2022",
-    achievement: "JEE Advanced AIR 164",
-    currentRole: "Hardware Systems Engineer",
-    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400",
-    quote: "The faculty at Apex made physics and math feel intuitive. Their mock exam environment mirrored the real test."
-  },
-  {
-    id: "alm5",
-    name: "Dr. Ananya Malik",
-    college: "PGIMS Rohtak",
-    course: "MBBS",
-    batch: "2022-2023",
-    achievement: "NEET Score 685/720",
-    currentRole: "Medical Student",
-    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400",
-    quote: "Studying at Apex transformed my weak areas in biology and chemistry into my strongest scoring subjects."
-  },
-  {
-    id: "alm6",
-    name: "Kunal Bansal",
-    college: "BITS Pilani",
-    course: "B.E. Computer Science",
-    batch: "2022-2023",
-    achievement: "BITSAT 352/390 & JEE Main 99.7%ile",
-    currentRole: "Analyst, Quantitative Finance",
-    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400",
-    quote: "Apex Institute is by far the best coaching in Jind. The teachers mentor you through every challenge."
-  },
-  {
-    id: "alm7",
-    name: "Dr. Simran Kaur",
-    college: "Lady Hardinge Medical College (LHMC)",
-    course: "MBBS",
-    batch: "2023-2024",
-    achievement: "NEET Score 690/720",
-    currentRole: "Medical Student",
-    photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400",
-    quote: "The weekly tests and in-depth analytical reviews helped me identify and fix silly mistakes before NEET."
-  }
-];
+const DEFAULT_TESTIMONIALS = snapshot.testimonials || [];
+const DEFAULT_RESULTS = snapshot.results || [];
+const DEFAULT_ALUMNI = snapshot.alumni || [];
 
 const DEFAULT_PAGES = [
   {

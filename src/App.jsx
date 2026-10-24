@@ -5,52 +5,70 @@ import { isDefault } from './services/firebase';
 import './css/main.css';
 import './css/admin.css';
 
-// SVG Icons as React Components
-export const IconPhone = () => <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.387a12.035 12.035 0 01-7.108-7.108c-.155-.44.01-1.09.387-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.11-1.008H4.5a2.25 2.25 0 00-2.25 2.25v1.372z" /></svg>;
-export const IconHome = () => <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>;
-export const IconBook = () => <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18c-2.305 0-4.408.867-6 2.292m0-14.25v14.25" /></svg>;
-export const IconShare = () => <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186l.965.543m-.965-.543a2.25 2.25 0 011.696-2.203m0 0l.967.544M11.686 9.25a2.25 2.25 0 103.098-3.098m-3.098 3.098l-.967-.544m0 0a2.25 2.25 0 00-1.696 2.203m0 0l-.965-.543m0 0a2.25 2.25 0 01-1.696 2.203" /></svg>;
-export const IconChevronRight = () => <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>;
-export const IconPlay = () => <svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>;
-export const IconClose = () => <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>;
-export const IconMenu = () => <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>;
-export const IconPlus = () => <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>;
-export const IconEdit = () => <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>;
-export const IconTrash = () => <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>;
-export const IconExternalLink = () => <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>;
-export const IconCheck = () => <svg fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>;
-export const IconStar = () => <svg fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499c.195-.561.97-.561 1.165 0l2.22 6.47a.75.75 0 00.713.518h6.82c.594 0 .84.766.36 1.137l-5.518 4.01a.75.75 0 00-.273.84l2.22 6.47c.196.56-.445 1.028-.941.666l-5.518-4.01a.75.75 0 00-.882 0l-5.518 4.01c-.496.362-1.137-.166-.941-.666l2.22-6.47a.75.75 0 00-.273-.84l-5.518-4.01c-.48-.37-.234-1.137.36-1.137h6.82a.75.75 0 00.713-.518l2.22-6.47z" /></svg>;
-export const IconUser = () => <svg fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>;
-
-// Helper for logo URL resolution with cache-busting for default assets
-export const getLogoSrc = (url) => {
-  if (!url) return '/logo_full.png?v=2';
-  if (url === '/logo_full.png' || url === '/logo_name.png' || url === '/logo.png') {
-    return url + '?v=2';
-  }
-  return url;
-};
-
-// Helper to transform any YouTube URL (watch, youtu.be, embed) into an embeddable URL
-export const getEmbedVideoUrl = (url) => {
-  if (!url) return '';
-  const trimmed = url.trim();
-  if (trimmed.includes('youtube.com/embed/')) {
-    return trimmed.includes('?') ? trimmed : `${trimmed}?autoplay=1`;
-  }
-  if (trimmed.includes('watch?v=')) {
-    const videoId = trimmed.split('watch?v=')[1]?.split('&')[0];
-    return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-  }
-  if (trimmed.includes('youtu.be/')) {
-    const videoId = trimmed.split('youtu.be/')[1]?.split('?')[0];
-    return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-  }
-  return trimmed;
-};
+// SVG Icons and shared utilities from standalone module
+import { 
+  IconPhone, 
+  IconHome, 
+  IconBook, 
+  IconShare, 
+  IconChevronRight, 
+  IconPlay, 
+  IconClose, 
+  IconMenu, 
+  IconPlus, 
+  IconEdit, 
+  IconTrash, 
+  IconExternalLink, 
+  IconCheck, 
+  IconStar, 
+  IconUser, 
+  getLogoSrc, 
+  getEmbedVideoUrl 
+} from './components/icons';
 
 // Lazy-load the heavy Administrative Panel chunk
 const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
+
+// Resilient Error Boundary to ensure admin dashboard never shows blank screen
+class AdminErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error("AdminPanel loading/rendering error:", error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '60px 20px', maxWidth: '600px', margin: '40px auto', textAlign: 'center', background: '#fff', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+          <h2 style={{ color: '#dc2626', marginBottom: '12px' }}>Admin Dashboard Encountered an Error</h2>
+          <p style={{ color: '#64748b', fontSize: '0.95rem', marginBottom: '20px' }}>
+            {this.state.error?.message || 'An unexpected error occurred while loading the admin interface.'}
+          </p>
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+            <button 
+              onClick={() => window.location.reload()} 
+              style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+            >
+              Reload Dashboard
+            </button>
+            <button 
+              onClick={() => this.props.navigate('/')} 
+              style={{ background: '#f1f5f9', color: '#334155', border: '1px solid #cbd5e1', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+            >
+              Back to Home
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -165,16 +183,18 @@ export default function App() {
   } else if (currentPath.startsWith('/admin')) {
     isStudentView = false;
     viewComponent = (
-      <React.Suspense fallback={
-        <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
-          <div style={{ textAlign: 'center' }}>
-            <div className="spinner" style={{ width: '32px', height: '32px', border: '3px solid #cbd5e1', borderTopColor: '#2563eb', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 14px' }}></div>
-            <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Loading Management Console...</div>
+      <AdminErrorBoundary navigate={navigate}>
+        <React.Suspense fallback={
+          <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
+            <div style={{ textAlign: 'center' }}>
+              <div className="spinner" style={{ width: '32px', height: '32px', border: '3px solid #cbd5e1', borderTopColor: '#2563eb', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 14px' }}></div>
+              <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Loading Management Console...</div>
+            </div>
           </div>
-        </div>
-      }>
-        <AdminPanel navigate={navigate} onUpdateSettings={setSettings} />
-      </React.Suspense>
+        }>
+          <AdminPanel navigate={navigate} onUpdateSettings={setSettings} />
+        </React.Suspense>
+      </AdminErrorBoundary>
     );
   } else {
     viewComponent = (
@@ -1748,6 +1768,223 @@ function EnquiryInlineForm() {
           </select>
           <button type="submit" className="form-submit-btn" style={{ padding: '11px', marginTop: '5px' }}>Submit Request</button>
         </form>
+      )}
+    </div>
+  );
+}
+
+// ---------------- ALL RESULTS VIEW (YEARWISE) ----------------
+function AllResultsView({ navigate }) {
+  const [results, setResults] = useState([]);
+  const [expandedYears, setExpandedYears] = useState({});
+
+  useEffect(() => {
+    setResults(dbService.getResults());
+  }, []);
+
+  // Group results by academic year
+  const grouped = results.reduce((acc, res) => {
+    const yr = res.year || '2025';
+    if (!acc[yr]) acc[yr] = [];
+    acc[yr].push(res);
+    return acc;
+  }, {});
+
+  // Sort years in descending order (newest first)
+  const sortedYears = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
+
+  const toggleExpandYear = (yr) => {
+    setExpandedYears(prev => ({
+      ...prev,
+      [yr]: !prev[yr]
+    }));
+  };
+
+  return (
+    <div className="fade-in student-content-wrap" style={{ marginTop: '20px', paddingBottom: '50px' }}>
+      <Helmet>
+        <title>Student Achievements & Results - APEX Institute</title>
+        <meta name="description" content="Explore year-wise ranks and outstanding achievements of APEX students in NEET, IIT-JEE, and national Olympiads." />
+      </Helmet>
+
+      <div className="section-header" style={{ marginBottom: '40px' }}>
+        <h2 className="section-title">Academic Achievements Gallery</h2>
+        <p className="section-subtitle">Year-by-year honors list of our toppers who excelled in national exams</p>
+      </div>
+
+      {sortedYears.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--light-gray)' }}>
+          No topper records found. Check back later!
+        </div>
+      ) : (
+        sortedYears.map(yr => {
+          const isExpanded = !!expandedYears[yr];
+          const studentsToRender = isExpanded ? grouped[yr] : grouped[yr].slice(0, 8);
+
+          return (
+            <div key={yr} style={{ marginBottom: '50px' }}>
+              <div style={{ 
+                borderBottom: '2px solid var(--border-light)', 
+                paddingBottom: '10px', 
+                marginBottom: '25px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '15px'
+              }}>
+                <h3 style={{ fontSize: '1.5rem', color: 'var(--navy-blue)', margin: 0, fontWeight: 800 }}>
+                  Academic Year {yr}
+                </h3>
+                <span className="status-badge contacted" style={{ fontSize: '0.8rem', padding: '4px 10px', fontWeight: 700 }}>
+                  {grouped[yr].length} Achievers
+                </span>
+              </div>
+
+              <div className="results-grid">
+                {studentsToRender.map(res => (
+                  <div className="result-card" key={res.id}>
+                    <div className="result-photo-wrap">
+                      <img 
+                        src={res.photo} 
+                        className={`result-photo ${res.photoFit ? `fit-${res.photoFit}` : 'fit-contain'}`} 
+                        alt={res.studentName} 
+                        loading="lazy"
+                      />
+                    </div>
+                    <span className="result-name">{res.studentName}</span>
+                    <span className="result-achievement">{res.achievement}</span>
+                    <span className="result-meta">{res.location}</span>
+                    <div style={{ marginTop: '8px', fontSize: '0.75rem', color: '#666', fontWeight: 600 }}>
+                      Category: {res.examType}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {grouped[yr].length > 8 && (
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '25px' }}>
+                  <button 
+                    className="courses-action-btn" 
+                    onClick={() => toggleExpandYear(yr)}
+                    style={{ padding: '10px 24px', fontSize: '0.9rem', fontWeight: 700 }}
+                  >
+                    {isExpanded ? 'View Less' : `View More (Show all ${grouped[yr].length} students)`}
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })
+      )}
+    </div>
+  );
+}
+
+// ---------------- ALL BLOGS VIEW ----------------
+function AllBlogsView({ navigate }) {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    setPosts(dbService.getPosts());
+  }, []);
+
+  return (
+    <div className="fade-in student-content-wrap" style={{ marginTop: '20px', paddingBottom: '50px' }}>
+      <Helmet>
+        <title>Latest News, Blogs & Exam Alerts - APEX Institute</title>
+        <meta name="description" content="Stay updated with the latest exam alerts, prep strategies, and academic guides for IIT-JEE and NEET from APEX experts." />
+      </Helmet>
+
+      <div className="section-header" style={{ marginBottom: '40px' }}>
+        <h2 className="section-title">Latest News & Blog Guides</h2>
+        <p className="section-subtitle">Academic tips, exam alerts, and guides written by our senior educators</p>
+      </div>
+
+      {posts.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--light-gray)' }}>
+          No articles or guides published yet. Check back soon!
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
+          {posts.map(post => {
+            const cleanExcerpt = post.content
+              ? post.content.replace(/<[^>]*>/g, '').substring(0, 160) + '...'
+              : '';
+
+            return (
+              <div 
+                key={post.id} 
+                className="info-card" 
+                style={{ 
+                  flexDirection: 'column', 
+                  padding: '0', 
+                  overflow: 'hidden', 
+                  borderRadius: 'var(--radius-lg)', 
+                  border: '1px solid var(--border-light)', 
+                  boxShadow: 'var(--shadow-sm)',
+                  backgroundColor: '#fff',
+                  transition: 'transform 0.2s, box-shadow 0.2s'
+                }}
+              >
+                {post.coverImage && (
+                  <div style={{ height: '200px', width: '100%', overflow: 'hidden' }}>
+                    <img 
+                      src={post.coverImage} 
+                      alt={post.title} 
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    />
+                  </div>
+                )}
+                <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                    {post.category && (
+                      <span className="status-badge new" style={{ fontSize: '0.7rem', padding: '3px 8px' }}>
+                        {post.category}
+                      </span>
+                    )}
+                    {post.publishDate && (
+                      <span style={{ fontSize: '0.75rem', color: '#666', fontWeight: 600 }}>
+                        {post.publishDate}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <h3 style={{ 
+                    fontSize: '1.25rem', 
+                    color: 'var(--navy-blue)', 
+                    margin: '0 0 12px 0', 
+                    fontWeight: 700,
+                    lineHeight: 1.4
+                  }}>
+                    {post.title}
+                  </h3>
+                  
+                  <p style={{ 
+                    fontSize: '0.88rem', 
+                    color: 'var(--light-gray)', 
+                    margin: '0 0 20px 0', 
+                    lineHeight: 1.6,
+                    flex: 1
+                  }}>
+                    {cleanExcerpt}
+                  </p>
+                  
+                  <button 
+                    className="courses-action-btn" 
+                    style={{ 
+                      padding: '10px 20px', 
+                      fontSize: '0.85rem', 
+                      alignSelf: 'flex-start',
+                      width: 'auto'
+                    }}
+                    onClick={() => navigate(`/posts/${post.slug}`)}
+                  >
+                    Read Full Post
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       )}
     </div>
   );
