@@ -11,6 +11,7 @@ import {
   IconHome, 
   IconBook, 
   IconShare, 
+  IconChevronLeft,
   IconChevronRight, 
   IconPlay, 
   IconClose, 
@@ -579,7 +580,7 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
           
           <div className="footer-bottom" style={{ justifyContent: 'center' }}>
             <span className="footer-copyright" style={{ textAlign: 'center' }}>
-              Â© {new Date().getFullYear()} {settings.instituteName}. All Rights Reserved. Designed professionally.
+              &copy; {new Date().getFullYear()} {settings.instituteName}. All Rights Reserved. Designed professionally.
             </span>
           </div>
         </div>
@@ -669,7 +670,7 @@ function TestimonialCard({ item, onPlayVideo }) {
           {/* Bottom Action Bar */}
           <div className="testimonial-video-bar">
             <span>Student Interview</span>
-            <span className="testimonial-video-action">Play Video â–¶</span>
+            <span className="testimonial-video-action">Play Video &#9654;</span>
           </div>
         </div>
       )}
@@ -699,7 +700,7 @@ function TestimonialCard({ item, onPlayVideo }) {
 
       {/* Star Rating for Credibility */}
       <div className="testimonial-stars" aria-label="5 star rating">
-        â˜…â˜…â˜…â˜…â˜…
+        &#9733;&#9733;&#9733;&#9733;&#9733;
       </div>
 
       {/* Review Text Body with Extension Button */}
@@ -719,9 +720,9 @@ function TestimonialCard({ item, onPlayVideo }) {
             aria-expanded={isExpanded}
           >
             {isExpanded ? (
-              <>Show Less <span className="btn-chevron">â–²</span></>
+              <>Show Less <span className="btn-chevron">&#9650;</span></>
             ) : (
-              <>Read Full Review <span className="btn-chevron">â–¼</span></>
+              <>Read Full Review <span className="btn-chevron">&#9660;</span></>
             )}
           </button>
         )}
@@ -818,8 +819,20 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
           
           {sliders.length > 1 && (
             <>
-              <button className="slider-arrow left" onClick={handlePrevSlide}>â€¹</button>
-              <button className="slider-arrow right" onClick={handleNextSlide}>â€º</button>
+              <button 
+                className="slider-arrow left" 
+                onClick={handlePrevSlide}
+                aria-label="Previous Slide"
+              >
+                <IconChevronLeft />
+              </button>
+              <button 
+                className="slider-arrow right" 
+                onClick={handleNextSlide}
+                aria-label="Next Slide"
+              >
+                <IconChevronRight />
+              </button>
               
               <div className="slider-dots">
                 {sliders.map((_, idx) => (
@@ -1182,7 +1195,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                       }}
                       onClick={() => navigate(`/posts/${post.slug}`)}
                     >
-                      Read Full Guide â†’
+                      Read Full Guide &rarr;
                     </button>
                   </div>
                 </div>

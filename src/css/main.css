@@ -253,6 +253,14 @@
 .slider-arrow.left { left: var(--spacing-md); }
 .slider-arrow.right { right: var(--spacing-md); }
 
+.slider-arrow svg {
+  width: 22px;
+  height: 22px;
+  stroke: var(--white);
+  stroke-width: 2.5;
+  display: block;
+}
+
 /* Dr. Kalam Quote Section */
 .kalam-section {
   display: flex;
