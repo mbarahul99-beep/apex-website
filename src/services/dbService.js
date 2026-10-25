@@ -28,8 +28,8 @@ const DB_KEYS = {
   SCHOLARSHIPS: 'apex_scholarships'
 };
 
-// Automatic cache migration: invalidate any stale browser cache holding deleted demo data
-const CACHE_VERSION = 'apex_live_v4';
+// Automatic cache migration: invalidate any stale browser cache holding deleted demo data or heavy base64
+const CACHE_VERSION = 'apex_live_v5';
 if (typeof window !== 'undefined' && window.localStorage) {
   try {
     if (localStorage.getItem('apex_data_version') !== CACHE_VERSION) {

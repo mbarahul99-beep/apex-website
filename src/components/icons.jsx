@@ -16,6 +16,14 @@ export const IconCheck = () => <svg fill="none" stroke="currentColor" strokeWidt
 export const IconStar = () => <svg fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499c.195-.561.97-.561 1.165 0l2.22 6.47a.75.75 0 00.713.518h6.82c.594 0 .84.766.36 1.137l-5.518 4.01a.75.75 0 00-.273.84l2.22 6.47c.196.56-.445 1.028-.941.666l-5.518-4.01a.75.75 0 00-.882 0l-5.518 4.01c-.496.362-1.137-.166-.941-.666l2.22-6.47a.75.75 0 00-.273-.84l-5.518-4.01c-.48-.37-.234-1.137.36-1.137h6.82a.75.75 0 00.713-.518l2.22-6.47z" /></svg>;
 export const IconUser = () => <svg fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>;
 
+// Helper to make sure custom width/height inputs have units (e.g. px)
+export const getUnitValue = (val, fallback) => {
+  if (!val) return fallback;
+  const clean = val.toString().trim();
+  if (/^\d+$/.test(clean)) return clean + 'px';
+  return clean;
+};
+
 // Helper for logo URL resolution with cache-busting for default assets
 export const getLogoSrc = (url) => {
   if (!url) return '/logo_full.png?v=2';

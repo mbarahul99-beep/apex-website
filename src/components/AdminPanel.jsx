@@ -9,7 +9,8 @@ import {
   IconTrash, 
   IconExternalLink, 
   IconClose, 
-  getLogoSrc 
+  getLogoSrc,
+  getUnitValue 
 } from './icons';
 function AdminPanel({ navigate, onUpdateSettings }) {
   const [isLogged, setIsLogged] = useState(dbService.isLoggedIn());
