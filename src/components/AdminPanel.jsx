@@ -2527,34 +2527,26 @@ function LogoUploadCompress({ value, onChange, label = "Upload & Apply New Logo 
         finalCtx.imageSmoothingQuality = 'high';
         finalCtx.drawImage(curCanvas, 0, 0, finalWidth, finalHeight);
 
-        const isPng = file.type === 'image/png';
-        const outputFormat = isPng ? 'image/png' : 'image/jpeg';
-        const outputQuality = isPng ? undefined : 0.92;
+        // High quality WebP output with alpha transparency support
+        let compressedDataUrl = finalCanvas.toDataURL('image/webp', 0.90);
+        if (!compressedDataUrl.startsWith('data:image/webp')) {
+          compressedDataUrl = file.type === 'image/png' 
+            ? finalCanvas.toDataURL('image/png') 
+            : finalCanvas.toDataURL('image/jpeg', 0.90);
+        }
 
-        let compressedDataUrl = finalCanvas.toDataURL(outputFormat, outputQuality);
-
-        // Safeguard for Firestore 1MB document limit: if base64 string is still over 350KB, scale down slightly further
-        if (compressedDataUrl.length > 350000) {
-          const safeCanvas = document.createElement('canvas');
-          safeCanvas.width = Math.round(finalWidth * 0.75);
-          safeCanvas.height = Math.round(finalHeight * 0.75);
-          const safeCtx = safeCanvas.getContext('2d');
-          safeCtx.imageSmoothingEnabled = true;
-          safeCtx.imageSmoothingQuality = 'high';
-          safeCtx.drawImage(finalCanvas, 0, 0, safeCanvas.width, safeCanvas.height);
-          compressedDataUrl = isPng 
-            ? safeCanvas.toDataURL('image/png') 
-            : safeCanvas.toDataURL('image/jpeg', 0.88);
-          finalWidth = safeCanvas.width;
-          finalHeight = safeCanvas.height;
+        // Safeguard for Firestore 1MB document limit: if string is still over 300KB
+        if (compressedDataUrl.length > 300000) {
+          compressedDataUrl = finalCanvas.toDataURL('image/webp', 0.82);
         }
         
+        const isWebPOut = compressedDataUrl.startsWith('data:image/webp');
         setImageInfo({
           origWidth: img.width,
           origHeight: img.height,
           finalWidth,
           finalHeight,
-          format: isPng ? 'PNG (Lossless Alpha)' : 'JPEG (High Quality)',
+          format: isWebPOut ? 'WebP (Lossless Alpha)' : (file.type === 'image/png' ? 'PNG' : 'JPEG'),
           sizeKb: Math.round(compressedDataUrl.length * 0.75 / 1024)
         });
 

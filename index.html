@@ -11,9 +11,9 @@
     <link rel="preconnect" href="https://firestore.googleapis.com" />
     <link rel="preconnect" href="https://images.unsplash.com" />
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
-    <!-- Preload Critical LCP Logo & Hero Banner -->
-    <link rel="preload" href="/logo_full.png?v=2" as="image" fetchpriority="high" />
-    <link rel="preload" href="/images/slides/s_1792327822326.jpg" as="image" fetchpriority="high" />
+    <!-- Preload Critical LCP Logo & Hero Banner in modern WebP format -->
+    <link rel="preload" href="/logo_full.webp" as="image" type="image/webp" fetchpriority="high" />
+    <link rel="preload" href="/images/slides/s_1792327822326.webp" as="image" type="image/webp" fetchpriority="high" />
     <!-- Dynamic LCP preload: reads first slide from cache so it stays accurate after admin updates -->
     <script>
       try {
@@ -87,7 +87,7 @@
           </div>
         </div>
         <div class="shell-header">
-          <img src="/logo_full.png?v=2" alt="Apex Institute" style="height:38px;width:auto;" />
+          <img src="/logo_full.webp" alt="Apex Institute" style="height:38px;width:auto;" />
           <div style="display:flex;gap:16px;align-items:center;">
             <div style="width:60px;height:12px;background:#e2e8f0;border-radius:4px;"></div>
             <div style="width:60px;height:12px;background:#e2e8f0;border-radius:4px;"></div>

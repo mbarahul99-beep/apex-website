@@ -15,7 +15,6 @@ import snapshot from "./firestoreSnapshot.json";
 const DB_KEYS = {
   SETTINGS: 'apex_settings',
   SLIDERS: 'apex_sliders',
-  KALAM: 'apex_kalam',
   COURSES: 'apex_courses',
   RESOURCES: 'apex_resources',
   TESTIMONIALS: 'apex_testimonials',
@@ -29,7 +28,7 @@ const DB_KEYS = {
 };
 
 // Automatic cache migration: invalidate any stale browser cache holding deleted demo data or heavy base64
-const CACHE_VERSION = 'apex_live_v5';
+const CACHE_VERSION = 'apex_live_v6';
 if (typeof window !== 'undefined' && window.localStorage) {
   try {
     if (localStorage.getItem('apex_data_version') !== CACHE_VERSION) {
@@ -53,15 +52,14 @@ const DEFAULT_SETTINGS = {
   telephone: "01681-247700",
   email: "instituteapexjind@gmail.com",
   whatsappText: "Hello Apex Institute, I would like to enquire about your coaching courses.",
-  logoUrl: "/logo_full.png",
-  logoNameUrl: "/logo_full.png",
+  logoUrl: "/logo_full.webp",
+  logoNameUrl: "/logo_full.webp",
   logoIconHeight: "44px",
   logoWidth: "260px",
   logoHeight: "34px",
   examPortalUrl: "https://app.instituteapex.in?app=student",
   showBlogImagesOnHome: false,
   showSliders: true,
-  showKalam: true,
   showInfoCard: true,
   showFeaturedCourses: true,
   showToppers: true,
@@ -75,7 +73,6 @@ const DEFAULT_SETTINGS = {
 };
 
 const DEFAULT_SLIDERS = snapshot.sliders || [];
-const DEFAULT_KALAM = snapshot.kalam || { imageUrl: "/kalam.jpg" };
 const DEFAULT_SCHOLARSHIPS = snapshot.scholarships || [];
 const DEFAULT_COURSES = snapshot.courses || [];
 const DEFAULT_RESOURCES = [
@@ -160,7 +157,6 @@ const notifyDbUpdates = () => {
 const cache = {
   settings: { ...DEFAULT_SETTINGS, ...loadData(DB_KEYS.SETTINGS, DEFAULT_SETTINGS) },
   sliders: loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0)),
-  kalam: loadData(DB_KEYS.KALAM, DEFAULT_KALAM),
   courses: loadData(DB_KEYS.COURSES, DEFAULT_COURSES),
   resources: loadData(DB_KEYS.RESOURCES, DEFAULT_RESOURCES),
   testimonials: loadData(DB_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS),
@@ -179,7 +175,6 @@ export const dbService = {
       // LocalStorage mode
       cache.settings = { ...DEFAULT_SETTINGS, ...loadData(DB_KEYS.SETTINGS, DEFAULT_SETTINGS) };
       cache.sliders = loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS).sort((a,b) => a.orderIndex - b.orderIndex);
-      cache.kalam = loadData(DB_KEYS.KALAM, DEFAULT_KALAM);
       cache.courses = loadData(DB_KEYS.COURSES, DEFAULT_COURSES);
       cache.resources = loadData(DB_KEYS.RESOURCES, DEFAULT_RESOURCES);
       cache.testimonials = loadData(DB_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS);
@@ -203,16 +198,7 @@ export const dbService = {
         cache.settings = DEFAULT_SETTINGS;
       }
 
-      // 2. Kalam Quote
-      const kalamSnap = await getDoc(doc(db, "kalam", "main"));
-      if (kalamSnap.exists()) {
-        cache.kalam = kalamSnap.data();
-      } else {
-        await setDoc(doc(db, "kalam", "main"), DEFAULT_KALAM);
-        cache.kalam = DEFAULT_KALAM;
-      }
-
-      // 3. Read seed status tracking doc from Firestore settings/seed_status
+      // 2. Read seed status tracking doc from Firestore settings/seed_status
       let seedStatus = {};
       try {
         const seedSnap = await getDoc(doc(db, "settings", "seed_status"));
@@ -269,7 +255,6 @@ export const dbService = {
       // Keep LocalStorage in sync as offline cache for all collections
       saveData(DB_KEYS.SETTINGS, cache.settings);
       saveData(DB_KEYS.SLIDERS, cache.sliders);
-      saveData(DB_KEYS.KALAM, cache.kalam);
       saveData(DB_KEYS.COURSES, cache.courses);
       saveData(DB_KEYS.RESOURCES, cache.resources);
       saveData(DB_KEYS.TESTIMONIALS, cache.testimonials);
@@ -288,7 +273,6 @@ export const dbService = {
       // Fail-safe fallback loading
       cache.settings = loadData(DB_KEYS.SETTINGS, DEFAULT_SETTINGS);
       cache.sliders = loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS);
-      cache.kalam = loadData(DB_KEYS.KALAM, DEFAULT_KALAM);
       cache.courses = loadData(DB_KEYS.COURSES, DEFAULT_COURSES);
       cache.resources = loadData(DB_KEYS.RESOURCES, DEFAULT_RESOURCES);
       cache.testimonials = loadData(DB_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS);
@@ -313,8 +297,8 @@ export const dbService = {
   async saveSettings(settings) {
     const cleanSettings = {
       ...settings,
-      logoUrl: settings.logoUrl || settings.logoNameUrl || '/logo_full.png',
-      logoNameUrl: settings.logoUrl || settings.logoNameUrl || '/logo_full.png'
+      logoUrl: settings.logoUrl || settings.logoNameUrl || '/logo_full.webp',
+      logoNameUrl: settings.logoUrl || settings.logoNameUrl || '/logo_full.webp'
     };
     cache.settings = cleanSettings;
     saveData(DB_KEYS.SETTINGS, cleanSettings);
@@ -345,19 +329,6 @@ export const dbService = {
     if (!isDefault) {
       await deleteDoc(doc(db, "sliders", id));
     }
-  },
-
-  // Kalam Section
-  getKalam() {
-    return cache.kalam;
-  },
-  async saveKalam(kalam) {
-    cache.kalam = kalam;
-    saveData(DB_KEYS.KALAM, kalam);
-    if (!isDefault) {
-      await setDoc(doc(db, "kalam", "main"), kalam);
-    }
-    return kalam;
   },
 
   // Courses

@@ -25,11 +25,10 @@ export const getUnitValue = (val, fallback) => {
   return clean;
 };
 
-// Helper for logo URL resolution with cache-busting for default assets
+// Helper for logo URL resolution with automatic WebP optimization
 export const getLogoSrc = (url) => {
-  if (!url) return '/logo_full.png?v=2';
-  if (url === '/logo_full.png' || url === '/logo_name.png' || url === '/logo.png') {
-    return url + '?v=2';
+  if (!url || url === '/logo_full.png' || url === '/logo_name.png' || url === '/logo.png') {
+    return '/logo_full.webp';
   }
   return url;
 };

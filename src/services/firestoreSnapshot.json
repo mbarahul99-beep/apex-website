@@ -5,20 +5,20 @@
       "orderIndex": 1,
       "mobileImageUrl": "",
       "active": true,
-      "imageUrl": "/images/slides/s_1792327505092.jpg"
+      "imageUrl": "/images/slides/s_1792327505092.webp"
     },
     {
       "id": "s_1792327822326",
       "active": true,
       "mobileImageUrl": "",
       "orderIndex": 0,
-      "imageUrl": "/images/slides/s_1792327822326.jpg"
+      "imageUrl": "/images/slides/s_1792327822326.webp"
     },
     {
       "id": "s_1792327825822",
       "active": true,
       "orderIndex": 2,
-      "imageUrl": "/images/slides/s_1792327825822.jpg",
+      "imageUrl": "/images/slides/s_1792327825822.webp",
       "mobileImageUrl": ""
     },
     {
@@ -26,12 +26,12 @@
       "orderIndex": 3,
       "active": true,
       "mobileImageUrl": "",
-      "imageUrl": "/images/slides/s_1792327827472.jpg"
+      "imageUrl": "/images/slides/s_1792327827472.webp"
     },
     {
       "id": "s_1792575816493",
       "mobileImageUrl": "",
-      "imageUrl": "/images/slides/s_1792575816493.jpg",
+      "imageUrl": "/images/slides/s_1792575816493.webp",
       "active": true,
       "orderIndex": 4
     }
@@ -53,7 +53,7 @@
       "showDetails": true,
       "showDuration": true,
       "category": "class-11-12",
-      "image": "/images/courses/c1.jpg",
+      "image": "/images/courses/c1.webp",
       "showImage": true
     },
     {
@@ -62,7 +62,7 @@
       "details": "Apex Institute provides focused JEE coaching for students aiming to excel in engineering entrance examinations. Our program is designed to develop analytical thinking, strengthen problem-solving abilities, and build a deep understanding of Physics, Chemistry, and Mathematics.\nThrough structured classroom learning, challenging practice questions, regular assessments, and strategic exam preparation, students gain the skills and confidence needed to tackle JEE effectively.\n\nAt Apex Institute, we go beyond textbooks to help students think critically, solve confidently, and prepare for a bright future in engineering.",
       "boards": "CBSE, ICSE & State Board Students",
       "showDuration": true,
-      "image": "/images/courses/c2.jpg",
+      "image": "/images/courses/c2.webp",
       "showDetails": true,
       "showFee": true,
       "showSchedule": true,
@@ -88,7 +88,7 @@
       "schedule": "Mon - Sat (2 hrs) • Sun - Test (1 hour)",
       "showTarget": true,
       "showDuration": true,
-      "image": "/images/courses/c3.jpg",
+      "image": "/images/courses/c3.webp",
       "showDetails": true,
       "duration": "1 Year Foundation",
       "showImage": true,
@@ -100,7 +100,7 @@
       "id": "res7",
       "achievement": "NEET 2024- PGIMS, Rohtak (HR)",
       "year": "2024",
-      "photo": "/images/results/res7.jpg",
+      "photo": "/images/results/res7.webp",
       "examType": "NEET",
       "location": "Marks 680/720",
       "studentName": "Sonam"
@@ -108,7 +108,7 @@
     {
       "id": "res8",
       "examType": "NEET",
-      "photo": "/images/results/res8.jpg",
+      "photo": "/images/results/res8.webp",
       "studentName": "Rakshita",
       "year": "2024",
       "location": "Marks 672/720",
@@ -122,7 +122,7 @@
       "examType": "NEET",
       "location": "Marks: 630/720",
       "achievement": "NEET 2022 - PGIMS, Rohtak (HR)",
-      "photo": "/images/results/res_1791029583804.jpg"
+      "photo": "/images/results/res_1791029583804.webp"
     },
     {
       "id": "res_1792666553838",
@@ -130,7 +130,7 @@
       "examType": "NEET",
       "year": "2024",
       "achievement": "NEET 2024 - Kalpana Chawla Medical College, Karnal (HR)",
-      "photo": "/images/results/res_1792666553838.jpg",
+      "photo": "/images/results/res_1792666553838.webp",
       "location": "Marks 680/720"
     },
     {
@@ -138,7 +138,7 @@
       "studentName": "Devanshi ",
       "location": "Marks 671/720",
       "achievement": "NEET 2024 - Sri Atal Bihari Bajpayee Govt. Med. College, Faridabad (HR)",
-      "photo": "/images/results/res_1792667254051.jpg",
+      "photo": "/images/results/res_1792667254051.webp",
       "year": "2024",
       "examType": "NEET"
     },
@@ -147,14 +147,14 @@
       "examType": "NEET",
       "studentName": "Mohit Kharb ",
       "location": "Marks 665/720",
-      "photo": "/images/results/res_1792667645387.jpg",
+      "photo": "/images/results/res_1792667645387.webp",
       "year": "2024",
       "achievement": "NEET 2024 - Sri Atal Bihari Bajpayee Govt. Med. College, Faridabad (HR)"
     },
     {
       "id": "res_1792839334496",
       "photoFit": "contain",
-      "photo": "/images/results/res_1792839334496.jpg",
+      "photo": "/images/results/res_1792839334496.webp",
       "achievement": "NEET 2024 - Govt. Medical College Sultanpur (UP)",
       "location": "Marks 660/720",
       "year": "2024",
@@ -164,7 +164,7 @@
     {
       "id": "res_1792839554259",
       "examType": "NEET",
-      "photo": "/images/results/res_1792839554259.jpg",
+      "photo": "/images/results/res_1792839554259.webp",
       "studentName": "Vipin Sharma",
       "location": "Marks 655/720",
       "photoFit": "contain",
@@ -178,7 +178,7 @@
       "year": "2023",
       "location": "Marks 676/720",
       "photoFit": "contain",
-      "photo": "/images/results/res_1792839815224.jpg",
+      "photo": "/images/results/res_1792839815224.webp",
       "studentName": "Mehak Goyal"
     },
     {
@@ -187,7 +187,7 @@
       "location": "Marks 645/720",
       "photoFit": "contain",
       "examType": "NEET",
-      "photo": "/images/results/res_1792840095592.jpg",
+      "photo": "/images/results/res_1792840095592.webp",
       "studentName": "Deepika ",
       "year": "2024"
     },
@@ -198,7 +198,7 @@
       "achievement": "NEET 2023 - Dr. Baba Saheb Ambedkar Med. College, New Delhi",
       "photoFit": "contain",
       "examType": "NEET",
-      "photo": "/images/results/res_1792840299340.jpg",
+      "photo": "/images/results/res_1792840299340.webp",
       "studentName": "Aryan "
     },
     {
@@ -209,12 +209,12 @@
       "year": "2023",
       "examType": "NEET",
       "studentName": "Divyanshi",
-      "photo": "/images/results/res_1792840482663.jpg"
+      "photo": "/images/results/res_1792840482663.webp"
     },
     {
       "id": "res_1792840741783",
       "photoFit": "contain",
-      "photo": "/images/results/res_1792840741783.jpg",
+      "photo": "/images/results/res_1792840741783.webp",
       "studentName": "Kartik Jindal",
       "year": "2023",
       "location": "Marks 628/720",
@@ -358,8 +358,7 @@
     "showFeaturedCourses": true,
     "address": "#1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana)",
     "allowedAdminEmails": "instituteapex12@gmail.com, instituteapexjind@gmail.com, mbarahul99@gmail.com, naveendhanda21@gmail.com",
-    "showKalam": false,
-    "logoUrl": "/images/logo_custom.png",
+    "logoUrl": "/logo_full.webp",
     "showQuickLinks": false,
     "timestamp": "2026-08-13T13:05:44.935Z",
     "logoHeight": "78px",
@@ -375,7 +374,7 @@
     "showEnquiryInline": true,
     "showAlumni": true,
     "testConnected": true,
-    "logoNameUrl": "/images/logo_custom.png",
+    "logoNameUrl": "/logo_full.webp",
     "showToppers": true
   }
 }
