@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import '../css/admin.css';
 import { dbService } from '../services/dbService';
 import { isDefault } from '../services/firebase';
 import { 
@@ -150,10 +151,7 @@ function AdminPanel({ navigate, onUpdateSettings }) {
             <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
             Banner Sliders (10)
           </div>
-          <div className={`admin-nav-item ${activeTab === 'kalam' ? 'active' : ''}`} onClick={() => setActiveTab('kalam')}>
-            <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" /></svg>
-            Kalam Quote
-          </div>
+          {/* Kalam tab removed */}
           <div className={`admin-nav-item ${activeTab === 'courses' ? 'active' : ''}`} onClick={() => setActiveTab('courses')}>
             <IconBook />
             Courses Manager
@@ -225,7 +223,7 @@ function AdminPanel({ navigate, onUpdateSettings }) {
           )}
           {activeTab === 'overview' && <AdminOverview setActiveTab={setActiveTab} onUpdateSettings={onUpdateSettings} />}
           {activeTab === 'sliders' && <AdminSliders />}
-          {activeTab === 'kalam' && <AdminKalam />}
+          {/* Kalam tab removed */}
           {activeTab === 'courses' && <AdminCourses />}
           {activeTab === 'results' && <AdminResults />}
           {activeTab === 'alumni' && <AdminAlumni />}
@@ -634,10 +632,7 @@ function SettingsForm({ onUpdateSettings }) {
           <input type="checkbox" name="showSliders" id="showSliders" checked={!!settings.showSliders} onChange={handleChange} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
           <label htmlFor="showSliders" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Banner Image Slider</label>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <input type="checkbox" name="showKalam" id="showKalam" checked={!!settings.showKalam} onChange={handleChange} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
-          <label htmlFor="showKalam" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Kalam Mentor Banner</label>
-        </div>
+        {/* Kalam Mentor Banner toggle removed */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <input type="checkbox" name="showInfoCard" id="showInfoCard" checked={!!settings.showInfoCard} onChange={handleChange} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
           <label htmlFor="showInfoCard" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>24/7 Study Partner Info Card</label>
@@ -876,72 +871,6 @@ function AdminSliders() {
           </div>
         ))}
       </div>
-    </div>
-  );
-}
-
-// ---------------- ADMIN KALAM SUB-VIEW ----------------
-function AdminKalam() {
-  const [kalam, setKalam] = useState({ imageUrl: '' });
-  const [success, setSuccess] = useState(false);
-
-  useEffect(() => {
-    setKalam(dbService.getKalam() || { imageUrl: '' });
-  }, []);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setKalam(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dbService.saveKalam(kalam);
-    setSuccess(true);
-    setTimeout(() => setSuccess(false), 3000);
-  };
-
-  return (
-    <div className="admin-card fade-in" style={{ maxWidth: '600px' }}>
-      <div className="admin-card-header">
-        <span className="admin-card-title">APJ Abdul Kalam Banner Configuration</span>
-      </div>
-      {success && (
-        <div style={{ backgroundColor: '#f0fdf4', color: 'var(--accent-green)', padding: '10px', borderRadius: 'var(--radius-md)', fontSize: '0.82rem', marginBottom: '15px', fontWeight: 600 }}>
-          Kalam Section updated!
-        </div>
-      )}
-      <form onSubmit={handleSubmit}>
-        <div className="admin-input-group">
-          <label>Kalam Banner Image URL / Path (Leave blank to hide Kalam Quote on Homepage)</label>
-          <input type="text" name="imageUrl" value={kalam.imageUrl || ''} onChange={handleChange} />
-          <ImageUploadCompress 
-            value={kalam.imageUrl} 
-            onChange={(val) => setKalam(prev => ({ ...prev, imageUrl: val }))} 
-            label="Or Upload and Compress File" 
-          />
-          <span style={{ fontSize: '0.75rem', color: '#666', marginTop: '4px', display: 'block' }}>
-            Set a URL or a local path. Default is <code>/kalam.jpg</code> (copied from the brochure).
-          </span>
-        </div>
-        {kalam.imageUrl && (
-          <div style={{ marginTop: '15px', marginBottom: '15px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <label style={{ fontWeight: 600, fontSize: '0.82rem', margin: 0 }}>Preview Banner:</label>
-              <button 
-                type="button" 
-                className="admin-btn secondary" 
-                style={{ padding: '2px 8px', fontSize: '0.72rem', color: '#ef4444', borderColor: '#ef4444' }} 
-                onClick={() => setKalam(prev => ({ ...prev, imageUrl: '' }))}
-              >
-                Clear Image / Reset
-              </button>
-            </div>
-            <img src={kalam.imageUrl} alt="Kalam Banner Preview" style={{ width: '100%', maxHeight: '200px', objectFit: 'contain', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-md)' }} />
-          </div>
-        )}
-        <button type="submit" className="admin-btn" style={{ padding: '10px 24px' }}>Save Updates</button>
-      </form>
     </div>
   );
 }
@@ -2724,15 +2653,8 @@ function LogoUploadCompress({ value, onChange, label = "Upload & Apply New Logo 
 }
 
 // ---------------- IMAGE UPLOAD & FRONTEND CANVAS COMPRESSION COMPONENT ----------------
-function ImageUploadCompress({ 
-  value, 
-  onChange, 
-  label = "Upload Image", 
-  maxWidth = 800, 
-  maxHeight = 600, 
-  quality = 0.82,
-  preserveOriginal = false
-}) {
+// Auto-converts ALL uploaded images to WebP for 30-50% smaller file sizes
+function ImageUploadCompress({ value, onChange, label='Upload Image', maxWidth=800, maxHeight=600, quality=0.85, preserveOriginal=false }) {
   const [compressing, setCompressing] = useState(false);
   const [error, setError] = useState(null);
   const [info, setInfo] = useState(null);
@@ -2740,155 +2662,81 @@ function ImageUploadCompress({
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      setError('Selected file is not an image.');
-      return;
-    }
-
-    setCompressing(true);
-    setError(null);
-
+    if (!file.type.startsWith('image/')) { setError('Selected file is not an image.'); return; }
+    setCompressing(true); setError(null); setInfo(null);
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = (event) => {
-      const rawDataUrl = event.target.result;
-
-      // If file is already reasonably sized (< 350KB) and preserveOriginal is allowed:
-      // Keep original byte-exact file without re-compressing or touching pixels!
-      if (preserveOriginal && file.size < 380000) {
-        onChange(rawDataUrl);
-        setInfo({
-          origWidth: null,
-          origHeight: null,
-          sizeKb: Math.round(file.size / 1024),
-          original: true
-        });
-        setCompressing(false);
-        return;
-      }
-
+    reader.onload = (ev) => {
       const img = new Image();
-      img.src = rawDataUrl;
+      img.src = ev.target.result;
       img.onload = () => {
-        const TARGET_MAX_WIDTH = maxWidth;
-        const TARGET_MAX_HEIGHT = maxHeight;
-
-        // If preserveOriginal is requested and image already fits within dimensions and safe file size
-        if (preserveOriginal && img.width <= TARGET_MAX_WIDTH && img.height <= TARGET_MAX_HEIGHT && file.size < 400000) {
-          onChange(rawDataUrl);
-          setInfo({
-            origWidth: img.width,
-            origHeight: img.height,
-            sizeKb: Math.round(file.size / 1024),
-            original: true
-          });
+        // Helper: encode canvas to WebP, fall back to JPEG if browser doesn't support WebP encode
+        const encodeWebP = (canvas, q) => {
+          const u = canvas.toDataURL('image/webp', q);
+          return u.startsWith('data:image/webp') ? u : canvas.toDataURL('image/jpeg', q);
+        };
+        // Small images with preserveOriginal: still convert format to WebP
+        if (preserveOriginal && img.width <= maxWidth && img.height <= maxHeight && file.size < 300000) {
+          const qc = document.createElement('canvas');
+          qc.width = img.width; qc.height = img.height;
+          qc.getContext('2d').drawImage(img, 0, 0);
+          const u = encodeWebP(qc, quality);
+          onChange(u);
+          setInfo({ finalWidth: img.width, finalHeight: img.height, sizeKb: Math.round(u.length * 0.75 / 1024), format: u.startsWith('data:image/webp') ? 'WebP' : 'JPEG', original: true });
           setCompressing(false);
           return;
         }
-
-        // Multi-step anti-aliased downsampling (step-down in halves)
-        let curCanvas = document.createElement('canvas');
-        curCanvas.width = img.width;
-        curCanvas.height = img.height;
-        let curCtx = curCanvas.getContext('2d');
-        curCtx.imageSmoothingEnabled = true;
-        curCtx.imageSmoothingQuality = 'high';
-        curCtx.drawImage(img, 0, 0);
-
-        let curWidth = img.width;
-        let curHeight = img.height;
-
-        // Step down iteratively by halves if image resolution is very large to prevent aliasing
-        while (curWidth * 0.5 >= TARGET_MAX_WIDTH || curHeight * 0.5 >= TARGET_MAX_HEIGHT) {
-          const stepCanvas = document.createElement('canvas');
-          const stepWidth = Math.floor(curWidth * 0.5);
-          const stepHeight = Math.floor(curHeight * 0.5);
-          stepCanvas.width = stepWidth;
-          stepCanvas.height = stepHeight;
-          const stepCtx = stepCanvas.getContext('2d');
-          stepCtx.imageSmoothingEnabled = true;
-          stepCtx.imageSmoothingQuality = 'high';
-          stepCtx.drawImage(curCanvas, 0, 0, stepWidth, stepHeight);
-
-          curCanvas = stepCanvas;
-          curWidth = stepWidth;
-          curHeight = stepHeight;
+        // Multi-step downsampling to prevent aliasing on large images
+        let cur = document.createElement('canvas');
+        cur.width = img.width; cur.height = img.height;
+        let cx = cur.getContext('2d');
+        cx.imageSmoothingEnabled = true; cx.imageSmoothingQuality = 'high';
+        cx.drawImage(img, 0, 0);
+        let cw = img.width, ch = img.height;
+        while (cw * 0.5 >= maxWidth || ch * 0.5 >= maxHeight) {
+          const sc = document.createElement('canvas');
+          const sw = Math.floor(cw * 0.5), sh = Math.floor(ch * 0.5);
+          sc.width = sw; sc.height = sh;
+          const sctx = sc.getContext('2d');
+          sctx.imageSmoothingEnabled = true; sctx.imageSmoothingQuality = 'high';
+          sctx.drawImage(cur, 0, 0, sw, sh);
+          cur = sc; cw = sw; ch = sh;
         }
-
-        // Calculate aspect ratio scale
-        const scale = Math.min(1, TARGET_MAX_WIDTH / curWidth, TARGET_MAX_HEIGHT / curHeight);
-        const finalWidth = Math.max(1, Math.round(curWidth * scale));
-        const finalHeight = Math.max(1, Math.round(curHeight * scale));
-
-        const finalCanvas = document.createElement('canvas');
-        finalCanvas.width = finalWidth;
-        finalCanvas.height = finalHeight;
-        const finalCtx = finalCanvas.getContext('2d');
-        finalCtx.fillStyle = '#ffffff';
-        finalCtx.fillRect(0, 0, finalWidth, finalHeight);
-        finalCtx.imageSmoothingEnabled = true;
-        finalCtx.imageSmoothingQuality = 'high';
-        finalCtx.drawImage(curCanvas, 0, 0, finalWidth, finalHeight);
-
-        // High quality JPEG output
-        let outQuality = quality;
-        let compressedDataUrl = finalCanvas.toDataURL('image/jpeg', outQuality);
-
-        // Ensure string stays below 380KB for Firestore safe storage
-        if (compressedDataUrl.length > 400000) {
-          compressedDataUrl = finalCanvas.toDataURL('image/jpeg', 0.80);
-        }
-
-        setInfo({
-          origWidth: img.width,
-          origHeight: img.height,
-          finalWidth,
-          finalHeight,
-          sizeKb: Math.round(compressedDataUrl.length * 0.75 / 1024),
-          original: false
-        });
-
-        onChange(compressedDataUrl);
+        const scale = Math.min(1, maxWidth / cw, maxHeight / ch);
+        const fw = Math.max(1, Math.round(cw * scale)), fh = Math.max(1, Math.round(ch * scale));
+        const fc = document.createElement('canvas');
+        fc.width = fw; fc.height = fh;
+        const fctx = fc.getContext('2d');
+        fctx.imageSmoothingEnabled = true; fctx.imageSmoothingQuality = 'high';
+        fctx.drawImage(cur, 0, 0, fw, fh);
+        // Output WebP — 30-50% smaller than JPEG at same visual quality
+        let out = encodeWebP(fc, quality);
+        if (out.length > 400000) out = encodeWebP(fc, 0.75);
+        const isWebP = out.startsWith('data:image/webp');
+        setInfo({ finalWidth: fw, finalHeight: fh, sizeKb: Math.round(out.length * 0.75 / 1024), format: isWebP ? 'WebP' : 'JPEG', original: false });
+        onChange(out);
         setCompressing(false);
       };
-      img.onerror = () => {
-        setError('Failed to process image file.');
-        setCompressing(false);
-      };
+      img.onerror = () => { setError('Failed to process image.'); setCompressing(false); };
     };
-    reader.onerror = () => {
-      setError('Failed to read image file.');
-      setCompressing(false);
-    };
+    reader.onerror = () => { setError('Failed to read file.'); setCompressing(false); };
   };
 
+  const uid = 'file-' + label.replace(/[^a-z0-9]/gi, '-').toLowerCase();
   return (
     <div style={{ marginTop: '6px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-        <input 
-          type="file" 
-          accept="image/*" 
-          onChange={handleFileChange} 
-          style={{ display: 'none' }} 
-          id={`file-compress-${label.replace(/\s+/g, '-').toLowerCase()}`} 
-        />
-        <label 
-          htmlFor={`file-compress-${label.replace(/\s+/g, '-').toLowerCase()}`} 
-          className="admin-btn secondary" 
-          style={{ cursor: 'pointer', padding: '6px 12px', fontSize: '0.76rem', display: 'inline-flex', alignItems: 'center', margin: 0 }}
-        >
-          {compressing ? 'âŒ› Processing Image...' : label}
+        <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} id={uid} />
+        <label htmlFor={uid} className="admin-btn secondary" style={{ cursor: 'pointer', padding: '6px 12px', fontSize: '0.76rem', display: 'inline-flex', alignItems: 'center', margin: 0 }}>
+          {compressing ? '⌛ Converting to WebP...' : '🖼️ ' + label}
         </label>
         {info && (
           <span style={{ fontSize: '0.74rem', color: 'var(--accent-green)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-            âœ“ {info.original ? 'Original Quality Preserved' : `High-Res (${info.finalWidth}x${info.finalHeight}px, ${info.sizeKb}KB)`}
+            ✓ {info.format} • {info.finalWidth}×{info.finalHeight}px • {info.sizeKb} KB
           </span>
         )}
         {!info && value && value.startsWith('data:image') && (
-          <span style={{ fontSize: '0.74rem', color: 'var(--accent-green)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-            âœ“ Ready
-          </span>
+          <span style={{ fontSize: '0.74rem', color: 'var(--accent-green)', fontWeight: 600 }}>✓ Ready</span>
         )}
       </div>
       {error && <span style={{ fontSize: '0.72rem', color: '#ef4444', fontWeight: 500 }}>{error}</span>}

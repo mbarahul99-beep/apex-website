@@ -3,7 +3,7 @@ import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { dbService } from './services/dbService';
 import { isDefault } from './services/firebase';
 import './css/main.css';
-import './css/admin.css';
+// admin.css is imported inside AdminPanel.jsx to keep it out of the critical path
 
 // SVG Icons and shared utilities from standalone module
 import { 
@@ -736,7 +736,6 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
   // Synchronous frame-0 cache initialization (instant open with no blank state)
   const [sliders, setSliders] = useState(() => dbService.getSliders().filter(s => s.active));
   const [courses, setCourses] = useState(() => dbService.getCourses());
-  const [kalam, setKalam] = useState(() => dbService.getKalam());
   const [resources, setResources] = useState(() => dbService.getResources());
   const [testimonials, setTestimonials] = useState(() => dbService.getTestimonials());
   const [results, setResults] = useState(() => dbService.getResults());
@@ -751,7 +750,6 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
   const refreshHomeData = () => {
     setSliders(dbService.getSliders().filter(s => s.active));
     setCourses(dbService.getCourses());
-    setKalam(dbService.getKalam());
     setResources(dbService.getResources());
     setTestimonials(dbService.getTestimonials());
     setResults(dbService.getResults());
@@ -848,19 +846,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
         </section>
       )}
 
-      {/* APJ Abdul Kalam Banner Section (Full Width) */}
-      {settings.showKalam !== false && kalam && kalam.imageUrl && (
-        <section className="kalam-banner-section" style={{ marginTop: '0', display: 'flex', justifyContent: 'center', width: '100%', overflow: 'hidden' }}>
-          <img 
-            src={kalam.imageUrl} 
-            alt="Dr. APJ Abdul Kalam - Our Mentor" 
-            loading="lazy"
-            decoding="async"
-            style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '0', boxShadow: 'none' }} 
-            onError={(e) => { e.target.style.display = 'none'; }}
-          />
-        </section>
-      )}
+      {/* Kalam Banner Section removed */}
 
       {/* Main homepage container wrapper */}
       <div className="student-content-wrap" style={{ marginTop: '20px' }}>
