@@ -1037,9 +1037,6 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                 {alm.currentRole && (
                   <span className="alumni-role">{alm.currentRole}</span>
                 )}
-                {alm.quote && (
-                  <p className="alumni-quote">"{alm.quote}"</p>
-                )}
               </div>
             ))}
           </div>
