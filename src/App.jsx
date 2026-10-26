@@ -485,7 +485,7 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
           <div className="mobile-drawer" onClick={e => e.stopPropagation()}>
             <div className="mobile-drawer-header">
               <span style={{ fontWeight: 800, color: 'var(--navy-blue)', fontSize: '1.1rem' }}>APEX PORTAL</span>
-              <button className="close-drawer-btn" onClick={() => setMobileMenuOpen(false)}>Ã—</button>
+              <button className="close-drawer-btn" onClick={() => setMobileMenuOpen(false)}>×</button>
             </div>
             <nav className="mobile-drawer-nav">
               <span className={`mobile-nav-link ${currentPath === '/' || currentPath === '/home' ? 'active' : ''}`} onClick={() => { navigate('/'); setMobileMenuOpen(false); }}>Home</span>
@@ -1376,7 +1376,7 @@ function OnlinePrepView({ navigate, openEnquiry }) {
         boxShadow: 'var(--shadow-sm)'
       }}>
         <div style={{ display: 'flex', gap: '12px' }}>
-          <span style={{ fontSize: '1.5rem' }}>ðŸ“</span>
+          <span style={{ fontSize: '1.5rem' }}>📝</span>
           <div>
             <h4 style={{ margin: '0 0 4px 0', color: '#92400e', fontWeight: 700 }}>Important Academic Notice</h4>
             <p style={{ margin: 0, fontSize: '0.88rem', color: '#b45309', lineHeight: 1.5 }}>
@@ -1461,7 +1461,7 @@ function ScholarshipView({ navigate, openEnquiry }) {
               </h3>
               
               <div style={{ display: 'flex', gap: '8px', fontSize: '0.82rem', color: 'var(--navy-blue)', fontWeight: 700, backgroundColor: '#f0f4f8', padding: '10px', borderRadius: 'var(--radius-sm)', marginBottom: '15px' }}>
-                <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>ðŸ†</span>
+                <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>🏆</span>
                 <div>
                   <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', color: 'var(--light-gray)', fontWeight: 600 }}>Criteria:</div>
                   <div style={{ marginTop: '2px' }}>{slab.criteria}</div>
@@ -1486,7 +1486,7 @@ function ScholarshipView({ navigate, openEnquiry }) {
 
       {/* Meritorious Track Record notice */}
       <div className="info-card" style={{ padding: '24px', display: 'flex', gap: '15px', border: '1px solid var(--border-light)', boxShadow: 'var(--shadow-sm)', marginBottom: '30px' }}>
-        <div style={{ fontSize: '2rem' }}>ðŸ’¡</div>
+        <div style={{ fontSize: '2rem' }}>💡</div>
         <div>
           <h4 style={{ margin: '0 0 6px 0', color: 'var(--navy-blue)', fontWeight: 700 }}>Applying with Merit Documents</h4>
           <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--light-gray)', lineHeight: 1.55 }}>

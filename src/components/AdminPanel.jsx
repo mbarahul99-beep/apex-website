@@ -208,14 +208,14 @@ function AdminPanel({ navigate, onUpdateSettings }) {
         <div className="admin-content">
           {isDefault ? (
             <div style={{ backgroundColor: '#fffbeb', border: '1px solid #fef3c7', padding: '12px 18px', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-              <span style={{ fontSize: '1.25rem' }}>âš ï¸</span>
+              <span style={{ fontSize: '1.25rem' }}>⚠️</span>
               <div style={{ fontSize: '0.85rem', color: '#92400e', lineHeight: '1.4' }}>
                 <strong>Database is disconnected (using local browser storage).</strong> To save your updates permanently and sync across all devices, paste your Firebase config in <code>src/services/firebaseConfig.js</code> in your code repository.
               </div>
             </div>
           ) : (
             <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #dcfce7', padding: '12px 18px', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-              <span style={{ fontSize: '1.25rem' }}>ðŸ”¥</span>
+              <span style={{ fontSize: '1.25rem' }}>🔥</span>
               <div style={{ fontSize: '0.85rem', color: '#166534', lineHeight: '1.4' }}>
                 <strong>Connected to Firebase Firestore.</strong> Your data is synchronized in real-time and saved permanently in your Google Cloud account.
               </div>
@@ -348,12 +348,12 @@ function SettingsForm({ onUpdateSettings }) {
     <form onSubmit={handleSubmit}>
       {success && (
         <div style={{ backgroundColor: '#f0fdf4', color: 'var(--accent-green)', padding: '12px', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', marginBottom: '15px', fontWeight: 600, border: '1px solid #bbf7d0' }}>
-          âœ“ System Settings & Header Logo Saved Successfully!
+          ✓ System Settings & Header Logo Saved Successfully!
         </div>
       )}
       {saveError && (
         <div style={{ backgroundColor: '#fef2f2', color: '#dc2626', padding: '12px', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', marginBottom: '15px', fontWeight: 600, border: '1px solid #fecaca' }}>
-          âš ï¸ {saveError}
+          ⚠️ {saveError}
         </div>
       )}
       <div className="admin-form-row">
@@ -393,7 +393,7 @@ function SettingsForm({ onUpdateSettings }) {
             }}
             title="Reset to default high-res logo"
           >
-            â†º Reset Default Logo
+            ↺ Reset Default Logo
           </button>
         </div>
 
@@ -824,7 +824,7 @@ function AdminSliders() {
                 <>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                     <span style={{ fontSize: '0.78rem', color: slide.active ? 'var(--accent-green)' : '#ef4444', fontWeight: 600 }}>
-                      {slide.active ? 'â— Showing' : 'â—‹ Hidden'}
+                      {slide.active ? '● Showing' : '○ Hidden'}
                     </span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <span style={{ fontSize: '0.72rem', color: 'var(--navy-dark)', fontWeight: 600 }}>Slot:</span>
@@ -847,7 +847,7 @@ function AdminSliders() {
                       onClick={() => handleMoveSlide(idx, idx - 1)}
                       title="Move Up"
                     >
-                      â–² Up
+                      ▲ Up
                     </button>
                     <button 
                       className="admin-btn secondary" 
@@ -856,7 +856,7 @@ function AdminSliders() {
                       onClick={() => handleMoveSlide(idx, idx + 1)}
                       title="Move Down"
                     >
-                      â–¼ Down
+                      ▼ Down
                     </button>
                     <button className="admin-btn secondary" style={{ flex: 1, padding: '4px 6px', fontSize: '0.72rem' }} onClick={() => handleEdit(slide)}>
                       Edit
@@ -1055,7 +1055,7 @@ function AdminCourses() {
             </div>
             <div className="admin-input-group">
               <label>Class Weekly Schedule *</label>
-              <input type="text" value={schedule} onChange={e => setSchedule(e.target.value)} placeholder="Mon - Fri (3 hrs) â€¢ Sat - Sun (3 hrs)" required />
+              <input type="text" value={schedule} onChange={e => setSchedule(e.target.value)} placeholder="Mon - Fri (3 hrs) • Sat - Sun (3 hrs)" required />
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
                 <input type="checkbox" id="chk-show-schedule" checked={showSchedule} onChange={e => setShowSchedule(e.target.checked)} />
                 <label htmlFor="chk-show-schedule" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#666', cursor: 'pointer', display: 'inline', margin: 0 }}>Show schedule on website</label>
@@ -1611,7 +1611,7 @@ function AdminAlumni() {
                       />
                     ) : (
                       <div style={{ width: '45px', height: '45px', borderRadius: '50%', backgroundColor: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', color: '#64748b' }}>
-                        ðŸ‘¤
+                        👤
                       </div>
                     )}
                   </td>
@@ -2616,13 +2616,13 @@ function LogoUploadCompress({ value, onChange, label = "Upload & Apply New Logo 
 
       {compressing && (
         <div style={{ fontSize: '0.78rem', color: 'var(--navy-blue)', marginTop: '8px', fontWeight: 600 }}>
-          â³ Resampling logo image with multi-step anti-aliasing...
+          ⏳ Resampling logo image with multi-step anti-aliasing...
         </div>
       )}
 
       {error && (
         <div style={{ fontSize: '0.78rem', color: '#ef4444', marginTop: '6px', fontWeight: 600 }}>
-          âš ï¸ {error}
+          ⚠️ {error}
         </div>
       )}
 
@@ -2637,7 +2637,7 @@ function LogoUploadCompress({ value, onChange, label = "Upload & Apply New Logo 
           fontWeight: 600,
           border: '1px solid #bbf7d0'
         }}>
-          âœ“ New Logo Applied: Original {imageInfo.origWidth}x{imageInfo.origHeight}px â†’ Optimized {imageInfo.finalWidth}x{imageInfo.finalHeight}px ({imageInfo.format})
+          ✓ New Logo Applied: Original {imageInfo.origWidth}x{imageInfo.origHeight}px → Optimized {imageInfo.finalWidth}x{imageInfo.finalHeight}px ({imageInfo.format})
         </div>
       )}
     </div>
@@ -2905,7 +2905,7 @@ function AdminTestimonials() {
                   <td>
                     <span className="status-badge new">{item.rankBadge}</span>
                   </td>
-                  <td>{item.videoUrl ? 'ðŸŽ¥ Yes (YouTube)' : 'âœï¸ Text Only'}</td>
+                  <td>{item.videoUrl ? '🎥 Yes (YouTube)' : '✍️ Text Only'}</td>
                   <td>
                     <div className="table-actions">
                       <button className="table-action-btn" onClick={() => handleEdit(item)} title="Edit Record">
