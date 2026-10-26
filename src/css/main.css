@@ -763,60 +763,29 @@
 }
 
 .alumni-name {
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   font-weight: 800;
   color: var(--navy-dark);
-  margin-bottom: 4px;
-}
-
-.alumni-college-badge {
-  display: inline-block;
-  background: #eff6ff;
-  color: var(--primary-blue);
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
   margin-bottom: 6px;
-  border: 1px solid #bfdbfe;
-}
-
-.alumni-course {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--dark-gray);
-  margin-bottom: 2px;
-}
-
-.alumni-achievement {
-  font-size: 0.82rem;
-  font-weight: 800;
-  color: #16a34a;
-  margin-bottom: 3px;
-}
-
-.alumni-batch {
-  font-size: 0.72rem;
-  color: var(--light-gray);
-  font-weight: 500;
-  margin-bottom: 4px;
 }
 
 .alumni-role {
-  font-size: 0.74rem;
+  font-size: 0.84rem;
   color: var(--navy-blue);
   font-weight: 600;
-  margin-bottom: 4px;
+  line-height: 1.35;
+  margin-bottom: 8px;
 }
 
-.alumni-quote {
+.alumni-batch {
+  display: inline-block;
   font-size: 0.74rem;
-  font-style: italic;
-  color: #64748b;
-  line-height: 1.4;
-  margin-top: 6px;
-  padding-top: 6px;
-  border-top: 1px dashed var(--border-light);
+  color: #475569;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
 }
 
 .view-more-container {

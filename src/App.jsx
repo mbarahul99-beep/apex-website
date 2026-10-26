@@ -1011,34 +1011,37 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
           </div>
 
           <div className="alumni-grid">
-            {(showAllAlumni ? alumni : alumni.slice(0, 5)).map(alm => (
-              <div className="alumni-card" key={alm.id}>
-                <div className="alumni-photo-wrap">
-                  <img 
-                    src={alm.photo || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400"} 
-                    className="alumni-photo" 
-                    alt={alm.name} 
-                    loading="lazy"
-                  />
+            {(showAllAlumni ? alumni : alumni.slice(0, 5)).map(alm => {
+              const roleWithPlace = alm.currentRole 
+                ? (alm.college && !alm.currentRole.toLowerCase().includes(alm.college.toLowerCase().slice(0, 4)) 
+                    ? `${alm.currentRole}, ${alm.college}` 
+                    : alm.currentRole)
+                : (alm.college || '');
+
+              return (
+                <div className="alumni-card" key={alm.id}>
+                  <div className="alumni-photo-wrap">
+                    <img 
+                      src={alm.photo || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400"} 
+                      className="alumni-photo" 
+                      alt={alm.name} 
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400";
+                      }}
+                    />
+                  </div>
+                  <span className="alumni-name">{alm.name}</span>
+                  {roleWithPlace && (
+                    <span className="alumni-role">{roleWithPlace}</span>
+                  )}
+                  {alm.batch && (
+                    <span className="alumni-batch">Batch {alm.batch}</span>
+                  )}
                 </div>
-                <span className="alumni-name">{alm.name}</span>
-                {alm.college && (
-                  <span className="alumni-college-badge">{alm.college}</span>
-                )}
-                {alm.course && (
-                  <span className="alumni-course">{alm.course}</span>
-                )}
-                {alm.achievement && (
-                  <span className="alumni-achievement">{alm.achievement}</span>
-                )}
-                {alm.batch && (
-                  <span className="alumni-batch">Batch {alm.batch}</span>
-                )}
-                {alm.currentRole && (
-                  <span className="alumni-role">{alm.currentRole}</span>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {alumni.length > 5 && (
