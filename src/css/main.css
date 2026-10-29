@@ -741,37 +741,53 @@
 .alumni-photo-wrap {
   width: 130px;
   height: 130px;
-  border-radius: var(--radius-full);
+  border-radius: 50%;
   overflow: hidden;
   margin-bottom: var(--spacing-sm);
-  border: 4px solid #eff6ff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  border: 4px solid var(--primary-blue, #1d4ed8);
+  box-shadow: 0 4px 14px rgba(29, 78, 216, 0.22);
   flex-shrink: 0;
+  padding: 3px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (min-width: 768px) {
   .alumni-photo-wrap {
     width: 155px;
     height: 155px;
+    border-width: 4.5px;
   }
 }
 
 .alumni-photo {
   width: 100%;
   height: 100%;
+  border-radius: 50%;
   object-fit: cover;
+  display: block;
 }
 
 .alumni-name {
   font-size: 1.05rem;
   font-weight: 800;
   color: var(--navy-dark);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .alumni-role {
-  font-size: 0.84rem;
-  color: var(--navy-blue);
+  font-size: 0.86rem;
+  color: var(--primary-blue, #1d4ed8);
+  font-weight: 700;
+  line-height: 1.35;
+  margin-bottom: 4px;
+}
+
+.alumni-college {
+  font-size: 0.82rem;
+  color: #475569;
   font-weight: 600;
   line-height: 1.35;
   margin-bottom: 8px;
@@ -780,12 +796,13 @@
 .alumni-batch {
   display: inline-block;
   font-size: 0.74rem;
-  color: #475569;
+  color: #64748b;
   background-color: #f1f5f9;
   border: 1px solid #e2e8f0;
-  padding: 3px 10px;
+  padding: 2px 10px;
   border-radius: var(--radius-full);
   font-weight: 600;
+  margin-top: auto;
 }
 
 .view-more-container {

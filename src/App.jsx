@@ -1012,11 +1012,10 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
 
           <div className="alumni-grid">
             {(showAllAlumni ? alumni : alumni.slice(0, 5)).map(alm => {
-              const roleWithPlace = alm.currentRole 
-                ? (alm.college && !alm.currentRole.toLowerCase().includes(alm.college.toLowerCase().slice(0, 4)) 
-                    ? `${alm.currentRole}, ${alm.college}` 
-                    : alm.currentRole)
-                : (alm.college || '');
+              const degreeRole = [alm.course, alm.currentRole]
+                .filter(Boolean)
+                .filter((v, i, a) => a.indexOf(v) === i)
+                .join(', ') || alm.currentRole || alm.course || '';
 
               return (
                 <div className="alumni-card" key={alm.id}>
@@ -1024,7 +1023,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                     <img 
                       src={alm.photo || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400"} 
                       className="alumni-photo" 
-                      alt={alm.name} 
+                      alt={alm.name || 'Alumni'} 
                       loading="lazy"
                       onError={(e) => {
                         e.currentTarget.onerror = null;
@@ -1032,12 +1031,15 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                       }}
                     />
                   </div>
-                  <span className="alumni-name">{alm.name}</span>
-                  {roleWithPlace && (
-                    <span className="alumni-role">{roleWithPlace}</span>
+                  {alm.name && <span className="alumni-name">{alm.name}</span>}
+                  {degreeRole && (
+                    <span className="alumni-role">{degreeRole}</span>
+                  )}
+                  {alm.college && (
+                    <span className="alumni-college">{alm.college}</span>
                   )}
                   {alm.batch && (
-                    <span className="alumni-batch">Batch {alm.batch}</span>
+                    <span className="alumni-batch">{alm.batch.toString().startsWith('Batch') ? alm.batch : `Batch ${alm.batch}`}</span>
                   )}
                 </div>
               );

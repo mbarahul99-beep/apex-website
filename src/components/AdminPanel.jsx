@@ -1429,12 +1429,9 @@ function AdminAlumni() {
 
   const [name, setName] = useState('');
   const [college, setCollege] = useState('');
-  const [course, setCourse] = useState('');
-  const [batch, setBatch] = useState('');
-  const [achievement, setAchievement] = useState('');
   const [currentRole, setCurrentRole] = useState('');
+  const [batch, setBatch] = useState('');
   const [photo, setPhoto] = useState('');
-  const [quote, setQuote] = useState('');
 
   const loadAlumniList = () => setAlumni(dbService.getAlumni());
 
@@ -1446,12 +1443,9 @@ function AdminAlumni() {
     setEditingAlumni(alm);
     setName(alm.name || '');
     setCollege(alm.college || '');
-    setCourse(alm.course || '');
+    setCurrentRole(alm.currentRole || alm.course || '');
     setBatch(alm.batch || '');
-    setAchievement(alm.achievement || '');
-    setCurrentRole(alm.currentRole || '');
     setPhoto(alm.photo || '');
-    setQuote(alm.quote || '');
     setFormOpen(true);
   };
 
@@ -1459,12 +1453,9 @@ function AdminAlumni() {
     setEditingAlumni(null);
     setName('');
     setCollege('');
-    setCourse('MBBS');
-    setBatch('2023-2024');
-    setAchievement('');
     setCurrentRole('');
+    setBatch('');
     setPhoto('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400');
-    setQuote('');
     setFormOpen(true);
   };
 
@@ -1486,13 +1477,11 @@ function AdminAlumni() {
       await dbService.saveAlumni({
         id: editingAlumni ? editingAlumni.id : undefined,
         name,
-        college,
-        course,
-        batch,
-        achievement,
         currentRole,
-        photo,
-        quote
+        course: currentRole,
+        college,
+        batch,
+        photo
       });
       setFormOpen(false);
       loadAlumniList();
@@ -1516,38 +1505,27 @@ function AdminAlumni() {
 
       {formOpen ? (
         <form onSubmit={handleSubmit} style={{ border: '1px solid #e2e8f0', padding: '20px', borderRadius: 'var(--radius-lg)' }}>
-          <h4 style={{ marginBottom: '15px' }}>{editingAlumni ? `Edit Profile: ${editingAlumni.name}` : 'Add New Alumni Profile'}</h4>
+          <h4 style={{ marginBottom: '15px' }}>{editingAlumni ? `Edit Profile: ${editingAlumni.name || 'Alumni'}` : 'Add New Alumni Profile'}</h4>
           
           <div className="admin-form-row">
             <div className="admin-input-group">
-              <label>Alumni Full Name *</label>
-              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Dr. Aman Sharma" required />
+              <label>Alumni Full Name</label>
+              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Dr. Aman Sharma" />
             </div>
             <div className="admin-input-group">
-              <label>Premier College / University *</label>
-              <input type="text" value={college} onChange={e => setCollege(e.target.value)} placeholder="e.g. AIIMS New Delhi / IIT Bombay" required />
+              <label>Degree / Current Role</label>
+              <input type="text" value={currentRole} onChange={e => setCurrentRole(e.target.value)} placeholder="e.g. MBBS, Resident Doctor / Software Engineer" />
             </div>
           </div>
 
           <div className="admin-form-row">
             <div className="admin-input-group">
-              <label>Degree / Course Studied</label>
-              <input type="text" value={course} onChange={e => setCourse(e.target.value)} placeholder="e.g. MBBS / B.Tech Computer Science" />
+              <label>College / University</label>
+              <input type="text" value={college} onChange={e => setCollege(e.target.value)} placeholder="e.g. AIIMS New Delhi / IIT Bombay" />
             </div>
             <div className="admin-input-group">
-              <label>Apex Batch Year</label>
+              <label>Batch Year</label>
               <input type="text" value={batch} onChange={e => setBatch(e.target.value)} placeholder="e.g. 2021-2022" />
-            </div>
-          </div>
-
-          <div className="admin-form-row">
-            <div className="admin-input-group">
-              <label>Entrance Exam Achievement / Rank</label>
-              <input type="text" value={achievement} onChange={e => setAchievement(e.target.value)} placeholder="e.g. NEET AIR 42 / JEE Advanced AIR 89" />
-            </div>
-            <div className="admin-input-group">
-              <label>Current Role / Designation</label>
-              <input type="text" value={currentRole} onChange={e => setCurrentRole(e.target.value)} placeholder="e.g. Resident Doctor, AIIMS / Software Engineer, Google" />
             </div>
           </div>
 
@@ -1562,21 +1540,11 @@ function AdminAlumni() {
               />
               {photo && (
                 <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  <img src={photo} alt="Preview" style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '3px solid #eff6ff' }} />
-                  <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Live Photo Preview</span>
+                  <img src={photo} alt="Preview" style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '3.5px solid #2563eb', padding: '2px', background: '#fff' }} />
+                  <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Live Photo Preview (Blue Circular Ring)</span>
                 </div>
               )}
             </div>
-          </div>
-
-          <div className="admin-input-group">
-            <label>Testimonial / Inspirational Quote</label>
-            <textarea 
-              value={quote} 
-              onChange={e => setQuote(e.target.value)} 
-              rows="3" 
-              placeholder="e.g. Apex Institute provided the rigorous concept clarity and test series that made cracking AIIMS possible!"
-            ></textarea>
           </div>
 
           <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
@@ -1591,11 +1559,9 @@ function AdminAlumni() {
               <tr>
                 <th>Photo</th>
                 <th>Name</th>
-                <th>College / Institute</th>
-                <th>Degree</th>
-                <th>Batch</th>
-                <th>Achievement</th>
-                <th>Current Role</th>
+                <th>Degree / Current Role</th>
+                <th>College / University</th>
+                <th>Batch Year</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -1606,25 +1572,19 @@ function AdminAlumni() {
                     {alm.photo ? (
                       <img 
                         src={alm.photo} 
-                        alt={alm.name} 
-                        style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #cbd5e1' }} 
+                        alt={alm.name || 'Alumni'} 
+                        style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover', border: '2.5px solid #2563eb', padding: '1px', background: '#fff' }} 
                       />
                     ) : (
-                      <div style={{ width: '45px', height: '45px', borderRadius: '50%', backgroundColor: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', color: '#64748b' }}>
+                      <div style={{ width: '45px', height: '45px', borderRadius: '50%', backgroundColor: '#eff6ff', border: '2px solid #2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', color: '#2563eb' }}>
                         👤
                       </div>
                     )}
                   </td>
-                  <td style={{ fontWeight: 600 }}>{alm.name}</td>
-                  <td>
-                    <span className="alumni-college-badge" style={{ margin: 0 }}>
-                      {alm.college}
-                    </span>
-                  </td>
-                  <td>{alm.course || '-'}</td>
-                  <td>{alm.batch ? `Batch ${alm.batch}` : '-'}</td>
-                  <td style={{ color: '#16a34a', fontWeight: 700 }}>{alm.achievement || '-'}</td>
-                  <td>{alm.currentRole || '-'}</td>
+                  <td style={{ fontWeight: 600 }}>{alm.name || '-'}</td>
+                  <td>{alm.currentRole || alm.course || '-'}</td>
+                  <td>{alm.college || '-'}</td>
+                  <td>{alm.batch ? (alm.batch.toString().startsWith('Batch') ? alm.batch : `Batch ${alm.batch}`) : '-'}</td>
                   <td>
                     <div className="table-actions">
                       <button className="table-action-btn" onClick={() => handleEdit(alm)} title="Edit"><IconEdit /></button>
