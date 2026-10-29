@@ -1432,6 +1432,7 @@ function AdminAlumni() {
   const [currentRole, setCurrentRole] = useState('');
   const [batch, setBatch] = useState('');
   const [photo, setPhoto] = useState('');
+  const [photoFit, setPhotoFit] = useState('contain');
 
   const loadAlumniList = () => setAlumni(dbService.getAlumni());
 
@@ -1446,6 +1447,7 @@ function AdminAlumni() {
     setCurrentRole(alm.currentRole || alm.course || '');
     setBatch(alm.batch || '');
     setPhoto(alm.photo || '');
+    setPhotoFit(alm.photoFit || 'contain');
     setFormOpen(true);
   };
 
@@ -1456,6 +1458,7 @@ function AdminAlumni() {
     setCurrentRole('');
     setBatch('');
     setPhoto('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400');
+    setPhotoFit('contain');
     setFormOpen(true);
   };
 
@@ -1481,7 +1484,8 @@ function AdminAlumni() {
         course: currentRole,
         college,
         batch,
-        photo
+        photo,
+        photoFit
       });
       setFormOpen(false);
       loadAlumniList();
@@ -1538,16 +1542,37 @@ function AdminAlumni() {
                 onChange={setPhoto} 
                 label="Click or Drag File to Upload & Compress Alumni Photo" 
               />
-              {photo && (
-                <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  <img src={photo} alt="Preview" style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '3.5px solid #2563eb', padding: '2px', background: '#fff' }} />
-                  <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Live Photo Preview (Blue Circular Ring)</span>
-                </div>
-              )}
+            </div>
+            <div className="admin-input-group" style={{ minWidth: '220px' }}>
+              <label>Photo Display Mode</label>
+              <select value={photoFit} onChange={e => setPhotoFit(e.target.value)}>
+                <option value="contain">Full Image (Fit / No Upper Cropping) - Recommended</option>
+                <option value="cover-top">Top Focus (Show Full Head / Hair)</option>
+                <option value="cover">Fill Circle (Crop to fill)</option>
+              </select>
+              <small style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '4px', display: 'block' }}>
+                "Full Image" guarantees the alumni's head and hair are never cropped at the top.
+              </small>
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+          {photo && (
+            <div style={{ marginTop: '15px', display: 'flex', alignItems: 'center', gap: '15px', background: '#eff6ff', padding: '12px 18px', borderRadius: '12px', border: '1px solid #bfdbfe' }}>
+              <div className="alumni-photo-wrap" style={{ width: '80px', height: '80px', margin: 0, flexShrink: 0 }}>
+                <img src={photo} alt="Preview" className={`alumni-photo fit-${photoFit}`} />
+              </div>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: '0.88rem', color: '#1d4ed8' }}>
+                  Live Preview (Blue Circle Frame)
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '2px' }}>
+                  Verify that the alumni's full head, hair, and face are completely visible before saving.
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
             <button type="submit" className="admin-btn" disabled={isSaving}>{isSaving ? 'Saving...' : 'Save Alumni Profile'}</button>
             <button type="button" className="admin-btn secondary" onClick={() => setFormOpen(false)}>Cancel</button>
           </div>
@@ -1570,11 +1595,13 @@ function AdminAlumni() {
                 <tr key={alm.id}>
                   <td>
                     {alm.photo ? (
-                      <img 
-                        src={alm.photo} 
-                        alt={alm.name || 'Alumni'} 
-                        style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover', border: '2.5px solid #2563eb', padding: '1px', background: '#fff' }} 
-                      />
+                      <div className="alumni-photo-wrap" style={{ width: '45px', height: '45px', margin: 0, borderWidth: '2.5px', padding: '1px' }}>
+                        <img 
+                          src={alm.photo} 
+                          alt={alm.name || 'Alumni'} 
+                          className={`alumni-photo ${alm.photoFit ? `fit-${alm.photoFit}` : 'fit-contain'}`}
+                        />
+                      </div>
                     ) : (
                       <div style={{ width: '45px', height: '45px', borderRadius: '50%', backgroundColor: '#eff6ff', border: '2px solid #2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', color: '#2563eb' }}>
                         👤

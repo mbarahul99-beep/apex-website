@@ -1022,7 +1022,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                   <div className="alumni-photo-wrap">
                     <img 
                       src={alm.photo || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400"} 
-                      className="alumni-photo" 
+                      className={`alumni-photo ${alm.photoFit ? `fit-${alm.photoFit}` : 'fit-contain'}`} 
                       alt={alm.name || 'Alumni'} 
                       loading="lazy"
                       onError={(e) => {

@@ -252,7 +252,8 @@
       "quote": "Apex Institute provided the rigorous concept clarity and test series that made cracking AIIMS possible!",
       "achievement": "NEET AIR 42",
       "batch": "2019-2020",
-      "name": "Dr. Aman Sharma"
+      "name": "Dr. Aman Sharma",
+      "photoFit": "contain"
     },
     {
       "id": "alm2",
@@ -263,7 +264,8 @@
       "batch": "2020-2021",
       "photo": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=400",
       "achievement": "JEE Advanced AIR 89",
-      "currentRole": "Software Engineer, Google"
+      "currentRole": "Software Engineer, Google",
+      "photoFit": "contain"
     },
     {
       "id": "alm3",
@@ -274,7 +276,8 @@
       "batch": "2021-2022",
       "photo": "https://images.unsplash.com/photo-1594824813501-48c081921381?q=80&w=400",
       "achievement": "NEET AIR 115",
-      "currentRole": "Medical Intern, Lok Nayak Hospital"
+      "currentRole": "Medical Intern, Lok Nayak Hospital",
+      "photoFit": "contain"
     },
     {
       "id": "alm4",
@@ -285,7 +288,8 @@
       "course": "B.Tech Electrical Engineering",
       "name": "Sahil Deshmukh",
       "currentRole": "Hardware Systems Engineer",
-      "college": "IIT Delhi"
+      "college": "IIT Delhi",
+      "photoFit": "contain"
     },
     {
       "id": "alm5",
@@ -296,7 +300,8 @@
       "batch": "2022-2023",
       "course": "MBBS",
       "college": "PGIMS Rohtak",
-      "quote": "Studying at Apex transformed my weak areas in biology and chemistry into my strongest scoring subjects."
+      "quote": "Studying at Apex transformed my weak areas in biology and chemistry into my strongest scoring subjects.",
+      "photoFit": "contain"
     },
     {
       "id": "alm6",
@@ -307,7 +312,8 @@
       "batch": "2022-2023",
       "college": "BITS Pilani",
       "achievement": "BITSAT 352/390 & JEE Main 99.7%ile",
-      "name": "Kunal Bansal"
+      "name": "Kunal Bansal",
+      "photoFit": "contain"
     },
     {
       "id": "alm7",
@@ -318,7 +324,8 @@
       "currentRole": "Medical Student",
       "course": "MBBS",
       "achievement": "NEET Score 690/720",
-      "photo": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400"
+      "photo": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400",
+      "photoFit": "contain"
     }
   ],
   "scholarships": [

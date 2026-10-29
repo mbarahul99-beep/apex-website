@@ -765,9 +765,26 @@
 .alumni-photo {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
+  border-radius: var(--radius-full);
+  object-fit: contain;
+  object-position: center;
   display: block;
+  transition: transform 0.3s ease;
+}
+
+.alumni-photo.fit-contain {
+  object-fit: contain;
+  object-position: center;
+}
+
+.alumni-photo.fit-cover {
+  object-fit: cover;
+  object-position: center;
+}
+
+.alumni-photo.fit-cover-top {
+  object-fit: cover;
+  object-position: top center;
 }
 
 .alumni-name {
