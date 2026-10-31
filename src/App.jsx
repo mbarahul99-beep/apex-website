@@ -999,9 +999,6 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                 <span className="result-name">{res.studentName}</span>
                 <span className="result-achievement">{res.achievement}</span>
                 <span className="result-meta">{res.location}</span>
-                {res.year && (
-                  <span className="result-year-badge">{res.year}</span>
-                )}
               </div>
             ))}
           </div>
