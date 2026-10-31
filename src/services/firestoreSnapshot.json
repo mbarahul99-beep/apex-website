@@ -116,15 +116,6 @@
       "achievement": "NEET 2024 - Lady Hardinge Medical College, New Delhi"
     },
     {
-      "id": "res_1791029583804",
-      "year": "2022",
-      "studentName": "Nidhi",
-      "examType": "NEET",
-      "location": "Marks: 630/720",
-      "achievement": "NEET 2022 - PGIMS, Rohtak (HR)",
-      "photo": "/images/results/res_1791029583804.webp"
-    },
-    {
       "id": "res_1792666553838",
       "studentName": "Chitrakshi Singh",
       "examType": "NEET",
@@ -172,16 +163,6 @@
       "year": "2024"
     },
     {
-      "id": "res_1792839815224",
-      "examType": "NEET",
-      "achievement": "NEET 2023 - Shri Atal Bihari Bajpayee Med. College, New Delhi",
-      "year": "2023",
-      "location": "Marks 676/720",
-      "photoFit": "contain",
-      "photo": "/images/results/res_1792839815224.webp",
-      "studentName": "Mehak Goyal"
-    },
-    {
       "id": "res_1792840095592",
       "achievement": "NEET 2024 - Govt. Medical College, Kolkata (WB)",
       "location": "Marks 645/720",
@@ -190,6 +171,16 @@
       "photo": "/images/results/res_1792840095592.webp",
       "studentName": "Deepika ",
       "year": "2024"
+    },
+    {
+      "id": "res_1792839815224",
+      "examType": "NEET",
+      "achievement": "NEET 2023 - Shri Atal Bihari Bajpayee Med. College, New Delhi",
+      "year": "2023",
+      "location": "Marks 676/720",
+      "photoFit": "contain",
+      "photo": "/images/results/res_1792839815224.webp",
+      "studentName": "Mehak Goyal"
     },
     {
       "id": "res_1792840299340",
@@ -220,6 +211,15 @@
       "location": "Marks 628/720",
       "achievement": "NEET 2023 - MAMC, Agroha, Hisar (HR)",
       "examType": "NEET"
+    },
+    {
+      "id": "res_1791029583804",
+      "year": "2022",
+      "studentName": "Nidhi",
+      "examType": "NEET",
+      "location": "Marks: 630/720",
+      "achievement": "NEET 2022 - PGIMS, Rohtak (HR)",
+      "photo": "/images/results/res_1791029583804.webp"
     }
   ],
   "testimonials": [

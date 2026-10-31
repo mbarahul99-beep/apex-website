@@ -17,7 +17,7 @@
     <!-- Dynamic LCP preload: reads first slide from cache so it stays accurate after admin updates -->
     <script>
       try {
-        var _c = JSON.parse(localStorage.getItem('apex_live_v9') || localStorage.getItem('apex_live_v8') || '{}');
+        var _c = JSON.parse(localStorage.getItem('apex_live_v10') || localStorage.getItem('apex_live_v9') || '{}');
         var _s = _c && _c.sliders && _c.sliders[0] && _c.sliders[0].image;
         if (_s && (_s.startsWith('http') || _s.startsWith('/'))) {
           var _l = document.createElement('link');

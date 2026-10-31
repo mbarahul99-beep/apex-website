@@ -692,6 +692,19 @@
   font-weight: 500;
 }
 
+.result-year-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #db2777;
+  background-color: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  margin-top: 6px;
+  letter-spacing: 0.3px;
+}
+
 /* Alumni Network Section */
 .alumni-section {
   padding-bottom: var(--spacing-xl);

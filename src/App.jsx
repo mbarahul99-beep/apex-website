@@ -784,10 +784,25 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
 
   const previewCourses = courses.slice(0, 3);
   
-  // Filter results/toppers
+  // Filter results/toppers (Strictly sorted by latest academic year first, e.g. 2025 -> 2024 -> 2023...)
+  const sortedResults = [...results].sort((a, b) => {
+    const parseYear = (val) => {
+      if (!val) return 0;
+      const m = String(val).match(/\d{4}/);
+      return m ? parseInt(m[0], 10) : 0;
+    };
+    const yA = parseYear(a.year);
+    const yB = parseYear(b.year);
+    if (yB !== yA) return yB - yA;
+    if (a.orderIndex !== undefined && b.orderIndex !== undefined && a.orderIndex !== b.orderIndex) {
+      return (a.orderIndex || 0) - (b.orderIndex || 0);
+    }
+    return 0;
+  });
+
   const filteredResults = activeResultTab === 'all' 
-    ? results 
-    : results.filter(r => r.examType === activeResultTab);
+    ? sortedResults 
+    : sortedResults.filter(r => r.examType === activeResultTab);
 
   return (
     <div className="fade-in">
@@ -984,6 +999,9 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                 <span className="result-name">{res.studentName}</span>
                 <span className="result-achievement">{res.achievement}</span>
                 <span className="result-meta">{res.location}</span>
+                {res.year && (
+                  <span className="result-year-badge">{res.year}</span>
+                )}
               </div>
             ))}
           </div>

@@ -28,7 +28,7 @@ const DB_KEYS = {
 };
 
 // Automatic cache migration: invalidate any stale browser cache holding deleted demo data or heavy base64
-const CACHE_VERSION = 'apex_live_v9';
+const CACHE_VERSION = 'apex_live_v10';
 if (typeof window !== 'undefined' && window.localStorage) {
   try {
     if (localStorage.getItem('apex_data_version') !== CACHE_VERSION) {
@@ -81,8 +81,26 @@ const DEFAULT_RESOURCES = [
   { id: "r3", title: "Haryana Board (HBSE) Class 12 Date Sheet 2027", type: "news", linkUrl: "#" },
   { id: "r4", title: "Class 10th NTSE Mock Papers & Answer Guides", type: "answer-key", linkUrl: "#" }
 ];
+export const sortResultsDesc = (list) => {
+  if (!Array.isArray(list)) return [];
+  return [...list].sort((a, b) => {
+    const parseYear = (val) => {
+      if (!val) return 0;
+      const m = String(val).match(/\d{4}/);
+      return m ? parseInt(m[0], 10) : 0;
+    };
+    const yA = parseYear(a.year);
+    const yB = parseYear(b.year);
+    if (yB !== yA) return yB - yA;
+    if (a.orderIndex !== undefined && b.orderIndex !== undefined && a.orderIndex !== b.orderIndex) {
+      return (a.orderIndex || 0) - (b.orderIndex || 0);
+    }
+    return 0;
+  });
+};
+
 const DEFAULT_TESTIMONIALS = snapshot.testimonials || [];
-const DEFAULT_RESULTS = snapshot.results || [];
+const DEFAULT_RESULTS = sortResultsDesc(snapshot.results || []);
 const DEFAULT_ALUMNI = snapshot.alumni || [];
 
 const DEFAULT_PAGES = [
@@ -160,7 +178,7 @@ const cache = {
   courses: loadData(DB_KEYS.COURSES, DEFAULT_COURSES),
   resources: loadData(DB_KEYS.RESOURCES, DEFAULT_RESOURCES),
   testimonials: loadData(DB_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS),
-  results: loadData(DB_KEYS.RESULTS, DEFAULT_RESULTS),
+  results: sortResultsDesc(loadData(DB_KEYS.RESULTS, DEFAULT_RESULTS)),
   alumni: loadData(DB_KEYS.ALUMNI, DEFAULT_ALUMNI),
   enquiries: loadData(DB_KEYS.ENQUIRIES, []),
   pages: loadData(DB_KEYS.PAGES, DEFAULT_PAGES),
@@ -178,7 +196,7 @@ export const dbService = {
       cache.courses = loadData(DB_KEYS.COURSES, DEFAULT_COURSES);
       cache.resources = loadData(DB_KEYS.RESOURCES, DEFAULT_RESOURCES);
       cache.testimonials = loadData(DB_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS);
-      cache.results = loadData(DB_KEYS.RESULTS, DEFAULT_RESULTS);
+      cache.results = sortResultsDesc(loadData(DB_KEYS.RESULTS, DEFAULT_RESULTS));
       cache.alumni = loadData(DB_KEYS.ALUMNI, DEFAULT_ALUMNI);
       cache.enquiries = loadData(DB_KEYS.ENQUIRIES, []);
       cache.pages = loadData(DB_KEYS.PAGES, DEFAULT_PAGES);
@@ -242,7 +260,7 @@ export const dbService = {
       cache.courses = await loadCollection("courses", DEFAULT_COURSES);
       cache.resources = await loadCollection("resources", DEFAULT_RESOURCES);
       cache.testimonials = await loadCollection("testimonials", DEFAULT_TESTIMONIALS);
-      cache.results = await loadCollection("results", DEFAULT_RESULTS);
+      cache.results = sortResultsDesc(await loadCollection("results", DEFAULT_RESULTS));
       cache.alumni = await loadCollection("alumni", DEFAULT_ALUMNI);
       cache.pages = await loadCollection("pages", DEFAULT_PAGES);
       cache.posts = await loadCollection("posts", DEFAULT_POSTS);
@@ -276,7 +294,7 @@ export const dbService = {
       cache.courses = loadData(DB_KEYS.COURSES, DEFAULT_COURSES);
       cache.resources = loadData(DB_KEYS.RESOURCES, DEFAULT_RESOURCES);
       cache.testimonials = loadData(DB_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS);
-      cache.results = loadData(DB_KEYS.RESULTS, DEFAULT_RESULTS);
+      cache.results = sortResultsDesc(loadData(DB_KEYS.RESULTS, DEFAULT_RESULTS));
       cache.alumni = loadData(DB_KEYS.ALUMNI, DEFAULT_ALUMNI);
       cache.enquiries = loadData(DB_KEYS.ENQUIRIES, []);
       cache.pages = loadData(DB_KEYS.PAGES, DEFAULT_PAGES);
@@ -378,7 +396,7 @@ export const dbService = {
 
   // Results
   getResults() {
-    return cache.results;
+    return sortResultsDesc(cache.results);
   },
   async saveResult(result) {
     const list = [...cache.results];
@@ -391,8 +409,9 @@ export const dbService = {
     } else {
       list.push(result);
     }
-    cache.results = list;
-    saveData(DB_KEYS.RESULTS, list);
+    const sorted = sortResultsDesc(list);
+    cache.results = sorted;
+    saveData(DB_KEYS.RESULTS, sorted);
 
     if (!isDefault) {
       await setDoc(doc(db, "results", result.id), result);
