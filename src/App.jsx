@@ -22,7 +22,11 @@ import {
   IconExternalLink, 
   IconCheck, 
   IconStar, 
-  IconUser, 
+  IconUser,
+  IconMapPin,
+  IconMail,
+  IconClock,
+  IconInfo,
   getLogoSrc, 
   getEmbedVideoUrl 
 } from './components/icons';
@@ -172,6 +176,21 @@ export default function App() {
   } else if (currentPath === '/blogs') {
     viewComponent = (
       <AllBlogsView 
+        navigate={navigate} 
+      />
+    );
+  } else if (currentPath === '/about' || currentPath === '/about-us' || currentPath === '/pages/about-apex-jind') {
+    viewComponent = (
+      <AboutUsView 
+        settings={settings}
+        navigate={navigate} 
+        openEnquiry={openEnquiry}
+      />
+    );
+  } else if (currentPath === '/contact' || currentPath === '/contact-us') {
+    viewComponent = (
+      <ContactUsView 
+        settings={settings}
         navigate={navigate} 
       />
     );
@@ -423,16 +442,17 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
               <span className={`desktop-nav-link ${currentPath === '/scholarships' ? 'active' : ''}`} onClick={() => navigate('/scholarships')}>Scholarships</span>
               <span className={`desktop-nav-link ${currentPath === '/online-prep' || currentPath === '/student-portal' ? 'active' : ''}`} onClick={() => navigate('/online-prep')}>Online Prep</span>
               <span className={`desktop-nav-link ${currentPath === '/blogs' ? 'active' : ''}`} onClick={() => navigate('/blogs')}>Blogs</span>
-              <span className={`desktop-nav-link ${currentPath === '/pages/about-apex-jind' ? 'active' : ''}`} onClick={() => navigate('/pages/about-apex-jind')}>About Us</span>
+              <span className={`desktop-nav-link ${currentPath === '/about' || currentPath === '/about-us' || currentPath === '/pages/about-apex-jind' ? 'active' : ''}`} onClick={() => navigate('/about')}>About Us</span>
+              <span className={`desktop-nav-link ${currentPath === '/contact' || currentPath === '/contact-us' ? 'active' : ''}`} onClick={() => navigate('/contact')}>Contact Us</span>
               
-              {customPages.filter(p => p.slug !== 'about-apex-jind').length > 0 && (
+              {customPages.filter(p => !['about-apex-jind', 'about', 'about-us', 'contact', 'contact-us'].includes(p.slug)).length > 0 && (
                 <div className="nav-dropdown-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
                   <span className="desktop-nav-link" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     Pages
                     <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ width: '12px', height: '12px' }}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
                   </span>
                   <div className="nav-dropdown-menu">
-                    {customPages.filter(p => p.slug !== 'about-apex-jind').map(page => (
+                    {customPages.filter(p => !['about-apex-jind', 'about', 'about-us', 'contact', 'contact-us'].includes(p.slug)).map(page => (
                       <a 
                         key={page.id} 
                         onClick={() => navigate(`/pages/${page.slug}`)}
@@ -493,8 +513,9 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
               <span className={`mobile-nav-link ${currentPath === '/scholarships' ? 'active' : ''}`} onClick={() => { navigate('/scholarships'); setMobileMenuOpen(false); }}>Scholarships</span>
               <span className={`mobile-nav-link ${currentPath === '/online-prep' || currentPath === '/student-portal' ? 'active' : ''}`} onClick={() => { navigate('/online-prep'); setMobileMenuOpen(false); }}>Online Prep</span>
               <span className={`mobile-nav-link ${currentPath === '/blogs' ? 'active' : ''}`} onClick={() => { navigate('/blogs'); setMobileMenuOpen(false); }}>Blogs</span>
-              <span className={`mobile-nav-link ${currentPath === '/pages/about-apex-jind' ? 'active' : ''}`} onClick={() => { navigate('/pages/about-apex-jind'); setMobileMenuOpen(false); }}>About Us</span>
-              {customPages.filter(p => p.slug !== 'about-apex-jind').map(page => (
+              <span className={`mobile-nav-link ${currentPath === '/about' || currentPath === '/about-us' || currentPath === '/pages/about-apex-jind' ? 'active' : ''}`} onClick={() => { navigate('/about'); setMobileMenuOpen(false); }}>About Us</span>
+              <span className={`mobile-nav-link ${currentPath === '/contact' || currentPath === '/contact-us' ? 'active' : ''}`} onClick={() => { navigate('/contact'); setMobileMenuOpen(false); }}>Contact Us</span>
+              {customPages.filter(p => !['about-apex-jind', 'about', 'about-us', 'contact', 'contact-us'].includes(p.slug)).map(page => (
                 <span 
                   key={page.id}
                   className={`mobile-nav-link ${currentPath === `/pages/${page.slug}` ? 'active' : ''}`} 
@@ -540,8 +561,10 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
               <ul className="footer-links-list">
                 <li className="footer-link-item"><a onClick={() => navigate('/')}>Home</a></li>
                 <li className="footer-link-item"><a onClick={() => navigate('/courses')}>All Courses</a></li>
-                <li className="footer-link-item"><a onClick={() => navigate('/pages/about-apex-jind')}>About Us</a></li>
-                {customPages.filter(p => p.slug !== 'about-apex-jind').map(page => (
+                <li className="footer-link-item"><a onClick={() => navigate('/about')}>About Us</a></li>
+                <li className="footer-link-item"><a onClick={() => navigate('/contact')}>Contact Us</a></li>
+                <li className="footer-link-item"><a onClick={() => navigate('/scholarships')}>Scholarships</a></li>
+                {customPages.filter(p => !['about-apex-jind', 'about', 'about-us', 'contact', 'contact-us'].includes(p.slug)).map(page => (
                   <li className="footer-link-item" key={page.id}>
                     <a onClick={() => navigate(`/pages/${page.slug}`)}>{page.title}</a>
                   </li>
@@ -607,6 +630,14 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
         <div className={`bottom-nav-item ${currentPath === '/courses' ? 'active' : ''}`} onClick={() => navigate('/courses')}>
           <IconBook />
           <span>Courses</span>
+        </div>
+        <div className={`bottom-nav-item ${currentPath === '/about' || currentPath === '/about-us' || currentPath === '/pages/about-apex-jind' ? 'active' : ''}`} onClick={() => navigate('/about')}>
+          <IconInfo />
+          <span>About</span>
+        </div>
+        <div className={`bottom-nav-item ${currentPath === '/contact' || currentPath === '/contact-us' ? 'active' : ''}`} onClick={() => navigate('/contact')}>
+          <IconPhone />
+          <span>Contact</span>
         </div>
       </nav>
     </div>
@@ -1509,6 +1540,596 @@ function ScholarshipView({ navigate, openEnquiry }) {
           <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--light-gray)', lineHeight: 1.55 }}>
             To avail of waivers, students must present original boards report sheets, qualifying exam registration cards, or rank documentation during checkout at the APEX administration office. Waivers are calculated strictly on tuition parameters.
           </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------- ABOUT US VIEW (MOBILE RESPONSIVE & ENHANCED) ----------------
+function AboutUsView({ settings, navigate, openEnquiry }) {
+  const [page, setPage] = useState(null);
+
+  useEffect(() => {
+    const loaded = dbService.getPageBySlug('about-apex-jind');
+    setPage(loaded);
+  }, []);
+
+  const instituteName = settings?.instituteName || 'Institute APEX';
+
+  return (
+    <div className="about-page-wrap fade-in">
+      <Helmet>
+        <title>About Us | {instituteName} Jind - NEET & IIT-JEE Coaching</title>
+        <meta 
+          name="description" 
+          content={`Learn more about ${instituteName} Jind, Haryana's leading coaching center for NEET Medical, IIT-JEE Engineering, and secondary board tuitions.`} 
+        />
+        <meta name="keywords" content="about apex institute jind, coaching institute jind, best neet coaching in jind, best iit jee coaching in jind, haryana coaching institute" />
+      </Helmet>
+
+      {/* Hero Banner */}
+      <section className="about-hero">
+        <div className="about-hero-badge">
+          <span>🎓 Premier Classroom Coaching in Jind</span>
+        </div>
+        <h1 className="about-hero-title">
+          Empowering Medical & Engineering Aspirants in Jind
+        </h1>
+        <p className="about-hero-subtitle">
+          Dedicated to academic rigor, conceptual depth, and personal mentorship since inception. Guiding students to top medical colleges (AIIMS, MAMC, PGIMS) and engineering institutes (IITs, NITs).
+        </p>
+
+        {/* Highlight Stats Bar */}
+        <div className="about-stats-grid">
+          <div className="about-stat-item">
+            <div className="about-stat-num">15+</div>
+            <div className="about-stat-label">Years Mentoring</div>
+          </div>
+          <div className="about-stat-item">
+            <div className="about-stat-num">Top Ranks</div>
+            <div className="about-stat-label">NEET & IIT-JEE</div>
+          </div>
+          <div className="about-stat-item">
+            <div className="about-stat-num">100%</div>
+            <div className="about-stat-label">NCERT & Board Rigor</div>
+          </div>
+          <div className="about-stat-item">
+            <div className="about-stat-num">Focused</div>
+            <div className="about-stat-label">Small Batches</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Container */}
+      <div className="about-container">
+        {/* Mission & Vision Section */}
+        <section className="about-section">
+          <div className="about-section-header">
+            <span className="about-section-tag">Our Vision & Mission</span>
+            <h2 className="about-section-title">Rooted in Jind, Focused on Global Standards</h2>
+            <p className="about-section-desc">
+              We bridge the gap between school curriculum and competitive examinations, ensuring students from Jind and surrounding regions achieve national ranks without having to migrate to distant cities.
+            </p>
+          </div>
+
+          <div className="about-cards-row">
+            <div className="about-mission-card">
+              <div className="about-mission-card-icon">🎯</div>
+              <h3>Our Core Mission</h3>
+              <p>
+                To provide accessible, high-caliber coaching with deep conceptual learning rather than rote memorization. We train students to dissect complex scientific concepts, apply analytical thinking, and tackle high-stakes national competitions with calm confidence.
+              </p>
+            </div>
+
+            <div className="about-mission-card">
+              <div className="about-mission-card-icon">🌟</div>
+              <h3>Our Pedagogical Vision</h3>
+              <p>
+                To foster an ecosystem of relentless curiosity and disciplined work ethics. By maintaining small batch sizes, our faculty knows each student by name, closely monitoring individual strengths and systematically overcoming weaknesses.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Custom Admin Content (if edited in Admin Panel) */}
+        {page && page.content && page.content.trim() && (
+          <section className="about-section">
+            <div className="about-section-header">
+              <span className="about-section-tag">Institute Overview</span>
+              <h2 className="about-section-title">{page.title || 'Welcome to Institute APEX'}</h2>
+            </div>
+            <div 
+              className="about-custom-content"
+              dangerouslySetInnerHTML={{ __html: page.content }}
+            />
+          </section>
+        )}
+
+        {/* Key Pillars Section */}
+        <section className="about-section">
+          <div className="about-section-header">
+            <span className="about-section-tag">Why Choose APEX</span>
+            <h2 className="about-section-title">The Pillars of Our Consistent Results</h2>
+            <p className="about-section-desc">
+              Every aspect of our learning methodology is engineered to maximize student retention, problem-solving speed, and exam accuracy.
+            </p>
+          </div>
+
+          <div className="about-pillars-grid">
+            <div className="about-pillar-card">
+              <div className="about-pillar-icon">👨‍🏫</div>
+              <h4>Distinguished Faculty</h4>
+              <p>
+                Experienced subject teachers with proven track records in guiding students through NEET and JEE Advanced syllabi.
+              </p>
+            </div>
+
+            <div className="about-pillar-card">
+              <div className="about-pillar-icon">💡</div>
+              <h4>Daily Doubt Resolution</h4>
+              <p>
+                Dedicated one-on-one doubt counters every day after class so no student leaves with unresolved questions.
+              </p>
+            </div>
+
+            <div className="about-pillar-card">
+              <div className="about-pillar-icon">📝</div>
+              <h4>All-India Mock Test Series</h4>
+              <p>
+                Regular OMR-based and computer-adaptive tests that replicate genuine exam pressure and time management.
+              </p>
+            </div>
+
+            <div className="about-pillar-card">
+              <div className="about-pillar-icon">📖</div>
+              <h4>Exhaustive Study Material</h4>
+              <p>
+                Curated chapter-wise theory, graded practice assignments, NCERT drill sheets, and 15+ years of solved PYQs.
+              </p>
+            </div>
+
+            <div className="about-pillar-card">
+              <div className="about-pillar-icon">🏫</div>
+              <h4>Air-Conditioned Classrooms</h4>
+              <p>
+                Quiet, well-ventilated, ergonomic study spaces fostering deep concentration and peer-learning synergy.
+              </p>
+            </div>
+
+            <div className="about-pillar-card">
+              <div className="about-pillar-icon">📊</div>
+              <h4>Parental Progress Connect</h4>
+              <p>
+                Frequent SMS, WhatsApp, and in-person progress reviews keeping parents informed about attendance and test marks.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Academic Offerings */}
+        <section className="about-section">
+          <div className="about-section-header">
+            <span className="about-section-tag">Coaching Programs</span>
+            <h2 className="about-section-title">Comprehensive Coaching Courses</h2>
+            <p className="about-section-desc">
+              Structured batches designed for students at various academic levels.
+            </p>
+          </div>
+
+          <div className="about-programs-grid">
+            <div className="about-program-card">
+              <span className="about-program-tag">Medical Entrance</span>
+              <h4>NEET (UG) Intensive Prep</h4>
+              <p>Two-year and one-year classroom programs for Class 11, 12, and Droppers covering Physics, Chemistry, and Biology.</p>
+              <a className="about-program-link" onClick={() => navigate('/courses')}>View Course Details &rarr;</a>
+            </div>
+
+            <div className="about-program-card">
+              <span className="about-program-tag">Engineering Entrance</span>
+              <h4>IIT-JEE (Main & Advanced)</h4>
+              <p>Rigorous concept drilling and multi-concept problem solving in Physics, Chemistry, and Mathematics.</p>
+              <a className="about-program-link" onClick={() => navigate('/courses')}>View Course Details &rarr;</a>
+            </div>
+
+            <div className="about-program-card">
+              <span className="about-program-tag">Class 9th & 10th</span>
+              <h4>Junior Foundation & Olympiads</h4>
+              <p>Early head-start for NTSE, NSEJS, Math Olympiads, and strong school board basics (CBSE/HBSE/ICSE).</p>
+              <a className="about-program-link" onClick={() => navigate('/courses')}>View Course Details &rarr;</a>
+            </div>
+
+            <div className="about-program-card">
+              <span className="about-program-tag">Academic Tuitions</span>
+              <h4>Board Exams Excellence</h4>
+              <p>Targeted board-level revision, descriptive answer writing practice, and NCERT master-classes.</p>
+              <a className="about-program-link" onClick={() => navigate('/courses')}>View Course Details &rarr;</a>
+            </div>
+          </div>
+        </section>
+
+        {/* Call-to-Action Banner */}
+        <div className="about-cta-banner">
+          <h3 className="about-cta-title">Visit Our Campus or Consult with Counselors</h3>
+          <p className="about-cta-desc">
+            Admissions are open for upcoming batches. Meet our senior educators, explore our study materials, and take a free diagnostic scholarship test.
+          </p>
+          <div className="about-cta-actions">
+            <button className="about-cta-btn-primary" onClick={() => navigate('/contact')}>
+              Contact Us & Admission Form
+            </button>
+            <button className="about-cta-btn-secondary" onClick={() => openEnquiry ? openEnquiry() : navigate('/contact')}>
+              Request Call Back
+            </button>
+            <button className="about-cta-btn-secondary" onClick={() => navigate('/courses')}>
+              Explore All Courses
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------- CONTACT US VIEW (DEDICATED & RESPONSIVE) ----------------
+function ContactUsView({ settings, navigate }) {
+  const [courses, setCourses] = useState([]);
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    courseId: '',
+    message: ''
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    setCourses(dbService.getCourses());
+  }, []);
+
+  const instituteName = settings?.instituteName || 'Institute APEX';
+  const address = settings?.address || '#1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana)';
+  const phone = settings?.phone || '94677-52374';
+  const telephone = settings?.telephone || '01681-247700';
+  const email = settings?.email || 'instituteapexjind@gmail.com';
+  const rawWhatsApp = (settings?.whatsappNumber || '9467752374').replace(/[^0-9]/g, '');
+  const whatsappUrl = `https://wa.me/91${rawWhatsApp}?text=${encodeURIComponent(settings?.whatsappText || 'Hello Apex Institute, I would like to enquire about coaching courses.')}`;
+  const cleanPhoneLink = `tel:${phone.replace(/[^0-9+]/g, '')}`;
+  const cleanTelLink = `tel:${telephone.replace(/[^0-9+]/g, '')}`;
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (errorMessage) setErrorMessage('');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.name.trim() || !formData.phone.trim()) {
+      setErrorMessage('Please enter both student/parent name and mobile number.');
+      return;
+    }
+
+    const cleanPhoneDigits = formData.phone.replace(/[^0-9]/g, '');
+    if (cleanPhoneDigits.length < 10) {
+      setErrorMessage('Please enter a valid 10-digit mobile number.');
+      return;
+    }
+
+    setSubmitting(true);
+    setErrorMessage('');
+
+    try {
+      const selectedCourse = courses.find(c => c.id === formData.courseId);
+      const courseTitle = selectedCourse ? selectedCourse.title : (formData.courseId || 'General Enquiry');
+
+      await dbService.addEnquiry({
+        studentName: formData.name.trim(),
+        phone: formData.phone.trim(),
+        email: formData.email.trim(),
+        courseId: formData.courseId || 'general',
+        courseTitle: courseTitle,
+        message: formData.message.trim(),
+        source: 'Contact Page'
+      });
+
+      setSubmitted(true);
+      setFormData({
+        name: '',
+        phone: '',
+        email: '',
+        courseId: '',
+        message: ''
+      });
+    } catch (err) {
+      console.error('Error submitting enquiry:', err);
+      setErrorMessage('Something went wrong while submitting. Please try calling us directly or chat on WhatsApp.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="contact-page-wrap fade-in">
+      <Helmet>
+        <title>Contact Us | {instituteName} Jind - Campus Details & Admission Form</title>
+        <meta 
+          name="description" 
+          content={`Contact ${instituteName} in Jind for NEET & IIT-JEE coaching admissions. Located at #1257, Urban Estate, Near HUDA Ground, Jind. Phone: ${phone}.`} 
+        />
+        <meta name="keywords" content="contact apex institute jind, apex institute phone number, apex jind address, admission enquiry apex jind" />
+      </Helmet>
+
+      {/* Hero Header */}
+      <section className="contact-hero">
+        <div className="contact-hero-badge">
+          <span>📍 We Are Here To Help</span>
+        </div>
+        <h1 className="contact-hero-title">
+          Get in Touch with {instituteName}
+        </h1>
+        <p className="contact-hero-subtitle">
+          Have questions regarding NEET, IIT-JEE batches, scholarship admissions, or classroom schedules? Contact us directly or visit our campus.
+        </p>
+      </section>
+
+      {/* Main Content Layout */}
+      <div className="contact-container">
+        <div className="contact-layout-grid">
+          
+          {/* Left Column: Official Contact Details */}
+          <div className="contact-info-panel">
+            {/* Campus Address Card */}
+            <div className="contact-card-box">
+              <div className="contact-card-title">
+                <IconMapPin />
+                <span>Campus Location</span>
+              </div>
+              <div className="contact-details-list">
+                <div className="contact-detail-item">
+                  <div className="contact-detail-icon">
+                    <IconMapPin />
+                  </div>
+                  <div className="contact-detail-body">
+                    <div className="contact-detail-label">Main Address</div>
+                    <div className="contact-detail-text">{address}</div>
+                    <div style={{ marginTop: '8px' }}>
+                      <a 
+                        href="https://www.google.com/maps/search/?api=1&query=Apex+Institute+1257+Urban+Estate+Jind+Haryana" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="contact-detail-link"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.82rem' }}
+                      >
+                        <span>Open in Google Maps</span>
+                        <IconExternalLink />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mobile & Phone */}
+                <div className="contact-detail-item">
+                  <div className="contact-detail-icon">
+                    <IconPhone />
+                  </div>
+                  <div className="contact-detail-body">
+                    <div className="contact-detail-label">Call Us Directly</div>
+                    <div className="contact-detail-text">
+                      <div>Mobile: <a href={cleanPhoneLink} className="contact-detail-link">{phone}</a></div>
+                      <div>Office: <a href={cleanTelLink} className="contact-detail-link">{telephone}</a></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Email */}
+                <div className="contact-detail-item">
+                  <div className="contact-detail-icon">
+                    <IconMail />
+                  </div>
+                  <div className="contact-detail-body">
+                    <div className="contact-detail-label">Email Inquiries</div>
+                    <div className="contact-detail-text">
+                      <a href={`mailto:${email}`} className="contact-detail-link">{email}</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* WhatsApp Quick Connect Card */}
+            <div className="contact-card-box" style={{ background: '#f0fdf4', borderColor: '#bbf7d0' }}>
+              <div className="contact-card-title" style={{ color: '#166534', marginBottom: '10px' }}>
+                <span>Instant WhatsApp Guidance</span>
+              </div>
+              <p style={{ fontSize: '0.85rem', color: '#166534', lineHeight: '1.5', marginBottom: '14px' }}>
+                Prefer chatting? Connect directly with our admission counselor on WhatsApp for instant batch schedules and fee details.
+              </p>
+              <a 
+                href={whatsappUrl} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="contact-whatsapp-card-btn"
+              >
+                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.517 2.266 2.27 3.51 5.284 3.508 8.489-.005 6.66-5.343 11.999-11.957 11.999-2.005-.001-3.973-.504-5.714-1.463L0 24zm6.59-4.846c1.6.95 3.197 1.451 4.82 1.452 5.518 0 10.006-4.486 10.01-10.002.002-2.673-1.037-5.186-2.927-7.079-1.889-1.89-4.4-2.932-7.08-2.933-5.524 0-10.014 4.487-10.018 10.004-.002 1.699.444 3.361 1.293 4.81l-.963 3.518 3.606-.945zm11.367-7.795c-.3-.15-1.772-.875-2.046-.975-.276-.1-.476-.15-.676.15-.2.3-.776.975-.95 1.175-.175.2-.35.225-.65.075-.3-.15-1.267-.467-2.414-1.492-.893-.797-1.497-1.782-1.672-2.082-.175-.3-.018-.462.13-.61.135-.133.3-.35.45-.525.15-.175.2-.3.3-.5.1-.2.05-.375-.025-.525-.075-.15-.676-1.63-1.026-2.47-.3-.72-.6-1.125-.676-1.125-.175 0-.35-.025-.525-.025-.175 0-.476.075-.726.35-.25.275-.95.925-.95 2.25s.965 2.6 1.1 2.775c.135.175 1.9 2.9 4.6 4.075.642.28 1.144.446 1.534.57.645.205 1.233.176 1.7.106.52-.078 1.772-.725 2.022-1.425.25-.7.25-1.3.175-1.425-.075-.125-.275-.2-.575-.35z"/></svg>
+                <span>Chat on WhatsApp</span>
+              </a>
+            </div>
+
+            {/* Counseling & Campus Timings */}
+            <div className="contact-card-box">
+              <div className="contact-card-title">
+                <IconClock />
+                <span>Office & Counseling Hours</span>
+              </div>
+              <div className="contact-hours-list">
+                <div className="contact-hour-row">
+                  <span>Monday – Saturday</span>
+                  <span>8:00 AM – 7:30 PM</span>
+                </div>
+                <div className="contact-hour-row">
+                  <span>Sunday</span>
+                  <span>9:00 AM – 2:00 PM</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Admission & Contact Enquiry Form */}
+          <div className="contact-form-card">
+            <div className="contact-form-header">
+              <h2 className="contact-form-title">Send an Admission Enquiry</h2>
+              <p className="contact-form-desc">
+                Fill out the form below. Our academic counseling team will reach out with course details and schedule your campus visit.
+              </p>
+            </div>
+
+            {submitted ? (
+              <div className="contact-success-box">
+                <div className="contact-success-icon">
+                  <IconCheck />
+                </div>
+                <h3 className="contact-success-title">Enquiry Submitted Successfully!</h3>
+                <p className="contact-success-text">
+                  Thank you! We have received your request. An academic counselor from {instituteName} will call you shortly on your provided phone number.
+                </p>
+                <button 
+                  className="admin-btn secondary" 
+                  style={{ padding: '10px 20px', fontWeight: 600 }}
+                  onClick={() => setSubmitted(false)}
+                >
+                  Send Another Enquiry
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="contact-form">
+                {errorMessage && (
+                  <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '10px 14px', borderRadius: '8px', fontSize: '0.86rem' }}>
+                    {errorMessage}
+                  </div>
+                )}
+
+                <div className="contact-field-group">
+                  <label className="contact-field-label">
+                    <span>Student / Parent Name</span>
+                    <span className="req">*</span>
+                  </label>
+                  <input 
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Enter student or parent's full name"
+                    className="contact-input"
+                    required
+                  />
+                </div>
+
+                <div className="contact-field-group">
+                  <label className="contact-field-label">
+                    <span>Mobile Phone Number</span>
+                    <span className="req">*</span>
+                  </label>
+                  <input 
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="Enter 10-digit mobile number"
+                    className="contact-input"
+                    required
+                  />
+                </div>
+
+                <div className="contact-field-group">
+                  <label className="contact-field-label">
+                    <span>Email Address (Optional)</span>
+                  </label>
+                  <input 
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="e.g. student@example.com"
+                    className="contact-input"
+                  />
+                </div>
+
+                <div className="contact-field-group">
+                  <label className="contact-field-label">
+                    <span>Target Course / Program</span>
+                  </label>
+                  <select 
+                    name="courseId"
+                    value={formData.courseId}
+                    onChange={handleChange}
+                    className="contact-select"
+                  >
+                    <option value="">-- Select Interested Course --</option>
+                    {courses.map(c => (
+                      <option key={c.id} value={c.id}>{c.title}</option>
+                    ))}
+                    <option value="NEET (Medical)">NEET (Medical Entrance Coaching)</option>
+                    <option value="IIT-JEE (Engineering)">IIT-JEE (Main & Advanced)</option>
+                    <option value="Class 9th-10th Foundation">Class 9th & 10th Junior Foundation</option>
+                    <option value="Board Tuitions">School Board Tuitions (CBSE / HBSE)</option>
+                    <option value="Scholarship Exam">Scholarship Test & Fee Discount Enquiry</option>
+                    <option value="General Query">General Campus Query</option>
+                  </select>
+                </div>
+
+                <div className="contact-field-group">
+                  <label className="contact-field-label">
+                    <span>Your Message / Query (Optional)</span>
+                  </label>
+                  <textarea 
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    placeholder="Tell us about your current school/class, queries, or suitable time for counseling..."
+                    className="contact-textarea"
+                  />
+                </div>
+
+                <button 
+                  type="submit" 
+                  className="contact-form-submit"
+                  disabled={submitting}
+                >
+                  {submitting ? 'Submitting...' : 'Submit Admission Enquiry'}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+
+        {/* Interactive Google Map Section */}
+        <div className="contact-map-card">
+          <div className="contact-map-header">
+            <div>
+              <div className="contact-map-title">Location on Map</div>
+              <div style={{ fontSize: '0.84rem', color: '#64748b', marginTop: '2px' }}>
+                {address}
+              </div>
+            </div>
+            <a 
+              href="https://www.google.com/maps/search/?api=1&query=Apex+Institute+1257+Urban+Estate+Jind+Haryana" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="contact-map-dir-btn"
+            >
+              <IconMapPin />
+              <span>Get Directions</span>
+            </a>
+          </div>
+          <iframe 
+            title="Apex Institute Jind Location"
+            src="https://maps.google.com/maps?q=1257+Urban+Estate+Jind+Haryana&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+            className="contact-map-frame"
+            loading="lazy"
+            allowFullScreen
+          />
         </div>
       </div>
     </div>
