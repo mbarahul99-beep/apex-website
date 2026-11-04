@@ -1568,10 +1568,10 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
         <meta name="keywords" content="about apex institute jind, coaching institute jind, best neet coaching in jind, best iit jee coaching in jind, haryana coaching institute" />
       </Helmet>
 
-      {/* Hero Banner */}
+      {/* Hero Banner with Clean High-Contrast Palette */}
       <section className="about-hero">
         <div className="about-hero-badge">
-          <span>🎓 Premier Classroom Coaching in Jind</span>
+          <span>Institute APEX Jind</span>
         </div>
         <h1 className="about-hero-title">
           Empowering Medical & Engineering Aspirants in Jind
@@ -1606,7 +1606,7 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
         {/* Mission & Vision Section */}
         <section className="about-section">
           <div className="about-section-header">
-            <span className="about-section-tag">Our Vision & Mission</span>
+            <span className="about-section-tag">Vision & Mission</span>
             <h2 className="about-section-title">Rooted in Jind, Focused on Global Standards</h2>
             <p className="about-section-desc">
               We bridge the gap between school curriculum and competitive examinations, ensuring students from Jind and surrounding regions achieve national ranks without having to migrate to distant cities.
@@ -1615,7 +1615,7 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
 
           <div className="about-cards-row">
             <div className="about-mission-card">
-              <div className="about-mission-card-icon">🎯</div>
+              <span className="about-card-badge">01</span>
               <h3>Our Core Mission</h3>
               <p>
                 To provide accessible, high-caliber coaching with deep conceptual learning rather than rote memorization. We train students to dissect complex scientific concepts, apply analytical thinking, and tackle high-stakes national competitions with calm confidence.
@@ -1623,7 +1623,7 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
             </div>
 
             <div className="about-mission-card">
-              <div className="about-mission-card-icon">🌟</div>
+              <span className="about-card-badge">02</span>
               <h3>Our Pedagogical Vision</h3>
               <p>
                 To foster an ecosystem of relentless curiosity and disciplined work ethics. By maintaining small batch sizes, our faculty knows each student by name, closely monitoring individual strengths and systematically overcoming weaknesses.
@@ -1649,7 +1649,7 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
         {/* Key Pillars Section */}
         <section className="about-section">
           <div className="about-section-header">
-            <span className="about-section-tag">Why Choose APEX</span>
+            <span className="about-section-tag">Academic Excellence</span>
             <h2 className="about-section-title">The Pillars of Our Consistent Results</h2>
             <p className="about-section-desc">
               Every aspect of our learning methodology is engineered to maximize student retention, problem-solving speed, and exam accuracy.
@@ -1658,7 +1658,7 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
 
           <div className="about-pillars-grid">
             <div className="about-pillar-card">
-              <div className="about-pillar-icon">👨‍🏫</div>
+              <span className="about-pillar-num">01</span>
               <h4>Distinguished Faculty</h4>
               <p>
                 Experienced subject teachers with proven track records in guiding students through NEET and JEE Advanced syllabi.
@@ -1666,7 +1666,7 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
             </div>
 
             <div className="about-pillar-card">
-              <div className="about-pillar-icon">💡</div>
+              <span className="about-pillar-num">02</span>
               <h4>Daily Doubt Resolution</h4>
               <p>
                 Dedicated one-on-one doubt counters every day after class so no student leaves with unresolved questions.
@@ -1674,7 +1674,7 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
             </div>
 
             <div className="about-pillar-card">
-              <div className="about-pillar-icon">📝</div>
+              <span className="about-pillar-num">03</span>
               <h4>All-India Mock Test Series</h4>
               <p>
                 Regular OMR-based and computer-adaptive tests that replicate genuine exam pressure and time management.
@@ -1682,7 +1682,7 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
             </div>
 
             <div className="about-pillar-card">
-              <div className="about-pillar-icon">📖</div>
+              <span className="about-pillar-num">04</span>
               <h4>Exhaustive Study Material</h4>
               <p>
                 Curated chapter-wise theory, graded practice assignments, NCERT drill sheets, and 15+ years of solved PYQs.
@@ -1690,7 +1690,7 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
             </div>
 
             <div className="about-pillar-card">
-              <div className="about-pillar-icon">🏫</div>
+              <span className="about-pillar-num">05</span>
               <h4>Air-Conditioned Classrooms</h4>
               <p>
                 Quiet, well-ventilated, ergonomic study spaces fostering deep concentration and peer-learning synergy.
@@ -1698,7 +1698,7 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
             </div>
 
             <div className="about-pillar-card">
-              <div className="about-pillar-icon">📊</div>
+              <span className="about-pillar-num">06</span>
               <h4>Parental Progress Connect</h4>
               <p>
                 Frequent SMS, WhatsApp, and in-person progress reviews keeping parents informed about attendance and test marks.
@@ -1861,10 +1861,10 @@ function ContactUsView({ settings, navigate }) {
         <meta name="keywords" content="contact apex institute jind, apex institute phone number, apex jind address, admission enquiry apex jind" />
       </Helmet>
 
-      {/* Hero Header */}
+      {/* Hero Header with Clean High-Contrast Palette */}
       <section className="contact-hero">
         <div className="contact-hero-badge">
-          <span>📍 We Are Here To Help</span>
+          <span>Admissions & Campus Inquiries</span>
         </div>
         <h1 className="contact-hero-title">
           Get in Touch with {instituteName}
@@ -1939,11 +1939,11 @@ function ContactUsView({ settings, navigate }) {
             </div>
 
             {/* WhatsApp Quick Connect Card */}
-            <div className="contact-card-box" style={{ background: '#f0fdf4', borderColor: '#bbf7d0' }}>
-              <div className="contact-card-title" style={{ color: '#166534', marginBottom: '10px' }}>
+            <div className="contact-card-box" style={{ background: '#fdf2f8', borderColor: '#fbcfe8' }}>
+              <div className="contact-card-title" style={{ color: '#be185d', marginBottom: '10px' }}>
                 <span>Instant WhatsApp Guidance</span>
               </div>
-              <p style={{ fontSize: '0.85rem', color: '#166534', lineHeight: '1.5', marginBottom: '14px' }}>
+              <p style={{ fontSize: '0.85rem', color: '#475569', lineHeight: '1.5', marginBottom: '14px' }}>
                 Prefer chatting? Connect directly with our admission counselor on WhatsApp for instant batch schedules and fee details.
               </p>
               <a 
@@ -1955,24 +1955,6 @@ function ContactUsView({ settings, navigate }) {
                 <svg fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.517 2.266 2.27 3.51 5.284 3.508 8.489-.005 6.66-5.343 11.999-11.957 11.999-2.005-.001-3.973-.504-5.714-1.463L0 24zm6.59-4.846c1.6.95 3.197 1.451 4.82 1.452 5.518 0 10.006-4.486 10.01-10.002.002-2.673-1.037-5.186-2.927-7.079-1.889-1.89-4.4-2.932-7.08-2.933-5.524 0-10.014 4.487-10.018 10.004-.002 1.699.444 3.361 1.293 4.81l-.963 3.518 3.606-.945zm11.367-7.795c-.3-.15-1.772-.875-2.046-.975-.276-.1-.476-.15-.676.15-.2.3-.776.975-.95 1.175-.175.2-.35.225-.65.075-.3-.15-1.267-.467-2.414-1.492-.893-.797-1.497-1.782-1.672-2.082-.175-.3-.018-.462.13-.61.135-.133.3-.35.45-.525.15-.175.2-.3.3-.5.1-.2.05-.375-.025-.525-.075-.15-.676-1.63-1.026-2.47-.3-.72-.6-1.125-.676-1.125-.175 0-.35-.025-.525-.025-.175 0-.476.075-.726.35-.25.275-.95.925-.95 2.25s.965 2.6 1.1 2.775c.135.175 1.9 2.9 4.6 4.075.642.28 1.144.446 1.534.57.645.205 1.233.176 1.7.106.52-.078 1.772-.725 2.022-1.425.25-.7.25-1.3.175-1.425-.075-.125-.275-.2-.575-.35z"/></svg>
                 <span>Chat on WhatsApp</span>
               </a>
-            </div>
-
-            {/* Counseling & Campus Timings */}
-            <div className="contact-card-box">
-              <div className="contact-card-title">
-                <IconClock />
-                <span>Office & Counseling Hours</span>
-              </div>
-              <div className="contact-hours-list">
-                <div className="contact-hour-row">
-                  <span>Monday – Saturday</span>
-                  <span>8:00 AM – 7:30 PM</span>
-                </div>
-                <div className="contact-hour-row">
-                  <span>Sunday</span>
-                  <span>9:00 AM – 2:00 PM</span>
-                </div>
-              </div>
             </div>
           </div>
 
