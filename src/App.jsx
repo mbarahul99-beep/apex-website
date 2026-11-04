@@ -1750,7 +1750,7 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
 
         {/* Call-to-Action Banner */}
         <div className="about-cta-banner">
-          <h3 className="about-cta-title">Visit Our Campus or Consult with Counselors</h3>
+          <h3 className="about-cta-title">Visit Our Institute or Consult with Counselors</h3>
           <p className="about-cta-desc">
             Admissions are open for upcoming batches. Meet our senior educators, explore our study materials, and take a free diagnostic scholarship test.
           </p>
@@ -1853,7 +1853,7 @@ function ContactUsView({ settings, navigate }) {
   return (
     <div className="contact-page-wrap fade-in">
       <Helmet>
-        <title>Contact Us | {instituteName} Jind - Campus Details & Admission Form</title>
+        <title>Contact Us | {instituteName} Jind - Institute Details & Admission Form</title>
         <meta 
           name="description" 
           content={`Contact ${instituteName} in Jind for NEET & IIT-JEE coaching admissions. Located at #1257, Urban Estate, Near HUDA Ground, Jind. Phone: ${phone}.`} 
@@ -1863,14 +1863,11 @@ function ContactUsView({ settings, navigate }) {
 
       {/* Hero Header with Clean High-Contrast Palette */}
       <section className="contact-hero">
-        <div className="contact-hero-badge">
-          <span>Admissions & Campus Inquiries</span>
-        </div>
         <h1 className="contact-hero-title">
           Get in Touch with {instituteName}
         </h1>
         <p className="contact-hero-subtitle">
-          Have questions regarding NEET, IIT-JEE batches, scholarship admissions, or classroom schedules? Contact us directly or visit our campus.
+          Have questions regarding NEET, IIT-JEE batches, scholarship admissions, or classroom schedules? Contact us directly or visit our institute.
         </p>
       </section>
 
@@ -1880,11 +1877,11 @@ function ContactUsView({ settings, navigate }) {
           
           {/* Left Column: Official Contact Details */}
           <div className="contact-info-panel">
-            {/* Campus Address Card */}
+            {/* Institute Address Card */}
             <div className="contact-card-box">
               <div className="contact-card-title">
                 <IconMapPin />
-                <span>Campus Location</span>
+                <span>Institute Location</span>
               </div>
               <div className="contact-details-list">
                 <div className="contact-detail-item">
@@ -1900,10 +1897,10 @@ function ContactUsView({ settings, navigate }) {
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="contact-detail-link"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.82rem' }}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '0.82rem' }}
                       >
                         <span>Open in Google Maps</span>
-                        <IconExternalLink />
+                        <span style={{ display: 'inline-flex', width: '13px', height: '13px' }}><IconExternalLink /></span>
                       </a>
                     </div>
                   </div>
@@ -1963,7 +1960,7 @@ function ContactUsView({ settings, navigate }) {
             <div className="contact-form-header">
               <h2 className="contact-form-title">Send an Admission Enquiry</h2>
               <p className="contact-form-desc">
-                Fill out the form below. Our academic counseling team will reach out with course details and schedule your campus visit.
+                Fill out the form below. Our academic counseling team will reach out with course details and schedule your institute visit.
               </p>
             </div>
 
@@ -2057,7 +2054,7 @@ function ContactUsView({ settings, navigate }) {
                     <option value="Class 9th-10th Foundation">Class 9th & 10th Junior Foundation</option>
                     <option value="Board Tuitions">School Board Tuitions (CBSE / HBSE)</option>
                     <option value="Scholarship Exam">Scholarship Test & Fee Discount Enquiry</option>
-                    <option value="General Query">General Campus Query</option>
+                    <option value="General Query">General Institute Query</option>
                   </select>
                 </div>
 
