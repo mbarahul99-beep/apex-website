@@ -4,9 +4,9 @@ import React, { useState, useEffect, useRef } from 'react';
 const KNOWLEDGE_BASE = [
   {
     category: 'neet',
-    keywords: ['neet', 'medical', 'biology', 'mbbs', 'aiims', 'doctor', 'नीट', 'मेडिकल', 'बायोलॉजी', 'एमबीबीएस', 'डॉक्टर', 'ड्रॉपर', 'dropper', 'repeater'],
-    answerEn: "Institute APEX provides dedicated classroom coaching for NEET (UG) for Class 11, Class 12, and Dropper/Repeater batches. We focus on 100% NCERT line-by-line mastery in Biology, Chemistry, and Physics, daily practice problem sheets (DPPs), and weekly OMR-based mock tests. Would you like to book a free 2-day demo class?",
-    answerHi: "इंस्टीट्यूट APEX में NEET (UG) की तैयारी के लिए 11वीं, 12वीं और ड्रॉपर/रिपीटर छात्रों के लिए विशेष क्लासरूम बैच उपलब्ध हैं। यहाँ बायोलॉजी, केमिस्ट्री और फिजिक्स में NCERT की लाइन-बाय-लाइन तैयारी, डेली प्रैक्टिस पेपर्स (DPPs) और साप्ताहिक OMR टेस्ट कराए जाते हैं। क्या आप 2 दिन की फ्री डेमो क्लास बुक करना चाहते हैं?"
+    keywords: ['neet', 'medical', 'biology', 'mbbs', 'aiims', 'doctor', 'नीट', 'मेडिकल', 'बायोलॉजी', 'एमबीबीएस', 'डॉक्टर', 'ड्रॉपर', 'dropper', 'repeater', '11th neet', '12th neet'],
+    answerEn: "Institute APEX provides premier classroom coaching for NEET (UG) for Class 11, Class 12, and Dropper/Repeater batches. We focus on 100% NCERT line-by-line mastery in Biology, Chemistry, and Physics, daily practice problem sheets (DPPs), and weekly OMR-based mock tests. Would you like to attend a free 2-day demo class?",
+    answerHi: "इंस्टीट्यूट APEX में NEET (UG) की तैयारी के लिए 11वीं, 12वीं और ड्रॉपर/रिपीटर छात्रों के लिए विशेष क्लासरूम बैच उपलब्ध हैं। यहाँ बायोलॉजी, केमिस्ट्री और फिजिक्स में NCERT की लाइन-बाय-लाइन तैयारी, डेली प्रैक्टिस पेपर्स (DPPs) और साप्ताहिक OMR टेस्ट कराए जाते हैं। क्या आप 2 दिन की फ्री डेमो क्लास लेना चाहते हैं?"
   },
   {
     category: 'jee',
@@ -16,25 +16,25 @@ const KNOWLEDGE_BASE = [
   },
   {
     category: 'foundation',
-    keywords: ['foundation', '9th', '10th', 'ninth', 'tenth', 'olympiad', 'ntse', 'फाउंडेशन', '9वीं', '10वीं', 'ओलंपियाड'],
+    keywords: ['foundation', '9th', '10th', 'ninth', 'tenth', 'olympiad', 'ntse', 'फाउंडेशन', '9वीं', '10वीं', 'ओलंपियाड', 'बोर्ड', 'board'],
     answerEn: "Our Junior Foundation Program for Class 9th and 10th builds rock-solid fundamentals in Science and Mathematics. It prepares students for School Boards (CBSE & HBSE) as well as future competitive exams like NTSE, Olympiads, and NEET/JEE early prep.",
     answerHi: "कक्षा 9वीं और 10वीं के लिए हमारा फाउंडेशन प्रोग्राम साइंस और मैथ्स की मजबूत नींव तैयार करता है। यह स्कूल बोर्ड (CBSE/HBSE) में टॉप करने के साथ-साथ NTSE, ओलंपियाड और भविष्य के NEET/JEE की अग्रिम तैयारी कराता है।"
   },
   {
     category: 'scholarship',
-    keywords: ['scholarship', 'asat', 'discount', 'concession', 'test', 'exam', 'स्कॉलरशिप', 'छात्रवृत्ति', 'छूट', 'टेस्ट', 'परीक्षा'],
+    keywords: ['scholarship', 'asat', 'discount', 'concession', 'test', 'exam', 'स्कॉलरशिप', 'छात्रवृत्ति', 'छूट', 'टेस्ट', 'परीक्षा', 'फीस छूट'],
     answerEn: "We conduct the APEX Scholarship Admission Test (ASAT), where meritorious and hardworking students can earn up to 90% fee scholarships on their tuition fees. You can register for the next ASAT test directly through our website or visit the institute.",
     answerHi: "हम APEX स्कॉलरशिप एडमिशन टेस्ट (ASAT) आयोजित करते हैं, जिसके माध्यम से मेधावी और मेहनती छात्रों को ट्यूशन फीस पर 90% तक की स्कॉलरशिप (फीस छूट) दी जाती है। आप वेबसाइट से या सीधे इंस्टीट्यूट आकर टेस्ट दे सकते हैं।"
   },
   {
     category: 'fee',
-    keywords: ['fee', 'fees', 'cost', 'price', 'charges', 'installment', 'फीस', 'खर्च', 'किस्त', 'रुपये'],
+    keywords: ['fee', 'fees', 'cost', 'price', 'charges', 'installment', 'फीस', 'खर्च', 'किस्त', 'रुपये', 'पैसा'],
     answerEn: "Institute APEX offers very affordable and competitive fee structures compared to large corporate institutes, with flexible easy installment options. Additional fee waivers are awarded through our ASAT scholarship test. Call us at 94677-52374 for the exact fee quote for your course.",
     answerHi: "इंस्टीट्यूट APEX की फीस जींद में सबसे किफायती और पारदर्शी है, जिसमें आसान किस्तों (Installments) की सुविधा भी है। ASAT स्कॉलरशिप टेस्ट द्वारा 90% तक फीस में छूट भी मिलती है। अपने पसंदीदा कोर्स की सटीक फीस के लिए आप 94677-52374 पर कॉल कर सकते हैं।"
   },
   {
     category: 'demo',
-    keywords: ['demo', 'trial', 'free class', 'डेमो', 'ट्रायल', 'फ्री क्लास', 'क्लास'],
+    keywords: ['demo', 'trial', 'free class', 'डेमो', 'ट्रायल', 'फ्री क्लास', 'क्लास', 'ट्रायल क्लास'],
     answerEn: "Yes! We welcome students and parents to attend 2 to 3 days of Free Trial Demo Classes to experience our classroom teaching quality, faculty interaction, and study material firsthand before taking admission.",
     answerHi: "हाँ बिल्कुल! हम सभी नए विद्यार्थियों को 2 से 3 दिन की फ्री ट्रायल डेमो क्लास प्रदान करते हैं, ताकि आप एडमिशन लेने से पहले शिक्षकों के पढ़ाने के तरीके और स्टडी मटेरियल को खुद अनुभव कर सकें।"
   },
@@ -52,7 +52,7 @@ const KNOWLEDGE_BASE = [
   },
   {
     category: 'timings',
-    keywords: ['timing', 'timings', 'time', 'batch', 'schedule', 'hours', 'समय', 'टाइमिंग', 'बैच', 'घंटे'],
+    keywords: ['timing', 'timings', 'time', 'batch', 'schedule', 'hours', 'समय', 'टाइमिंग', 'बैच', 'घंटे', 'कब'],
     answerEn: "We operate separate Morning and Evening batches designed specifically around school hours so students have no scheduling conflicts. Batch sizes are strictly kept small (25-30 students) for individual attention.",
     answerHi: "हमारे यहाँ सुबह और शाम के अलग-अलग बैच उपलब्ध हैं जिन्हें स्कूल के समय को ध्यान में रखकर बनाया गया है। हर बैच में छात्रों की संख्या 25-30 तक सीमित रखी जाती है ताकि प्रत्येक छात्र पर व्यक्तिगत ध्यान दिया जा सके।"
   },
@@ -61,6 +61,12 @@ const KNOWLEDGE_BASE = [
     keywords: ['result', 'results', 'topper', 'selection', 'rank', 'रिजल्ट', 'परिणाम', 'टॉपर', 'सलेक्शन', 'रैंक'],
     answerEn: "Institute APEX has a 15+ year proven track record in Jind with students achieving top selections in Government Medical Colleges (AIIMS, MAMC Delhi, PGIMS Rohtak) and prestigious IITs, NITs, and BITS.",
     answerHi: "इंस्टीट्यूट APEX का जींद में 15 से अधिक वर्षों का शानदार ट्रैक रिकॉर्ड रहा है। हमारे छात्र देश के प्रतिष्ठित मेडिकल कॉलेजों (AIIMS, MAMC दिल्ली, PGIMS रोहतक) और IITs/NITs में शानदार रैंक के साथ चयनित हुए हैं।"
+  },
+  {
+    category: 'general_greeting',
+    keywords: ['hello', 'hi', 'hey', 'namaste', 'pranam', 'नमस्ते', 'प्रणाम', 'हेलो', 'हाय'],
+    answerEn: "Hello! Welcome to Institute APEX Jind. I am Pooja Sharma, your Academic Counselor. How can I help you regarding NEET, IIT-JEE, or Foundation admissions today?",
+    answerHi: "नमस्ते! इंस्टीट्यूट APEX जींद में आपका स्वागत है। मैं आपकी अकादमिक काउंसलर पूजा शर्मा हूँ। आज मैं NEET, IIT-JEE या स्कूल फाउंडेशन एडमिशन में आपकी क्या मदद कर सकती हूँ?"
   }
 ];
 
@@ -70,15 +76,14 @@ export default function CounselorAvatar({ settings = {} }) {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [handsFree, setHandsFree] = useState(true); // Continuous conversation loop with auto follow-up
-  const [mouthOpen, setMouthOpen] = useState(false); // Dynamic talking mouth lip-sync state
+  const [handsFree, setHandsFree] = useState(true); // Continuous Auto Follow-up
   const [systemVoices, setSystemVoices] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [chatLog, setChatLog] = useState([
     {
       sender: 'counselor',
-      textHi: "नमस्ते! मैं इंस्टीट्यूट APEX जींद से आपकी अकादमिक काउंसलर हूँ। NEET, IIT-JEE, 9वीं-10वीं फाउंडेशन या स्कॉलरशिप एडमिशन के बारे में कोई भी सवाल पूछिए!",
-      textEn: "Hello! I am your Academic Counselor from Institute APEX, Jind. Feel free to ask me anything about NEET, IIT-JEE, 9th-10th Foundation, or Scholarship admissions!"
+      textHi: "नमस्ते! मैं इंस्टीट्यूट APEX जींद से पूजा शर्मा हूँ। मैं NEET, IIT-JEE, 9वीं-10वीं फाउंडेशन या स्कॉलरशिप एडमिशन में आपकी कैसे सहायता कर सकती हूँ?",
+      textEn: "Hello! I am Pooja Sharma from Institute APEX, Jind. How can I assist you with NEET, IIT-JEE, Foundation courses, or scholarship admissions today?"
     }
   ]);
   const [currentSubtitle, setCurrentSubtitle] = useState('');
@@ -86,7 +91,6 @@ export default function CounselorAvatar({ settings = {} }) {
   const recognitionRef = useRef(null);
   const chatBottomRef = useRef(null);
   const synthRef = useRef(null);
-  const mouthTimerRef = useRef(null);
   const handsFreeRef = useRef(handsFree);
   const isSpeakingRef = useRef(false);
   const isOpenRef = useRef(false);
@@ -95,22 +99,6 @@ export default function CounselorAvatar({ settings = {} }) {
   useEffect(() => { handsFreeRef.current = handsFree; }, [handsFree]);
   useEffect(() => { isSpeakingRef.current = isSpeaking; }, [isSpeaking]);
   useEffect(() => { isOpenRef.current = isOpen; }, [isOpen]);
-
-  // Animated mouth lip-sync effect during active speech
-  useEffect(() => {
-    if (isSpeaking) {
-      // Alternate mouth open/talking expression in cadence with speech syllables
-      mouthTimerRef.current = setInterval(() => {
-        setMouthOpen(prev => !prev);
-      }, 210);
-    } else {
-      if (mouthTimerRef.current) clearInterval(mouthTimerRef.current);
-      setMouthOpen(false);
-    }
-    return () => {
-      if (mouthTimerRef.current) clearInterval(mouthTimerRef.current);
-    };
-  }, [isSpeaking]);
 
   // Voice Loading & Natural Female Selection
   const refreshVoices = () => {
@@ -131,11 +119,11 @@ export default function CounselorAvatar({ settings = {} }) {
         window.speechSynthesis.onvoiceschanged = refreshVoices;
       }
 
-      // Initialize Speech Recognition for continuous listening
+      // Initialize Speech Recognition for continuous hands-free listening
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
-        recognition.continuous = false; // We use cycle-based continuous listening for crisp boundary detection
+        recognition.continuous = false;
         recognition.interimResults = false;
 
         recognition.onstart = () => {
@@ -151,16 +139,15 @@ export default function CounselorAvatar({ settings = {} }) {
         };
 
         recognition.onerror = (event) => {
-          // If silence timeout or aborted, resume hands-free if still appropriate
           console.warn('Speech recognition status:', event.error);
           setIsListening(false);
+          // Restart gently after momentary silence if still in hands-free mode
           if (event.error === 'no-speech' && handsFreeRef.current && isOpenRef.current && !isSpeakingRef.current) {
-            // Restart listening gently after silence
             setTimeout(() => {
               if (handsFreeRef.current && isOpenRef.current && !isSpeakingRef.current) {
                 startListening();
               }
-            }, 800);
+            }, 900);
           }
         };
 
@@ -187,7 +174,7 @@ export default function CounselorAvatar({ settings = {} }) {
     }
   }, [chatLog, currentSubtitle, isSpeaking, isListening]);
 
-  // Select the highest quality Indian female natural voice
+  // Select the highest quality natural Indian female voice
   const getNaturalFemaleVoice = (langCode) => {
     const voices = systemVoices.length > 0 
       ? systemVoices 
@@ -202,7 +189,7 @@ export default function CounselorAvatar({ settings = {} }) {
              (lower.includes('male') && !lower.includes('female'));
     };
 
-    // Female names / indicators across OSes
+    // Female names / indicators across OSes (Edge, Chrome, Windows, Android, iOS)
     const isFemaleVoice = (name) => {
       const lower = name.toLowerCase();
       if (isRoboticOrMale(lower)) return false;
@@ -269,7 +256,7 @@ export default function CounselorAvatar({ settings = {} }) {
     try {
       recognitionRef.current.start();
     } catch (err) {
-      // Ignore if already active
+      // Ignore if already listening
     }
   };
 
@@ -297,7 +284,7 @@ export default function CounselorAvatar({ settings = {} }) {
       const utterance = new SpeechSynthesisUtterance(text);
       
       // Warm, natural female pitch & conversational rate
-      utterance.pitch = 1.15;
+      utterance.pitch = 1.16;
       utterance.rate = langCode === 'hi' ? 0.94 : 0.98;
 
       const chosenVoice = getNaturalFemaleVoice(langCode);
@@ -345,7 +332,6 @@ export default function CounselorAvatar({ settings = {} }) {
       try { synthRef.current.cancel(); } catch (e) {}
     }
     setIsSpeaking(false);
-    setMouthOpen(false);
   };
 
   const toggleMicManual = () => {
@@ -396,8 +382,8 @@ export default function CounselorAvatar({ settings = {} }) {
       answerHi = matchedItem.answerHi;
       answerEn = matchedItem.answerEn;
     } else {
-      answerHi = "धन्यवाद! अधिक जानकारी और सीधे काउंसलिंग के लिए आप हमारे हेल्पलाइन नंबर 94677-52374 पर कॉल कर सकते हैं या हमारे जींद इंस्टीट्यूट (हुड्डा ग्राउंड के पास) पधार सकते हैं। क्या आप कुछ और पूछना चाहते हैं?";
-      answerEn = "Thank you! For specific queries, personalized batch guidance, or instant admissions support, please call our counselor directly at 94677-52374 or visit our institute near HUDA Ground, Jind. Would you like to ask anything else?";
+      answerHi = "धन्यवाद! अधिक जानकारी, सटीक बैच टाइमिंग और व्यक्तिगत मार्गदर्शन के लिए आप हमारे हेल्पलाइन नंबर 94677-52374 पर कॉल कर सकते हैं या हमारे जींद इंस्टीट्यूट (हुड्डा ग्राउंड के पास) पधार सकते हैं। क्या आप कुछ और जानना चाहते हैं?";
+      answerEn = "Thank you! For specific queries, batch timings, or instant admissions guidance, please call our counselor directly at 94677-52374 or visit our institute near HUDA Ground, Jind. Would you like to know anything else?";
     }
 
     const counselorMsg = {
@@ -421,11 +407,11 @@ export default function CounselorAvatar({ settings = {} }) {
 
   const openAvatar = () => {
     setIsOpen(true);
-    // Play greeting and automatically enter listening mode
+    // Greet student with female voice and enter hands-free listening
     setTimeout(() => {
       const greeting = language === 'hi' 
-        ? "नमस्ते! मैं इंस्टीट्यूट APEX जींद से पूजा शर्मा हूँ। मैं NEET, IIT-JEE और एडमिशन में आपकी क्या सहायता कर सकती हूँ?"
-        : "Hello! I am Pooja Sharma from Institute APEX, Jind. How can I assist you with NEET, IIT-JEE, or admissions today?";
+        ? "नमस्ते! मैं इंस्टीट्यूट APEX जींद से आपकी सीनियर काउंसलर पूजा शर्मा हूँ। मैं NEET, IIT-JEE या स्कूल फाउंडेशन में आपकी क्या सहायता कर सकती हूँ?"
+        : "Hello! I am Pooja Sharma, Senior Academic Counselor from Institute APEX, Jind. How can I assist you with NEET, IIT-JEE, or admissions today?";
       speakText(greeting, language, true);
     }, 300);
   };
@@ -464,13 +450,13 @@ export default function CounselorAvatar({ settings = {} }) {
 
   return (
     <>
-      {/* Floating Avatar Launcher Bubble */}
+      {/* Floating Audio-Wave AI Launcher Bubble */}
       {!isOpen && (
         <div className="counselor-bubble-wrapper">
           <button
             className="counselor-bubble-btn"
             onClick={openAvatar}
-            title={language === 'hi' ? "काउंसलर से लाइव बातचीत करें (वॉयस व वीडियो)" : "Talk to AI Counselor (Live Voice & Video)"}
+            title={language === 'hi' ? "काउंसलर से लाइव बातचीत करें (वॉयस व ऑडियो)" : "Talk to AI Counselor (Live Voice)"}
             aria-label="Academic Counselor"
           >
             <div className="counselor-bubble-img-wrap">
@@ -487,20 +473,20 @@ export default function CounselorAvatar({ settings = {} }) {
             </div>
             <div className="counselor-bubble-text">
               <span className="counselor-bubble-badge">
-                <span className="live-pulse" /> {language === 'hi' ? "लाइव काउंसलर" : "Live Counselor"}
+                <span className="live-pulse" /> {language === 'hi' ? "AI काउंसलर" : "AI Counselor"}
               </span>
               <span className="counselor-bubble-sub">
-                {language === 'hi' ? "हाथों-मुक्त वॉयस कॉल" : "Continuous Voice Call"}
+                {language === 'hi' ? "ऑडियो वॉयस कंसल्टेशन" : "Live Voice Assistant"}
               </span>
             </div>
           </button>
         </div>
       )}
 
-      {/* Main Interactive Counselor Window */}
+      {/* Main Interactive Audio-Wave AI Counselor Window */}
       {isOpen && (
         <div className="counselor-modal-overlay">
-          <div className="counselor-card" role="dialog" aria-label="AI Counselor Chat">
+          <div className="counselor-card" role="dialog" aria-label="AI Counselor Consultation">
             
             {/* Window Header */}
             <div className="counselor-header">
@@ -519,12 +505,12 @@ export default function CounselorAvatar({ settings = {} }) {
                 <div className="counselor-header-info">
                   <h4 className="counselor-name">{counselorName}</h4>
                   <span className="counselor-title">
-                    {language === 'hi' ? "इंस्टीट्यूट APEX • लाइव परामर्श" : "Institute APEX • Live Consultation"}
+                    {language === 'hi' ? "इंस्टीट्यूट APEX • ऑडियो वॉयस परामर्श" : "Institute APEX • Voice Consultation"}
                   </span>
                 </div>
               </div>
 
-              {/* Language Switcher, Hands-Free Toggle & Controls */}
+              {/* Controls */}
               <div className="counselor-header-actions">
                 {/* Hands-Free Duplex Auto-Listen Toggle */}
                 <button
@@ -593,55 +579,53 @@ export default function CounselorAvatar({ settings = {} }) {
               </div>
             </div>
 
-            {/* Video Face Avatar Viewport with Real Talking Lip-Sync and Listening States */}
-            <div className="counselor-video-stage">
-              <div className={`counselor-video-frame ${isSpeaking ? 'is-speaking' : isListening ? 'is-listening' : ''}`}>
+            {/* Audio Wave Avatar Viewport (Modern Dignified Voice Orb Presentation) */}
+            <div className="counselor-video-stage audio-wave-stage">
+              <div className="audio-wave-orb-wrapper">
                 
-                {/* Active Talking Face Frame vs Attentive Listening Face Frame */}
-                <div className="counselor-portrait-container">
+                {/* Acoustic Sound Wave Rings (Animate around avatar when speaking or listening) */}
+                <div className={`audio-wave-rings ${isSpeaking ? 'speaking-waves' : isListening ? 'listening-waves' : 'idle-waves'}`}>
+                  <span className="wave-ring ring-1" />
+                  <span className="wave-ring ring-2" />
+                  <span className="wave-ring ring-3" />
+                </div>
+
+                {/* Clean Professional Counselor Portrait */}
+                <div className="audio-counselor-portrait">
                   <picture>
-                    <source 
-                      srcSet={isSpeaking && mouthOpen ? "/images/counselor_speaking.webp" : "/images/counselor_avatar.webp"} 
-                      type="image/webp" 
-                    />
+                    <source srcSet="/images/counselor_avatar.webp" type="image/webp" />
                     <img 
-                      src={isSpeaking && mouthOpen ? "/images/counselor_speaking.jpg" : "/images/counselor_avatar.jpg"} 
-                      alt="Indian Academic Counselor" 
-                      className={`counselor-face-img ${isSpeaking ? 'animating-talk' : isListening ? 'animating-listen' : 'animating-idle'}`}
+                      src="/images/counselor_avatar.jpg" 
+                      alt="Pooja Sharma - Academic Counselor" 
+                      className="audio-counselor-img"
                     />
                   </picture>
-
-                  {/* Pulsing Listening Radar Waves when user is speaking */}
-                  {isListening && (
-                    <div className="listening-radar-pulse">
-                      <span className="radar-ring r1" />
-                      <span className="radar-ring r2" />
-                    </div>
-                  )}
                 </div>
 
-                {/* Animated Voice Equalizer overlay when counselor is speaking */}
+                {/* Dynamic Multi-Bar Spectrum Equalizer */}
                 {isSpeaking && (
-                  <div className="counselor-audio-wave-bars">
-                    <span className="wave-bar bar-1" />
-                    <span className="wave-bar bar-2" />
-                    <span className="wave-bar bar-3" />
-                    <span className="wave-bar bar-4" />
-                    <span className="wave-bar bar-5" />
+                  <div className="counselor-spectrum-bars">
+                    <span className="spectrum-bar s1" />
+                    <span className="spectrum-bar s2" />
+                    <span className="spectrum-bar s3" />
+                    <span className="spectrum-bar s4" />
+                    <span className="spectrum-bar s5" />
+                    <span className="spectrum-bar s6" />
+                    <span className="spectrum-bar s7" />
                   </div>
                 )}
+              </div>
 
-                {/* Video HUD State Badges */}
-                <div className={`counselor-hud-badge ${isListening ? 'hud-listening' : isSpeaking ? 'hud-speaking' : ''}`}>
-                  <span className={`hud-rec-dot ${isSpeaking ? 'active' : isListening ? 'listening-pulse' : ''}`} />
-                  <span>
-                    {isSpeaking 
-                      ? (language === 'hi' ? "काउंसलर बोल रही हैं..." : "Counselor Speaking...") 
-                      : isListening 
-                        ? (language === 'hi' ? "सुन रही हूँ, बोलिए..." : "Listening... Speak now")
-                        : (language === 'hi' ? "लाइव परामर्श" : "Live Consultation")}
-                  </span>
-                </div>
+              {/* HUD Consultation State Badge */}
+              <div className={`counselor-hud-badge ${isListening ? 'hud-listening' : isSpeaking ? 'hud-speaking' : ''}`}>
+                <span className={`hud-rec-dot ${isSpeaking ? 'active' : isListening ? 'listening-pulse' : ''}`} />
+                <span>
+                  {isSpeaking 
+                    ? (language === 'hi' ? "काउंसलर बोल रही हैं..." : "Counselor Speaking...") 
+                    : isListening 
+                      ? (language === 'hi' ? "सुन रही हूँ, बोलिए..." : "Listening... Speak now")
+                      : (language === 'hi' ? "ऑडियो वॉयस परामर्श" : "Voice Consultation")}
+                </span>
               </div>
 
               {/* Subtitle Teleprompter Banner */}

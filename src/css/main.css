@@ -3161,128 +3161,149 @@
   flex-shrink: 0;
 }
 
-.counselor-video-frame {
+/* Audio Wave AI Counselor Stage */
+.audio-wave-stage {
+  background: radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%);
+  padding: 16px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: relative;
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
-  padding: 3px;
-  background: linear-gradient(135deg, #be185d, #ec4899, #3b82f6);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  transition: all 0.3s ease;
-}
-
-.counselor-video-frame.is-speaking {
-  box-shadow: 0 0 26px rgba(244, 63, 94, 0.7);
-  animation: speakingGlowPulse 1.4s infinite alternate;
-}
-
-.counselor-video-frame.is-listening {
-  box-shadow: 0 0 26px rgba(16, 185, 129, 0.65);
-  background: linear-gradient(135deg, #10b981, #059669, #3b82f6);
-}
-
-.counselor-portrait-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
+  flex-shrink: 0;
   overflow: hidden;
 }
 
-.counselor-face-img {
+.audio-wave-orb-wrapper {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Acoustic Sound Wave Rings radiating around the portrait */
+.audio-wave-rings {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.wave-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  opacity: 0;
+}
+
+/* Speaking State: Vibrant glowing magenta & cyan soundwaves */
+.speaking-waves .wave-ring {
+  border-color: #f43f5e;
+  animation: speakingWaveOrb 1.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+.speaking-waves .ring-1 { animation-delay: 0s; border-color: #be185d; }
+.speaking-waves .ring-2 { animation-delay: 0.5s; border-color: #ec4899; }
+.speaking-waves .ring-3 { animation-delay: 1.0s; border-color: #38bdf8; }
+
+/* Listening State: Gentle green radar rings */
+.listening-waves .wave-ring {
+  border-color: #10b981;
+  animation: listeningWaveOrb 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+.listening-waves .ring-1 { animation-delay: 0s; border-color: #10b981; }
+.listening-waves .ring-2 { animation-delay: 0.65s; border-color: #34d399; }
+.listening-waves .ring-3 { animation-delay: 1.3s; border-color: #6ee7b7; }
+
+/* Idle State: Gentle pulse */
+.idle-waves .wave-ring {
+  border-color: rgba(255, 255, 255, 0.1);
+  animation: idleWaveOrb 3.5s infinite ease-in-out;
+}
+
+@keyframes speakingWaveOrb {
+  0% { transform: scale(0.92); opacity: 0.85; }
+  100% { transform: scale(1.36); opacity: 0; }
+}
+
+@keyframes listeningWaveOrb {
+  0% { transform: scale(0.94); opacity: 0.9; }
+  100% { transform: scale(1.32); opacity: 0; }
+}
+
+@keyframes idleWaveOrb {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.08); opacity: 0.1; }
+}
+
+/* High-res circular Counselor Portrait */
+.audio-counselor-portrait {
+  position: relative;
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(135deg, #be185d, #ec4899, #38bdf8);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(190, 24, 93, 0.3);
+  z-index: 2;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.speaking-waves ~ .audio-counselor-portrait {
+  box-shadow: 0 0 30px rgba(244, 63, 94, 0.7);
+  transform: scale(1.02);
+}
+
+.listening-waves ~ .audio-counselor-portrait {
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.65);
+}
+
+.audio-counselor-img {
   width: 100%;
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
   display: block;
-  transition: transform 0.2s ease, opacity 0.15s ease;
 }
 
-.counselor-face-img.animating-talk {
-  animation: counselorSpeakingSway 0.32s infinite alternate ease-in-out;
-}
-
-.counselor-face-img.animating-listen {
-  animation: counselorListeningBreathing 2.6s infinite ease-in-out;
-}
-
-.counselor-face-img.animating-idle {
-  animation: counselorIdleBreathing 3.6s infinite ease-in-out;
-}
-
-/* Pulsing Listening Radar Waves */
-.listening-radar-pulse {
+/* Dynamic Multi-Bar Spectrum Equalizer */
+.counselor-spectrum-bars {
   position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.radar-ring {
-  position: absolute;
-  inset: -6px;
-  border: 2px solid #10b981;
-  border-radius: 50%;
-  opacity: 0;
-  animation: radarRingPulse 2s cubic-bezier(0.2, 0.8, 0.4, 1) infinite;
-}
-
-.radar-ring.r2 {
-  animation-delay: 1s;
-}
-
-@keyframes radarRingPulse {
-  0% { transform: scale(0.95); opacity: 0.9; }
-  100% { transform: scale(1.22); opacity: 0; }
-}
-
-@keyframes counselorSpeakingSway {
-  0% { transform: scale(1.02) translateY(0); }
-  50% { transform: scale(1.035) translateY(-1px) rotate(0.4deg); }
-  100% { transform: scale(1.01) translateY(1px) rotate(-0.4deg); }
-}
-
-@keyframes counselorListeningBreathing {
-  0% { transform: scale(1) translateY(0); }
-  50% { transform: scale(1.02) translateY(-2px); }
-  100% { transform: scale(1) translateY(0); }
-}
-
-@keyframes counselorIdleBreathing {
-  0% { transform: scale(1) translateY(0); }
-  50% { transform: scale(1.01) translateY(-1px); }
-  100% { transform: scale(1) translateY(0); }
-}
-
-/* Audio Wave Equalizer */
-.counselor-audio-wave-bars {
-  position: absolute;
-  bottom: -4px;
+  bottom: -6px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: flex-end;
   gap: 3px;
-  height: 18px;
-  background: rgba(15, 23, 42, 0.9);
-  padding: 3px 8px;
+  height: 20px;
+  background: rgba(15, 23, 42, 0.92);
+  padding: 3px 10px;
   border-radius: 9999px;
   border: 1px solid #f43f5e;
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.4);
+  z-index: 3;
 }
 
-.wave-bar {
+.spectrum-bar {
   width: 3px;
   background: #f43f5e;
   border-radius: 2px;
-  animation: equalizerBounce 0.8s ease-in-out infinite alternate;
+  animation: spectrumBounce 0.7s ease-in-out infinite alternate;
 }
 
-.bar-1 { height: 6px; animation-delay: 0.1s; }
-.bar-2 { height: 12px; animation-delay: 0.3s; }
-.bar-3 { height: 16px; animation-delay: 0.15s; }
-.bar-4 { height: 10px; animation-delay: 0.25s; }
-.bar-5 { height: 7px; animation-delay: 0.4s; }
+.s1 { height: 6px; animation-delay: 0.1s; }
+.s2 { height: 14px; animation-delay: 0.3s; }
+.s3 { height: 18px; animation-delay: 0.15s; }
+.s4 { height: 12px; animation-delay: 0.25s; }
+.s5 { height: 16px; animation-delay: 0.4s; }
+.s6 { height: 10px; animation-delay: 0.2s; }
+.s7 { height: 7px; animation-delay: 0.35s; }
+
+@keyframes spectrumBounce {
+  0% { height: 4px; }
+  100% { height: 18px; }
+}
 
 .counselor-hud-badge {
   position: absolute;
