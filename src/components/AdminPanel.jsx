@@ -310,16 +310,22 @@ function SettingsForm({ onUpdateSettings }) {
   const [isTestingVoice, setIsTestingVoice] = useState(false);
   const [testVoiceStatus, setTestVoiceStatus] = useState(null);
 
-  const handleTestAiVoice = async () => {
+  const handleTestAiVoice = async (lang = 'en') => {
     if (!settings.geminiApiKey) {
       setTestVoiceStatus({ type: 'error', message: 'Please paste your Gemini API key above first.' });
       return;
     }
     setIsTestingVoice(true);
-    setTestVoiceStatus({ type: 'info', message: 'Connecting to Google Gemini 2.0 and generating natural studio voice...' });
+    setTestVoiceStatus({ 
+      type: 'info', 
+      message: `Connecting to Google Gemini (${lang === 'hi' ? 'Hindi' : 'English'}) and generating natural studio voice...` 
+    });
 
     try {
-      const testPrompt = `Say: "Hello! This is the AI Academic Counselor at Institute APEX, Jind. I am ready to guide students for NEET, IIT-JEE, and scholarship admissions."`;
+      const testPrompt = lang === 'hi'
+        ? `Say strictly in clear, natural, polite Hindi: "नमस्ते! मैं इंस्टीट्यूट एपेक्स जींद की सीनियर एकेडमिक काउंसलर हूँ। नीट, जेईई और छात्रवृत्ति एडमिशन में मैं आपकी कैसे सहायता कर सकती हूँ?"`
+        : `Say strictly in natural, professional English: "Hello! This is the Senior Academic Counselor at Institute APEX, Jind. I am ready to guide students for NEET, IIT-JEE, and scholarship admissions."`;
+
       const result = await requestGeminiSpeech({
         apiKey: settings.geminiApiKey,
         prompt: testPrompt,
@@ -331,7 +337,7 @@ function SettingsForm({ onUpdateSettings }) {
         await audio.play().catch(e => console.warn('Audio play error:', e));
         setTestVoiceStatus({
           type: 'success',
-          message: `✓ Natural Studio Voice (${settings.aiVoiceName || 'Aoede'}) Playing Successfully!`,
+          message: `✓ Natural Studio Voice (${settings.aiVoiceName || 'Aoede'} • ${lang === 'hi' ? 'Hindi' : 'English'}) via ${result.modelUsed || 'Gemini'} Playing Successfully!`,
           text: result.text || 'Audio playback active.'
         });
       } else {
@@ -778,18 +784,18 @@ function SettingsForm({ onUpdateSettings }) {
           </div>
 
           <div className="admin-input-group" style={{ flex: 1 }}>
-            <label style={{ fontWeight: 700 }}>AI Counselor Voice (Studio Spoken)</label>
+            <label style={{ fontWeight: 700 }}>AI Counselor Voice (Hindi & English Studio)</label>
             <select 
               name="aiVoiceName" 
               value={settings.aiVoiceName || 'Aoede'} 
               onChange={handleChange}
               style={{ height: '42px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '0 12px', fontSize: '0.85rem' }}
             >
-              <option value="Aoede">Aoede — Natural Female (Warm & Melodious - Recommended)</option>
-              <option value="Kore">Kore — Professional Female (Clear & Dignified)</option>
-              <option value="Puck">Puck — Natural Male (Friendly & Energetic)</option>
-              <option value="Charon">Charon — Deep Male (Authoritative & Calm)</option>
-              <option value="Fenrir">Fenrir — Confident Male (Crisp Studio)</option>
+              <option value="Aoede">Aoede — Natural Female (Hindi & English, Warm & Melodious - Recommended)</option>
+              <option value="Kore">Kore — Dignified Female (Hindi & English, Clear & Formal)</option>
+              <option value="Puck">Puck — Friendly Male (Hindi & English, Energetic)</option>
+              <option value="Charon">Charon — Deep Male (Hindi & English, Calm & Authoritative)</option>
+              <option value="Fenrir">Fenrir — Crisp Male (Hindi & English, Studio)</option>
             </select>
           </div>
         </div>
@@ -805,7 +811,7 @@ function SettingsForm({ onUpdateSettings }) {
               className="admin-btn secondary" 
               style={{ padding: '3px 10px', fontSize: '0.72rem' }}
               onClick={() => {
-                const defaultPrompt = "You are the Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 94677-52374, Landline: 01681-247700).\nWe offer premier coaching for: NEET (UG) for Class 11, 12, and Droppers; IIT-JEE (Main & Advanced) for Class 11 and 12; Foundation for Class 9th and 10th (Olympiads, NTSE, School Boards); and ASAT Scholarship Test with up to 90% fee waiver. Free 2-3 day trial demo classes are available.\nPlease reply strictly in clear, professional English in 2 to 3 concise, helpful sentences.";
+                const defaultPrompt = "You are the Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 94677-52374, Landline: 01681-247700).\nWe offer premier coaching for: NEET (UG) for Class 11, 12, and Droppers; IIT-JEE (Main & Advanced) for Class 11 and 12; Foundation for Class 9th and 10th (Olympiads, NTSE, School Boards); and ASAT Scholarship Test with up to 90% fee waiver. Free 2-3 day trial demo classes are available.\nLanguage Policy: If the student speaks or asks in Hindi or Hinglish, answer warmly in polite, clear Hindi. If the student speaks in English, answer in clear, professional English. Keep responses concise in 2 to 3 sentences.";
                 setSettings(prev => ({ ...prev, aiCounselorPrompt: defaultPrompt }));
               }}
             >
@@ -813,11 +819,11 @@ function SettingsForm({ onUpdateSettings }) {
             </button>
           </div>
           <p style={{ fontSize: '0.76rem', color: '#64748b', margin: '0 0 8px 0' }}>
-            Train your AI counselor here. You can add courses, batch timings, fee structures, scholarship rules, phone numbers, or admission deadlines. The counselor will follow these exact guidelines.
+            Train your AI counselor here. You can add courses, batch timings, fee structures, scholarship rules, phone numbers, or admission deadlines. The counselor speaks both Hindi & English fluently.
           </p>
           <textarea 
             name="aiCounselorPrompt" 
-            value={settings.aiCounselorPrompt !== undefined ? settings.aiCounselorPrompt : "You are the Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 94677-52374, Landline: 01681-247700).\nWe offer premier coaching for: NEET (UG) for Class 11, 12, and Droppers; IIT-JEE (Main & Advanced) for Class 11 and 12; Foundation for Class 9th and 10th (Olympiads, NTSE, School Boards); and ASAT Scholarship Test with up to 90% fee waiver. Free 2-3 day trial demo classes are available.\nPlease reply strictly in clear, professional English in 2 to 3 concise, helpful sentences."} 
+            value={settings.aiCounselorPrompt !== undefined ? settings.aiCounselorPrompt : "You are the Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 94677-52374, Landline: 01681-247700).\nWe offer premier coaching for: NEET (UG) for Class 11, 12, and Droppers; IIT-JEE (Main & Advanced) for Class 11 and 12; Foundation for Class 9th and 10th (Olympiads, NTSE, School Boards); and ASAT Scholarship Test with up to 90% fee waiver. Free 2-3 day trial demo classes are available.\nLanguage Policy: If the student speaks or asks in Hindi or Hinglish, answer warmly in polite, clear Hindi. If the student speaks in English, answer in clear, professional English. Keep responses concise in 2 to 3 sentences."} 
             onChange={handleChange} 
             rows="6"
             style={{ width: '100%', fontSize: '0.85rem', lineHeight: 1.5, fontFamily: 'inherit', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '10px' }}
@@ -836,33 +842,56 @@ function SettingsForm({ onUpdateSettings }) {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
             <div>
               <h5 style={{ margin: 0, color: 'var(--navy-blue)', fontSize: '0.9rem', fontWeight: 700 }}>
-                Live AI Voice & Response Tester
+                Live AI Voice & Response Tester (Hindi & English)
               </h5>
               <p style={{ margin: '4px 0 0 0', fontSize: '0.78rem', color: '#64748b' }}>
-                Test your Gemini API Key and hear the natural studio voice right here before saving.
+                Test your Gemini API Key and hear the natural studio voice in Hindi or English before saving.
               </p>
             </div>
-            <button 
-              type="button" 
-              className="admin-btn"
-              disabled={isTestingVoice || !settings.geminiApiKey}
-              onClick={handleTestAiVoice}
-              style={{ 
-                background: settings.geminiApiKey ? 'linear-gradient(135deg, #4f46e5, #7c3aed)' : '#94a3b8', 
-                color: '#fff',
-                padding: '8px 18px',
-                fontSize: '0.82rem',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: settings.geminiApiKey ? 'pointer' : 'not-allowed'
-              }}
-            >
-              {isTestingVoice ? 'Testing Voice...' : '▶ Test Gemini Voice Live'}
-            </button>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <button 
+                type="button" 
+                className="admin-btn"
+                disabled={isTestingVoice || !settings.geminiApiKey}
+                onClick={() => handleTestAiVoice('en')}
+                style={{ 
+                  background: settings.geminiApiKey ? 'linear-gradient(135deg, #4f46e5, #7c3aed)' : '#94a3b8', 
+                  color: '#fff',
+                  padding: '8px 16px',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: settings.geminiApiKey ? 'pointer' : 'not-allowed'
+                }}
+              >
+                {isTestingVoice ? 'Testing...' : '▶ Test English Voice'}
+              </button>
+              <button 
+                type="button" 
+                className="admin-btn"
+                disabled={isTestingVoice || !settings.geminiApiKey}
+                onClick={() => handleTestAiVoice('hi')}
+                style={{ 
+                  background: settings.geminiApiKey ? 'linear-gradient(135deg, #be185d, #ec4899)' : '#94a3b8', 
+                  color: '#fff',
+                  padding: '8px 16px',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: settings.geminiApiKey ? 'pointer' : 'not-allowed'
+                }}
+              >
+                {isTestingVoice ? 'Testing...' : '▶ Test Hindi Voice (हिंदी आवाज)'}
+              </button>
+            </div>
           </div>
 
           {testVoiceStatus && (

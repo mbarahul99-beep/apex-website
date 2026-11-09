@@ -66,6 +66,7 @@ export default function CounselorAvatar({ settings = {} }) {
   const [isListening, setIsListening] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [language, setLanguage] = useState('en'); // 'en' or 'hi'
   const [systemVoices, setSystemVoices] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [chatLog, setChatLog] = useState([
@@ -291,55 +292,22 @@ export default function CounselorAvatar({ settings = {} }) {
     // Check if Gemini API Key is configured in settings
     if (settings.geminiApiKey) {
       try {
-        const customPrompt = settings.aiCounselorPrompt || `You are the Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 94677-52374).
+        const customPrompt = settings.aiCounselorPrompt || `You are the Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 94677-52374, Landline: 01681-247700).
 We offer premier coaching for: NEET (UG) for Class 11, 12, and Droppers; IIT-JEE (Main & Advanced) for Class 11 and 12; Foundation for Class 9th and 10th (Olympiads, NTSE, School Boards); and ASAT Scholarship Test with up to 90% fee waiver. Free 2-3 day trial demo classes are available.
-Please reply strictly in clear, professional English in 2 to 3 concise, helpful sentences.`;
+Language Policy: If the student speaks or asks in Hindi or Hinglish, answer warmly in polite, clear conversational Hindi. If the student speaks in English, answer in clear, professional English. Keep answers concise in 2 to 3 sentences.`;
 
-        const fullPrompt = `${customPrompt}\nStudent Query: "${cleanQuery}"`;
-
-        // Request Gemini 2.0 Flash with audio modality (Aoede / Kore female voice)
+        const fullPrompt = `${customPrompt}\nStudent Query (${language === 'hi' ? 'Hindi Preferred' : 'English'}): "${cleanQuery}"`;
         const voiceName = settings.aiVoiceName || "Aoede";
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${settings.geminiApiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: fullPrompt }] }],
-            generationConfig: {
-              responseModalities: ["TEXT", "AUDIO"],
-              speechConfig: {
-                voiceConfig: {
-                  prebuiltVoiceConfig: {
-                    voiceName: voiceName
-                  }
-                }
-              }
-            }
-          })
+
+        const result = await requestGeminiSpeech({
+          apiKey: settings.geminiApiKey,
+          prompt: fullPrompt,
+          voiceName: voiceName
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          const parts = data.candidates?.[0]?.content?.parts || [];
-          for (const p of parts) {
-            if (p.text) answerText = p.text.trim();
-            if (p.inlineData && p.inlineData.data) {
-              audioBlobUrl = createAudioUrlFromInlineData(p.inlineData);
-            }
-          }
-        } else {
-          // If Gemini 2.0 audio rate-limited or not available, fallback to text Gemini 1.5
-          console.warn('Gemini 2.0 audio status:', response.status, 'trying text fallback');
-          const textResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${settings.geminiApiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: fullPrompt }] }]
-            })
-          });
-          if (textResp.ok) {
-            const textData = await textResp.json();
-            answerText = textData.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
-          }
+        if (result && result.text) {
+          answerText = result.text;
+          audioBlobUrl = result.audioBlobUrl;
         }
       } catch (err) {
         console.warn('Gemini API call failed, using knowledge base:', err);
@@ -373,22 +341,25 @@ Please reply strictly in clear, professional English in 2 to 3 concise, helpful 
     playSpeechAudio(answerText, audioBlobUrl);
   };
 
-  const defaultWelcome = "Hello! I am your Academic Counselor at Institute APEX, Jind. How can I assist you with admissions or courses today?";
+  const defaultWelcomeEn = "Hello! I am your Academic Counselor at Institute APEX, Jind. How can I assist you with admissions or courses today?";
+  const defaultWelcomeHi = "नमस्ते! मैं इंस्टीट्यूट एपेक्स जींद की सीनियर एकेडमिक काउंसलर हूँ। नीट, जेईई और छात्रवृत्ति एडमिशन में मैं आपकी कैसे सहायता कर सकती हूँ?";
 
   const openAvatar = async () => {
     setIsOpen(true);
+    const welcome = language === 'hi' ? defaultWelcomeHi : defaultWelcomeEn;
+
     if (settings.geminiApiKey) {
       try {
         setIsThinking(true);
         const result = await requestGeminiSpeech({
           apiKey: settings.geminiApiKey,
-          prompt: `Say strictly and warmly: "${defaultWelcome}"`,
+          prompt: `Say strictly and warmly in ${language === 'hi' ? 'Hindi' : 'English'}: "${welcome}"`,
           voiceName: settings.aiVoiceName || 'Aoede'
         });
         setIsThinking(false);
         if (result && result.audioBlobUrl) {
-          setChatLog(prev => [{ ...prev[0], audioBlobUrl: result.audioBlobUrl }]);
-          playSpeechAudio(defaultWelcome, result.audioBlobUrl);
+          setChatLog(prev => [{ ...prev[0], text: welcome, audioBlobUrl: result.audioBlobUrl }]);
+          playSpeechAudio(welcome, result.audioBlobUrl);
           return;
         }
       } catch (err) {
@@ -398,7 +369,7 @@ Please reply strictly in clear, professional English in 2 to 3 concise, helpful 
     }
 
     setTimeout(() => {
-      playFallbackVoice(defaultWelcome);
+      playFallbackVoice(welcome);
     }, 300);
   };
 
@@ -461,7 +432,35 @@ Please reply strictly in clear, professional English in 2 to 3 concise, helpful 
                 </div>
               </div>
 
-              <div className="counselor-header-actions">
+              <div className="counselor-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    const next = language === 'en' ? 'hi' : 'en';
+                    setLanguage(next);
+                    if (recognitionRef.current) {
+                      recognitionRef.current.lang = next === 'hi' ? 'hi-IN' : 'en-US';
+                    }
+                  }}
+                  title={language === 'en' ? "Switch to Hindi voice (हिंदी)" : "Switch to English voice"}
+                  style={{
+                    background: language === 'hi' ? 'linear-gradient(135deg, #be185d, #ec4899)' : 'rgba(255, 255, 255, 0.15)',
+                    color: '#fff',
+                    border: '1px solid rgba(255, 255, 255, 0.25)',
+                    padding: '3px 8px',
+                    borderRadius: '9999px',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    lineHeight: 1.2
+                  }}
+                >
+                  {language === 'hi' ? '🇮🇳 हिन्दी' : '🌐 EN'}
+                </button>
+
                 <button 
                   className={`counselor-icon-btn ${isMuted ? 'muted' : ''}`}
                   onClick={() => {
