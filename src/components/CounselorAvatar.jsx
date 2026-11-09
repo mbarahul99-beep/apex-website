@@ -1,0 +1,601 @@
+import React, { useState, useEffect, useRef } from 'react';
+
+// Comprehensive Knowledge Base for Institute APEX (Bilingual: Hindi & English)
+const KNOWLEDGE_BASE = [
+  {
+    category: 'neet',
+    keywords: ['neet', 'medical', 'biology', 'mbbs', 'aiims', 'doctor', 'नीट', 'मेडिकल', 'बायोलॉजी', 'एमबीबीएस', 'डॉक्टर', 'ड्रॉपर', 'dropper', 'repeater'],
+    answerEn: "Institute APEX provides dedicated classroom coaching for NEET (UG) for Class 11, Class 12, and Dropper/Repeater batches. We focus on 100% NCERT line-by-line mastery in Biology, Chemistry, and Physics, daily practice problem sheets (DPPs), and weekly OMR-based mock tests. Would you like to book a free 2-day demo class?",
+    answerHi: "इंस्टीट्यूट APEX में NEET (UG) की तैयारी के लिए 11वीं, 12वीं और ड्रॉपर/रिपीटर छात्रों के लिए विशेष क्लासरूम बैच उपलब्ध हैं। यहाँ बायोलॉजी, केमिस्ट्री और फिजिक्स में NCERT की लाइन-बाय-लाइन तैयारी, डेली प्रैक्टिस पेपर्स (DPPs) और साप्ताहिक OMR टेस्ट कराए जाते हैं। क्या आप 2 दिन की फ्री डेमो क्लास बुक करना चाहते हैं?"
+  },
+  {
+    category: 'jee',
+    keywords: ['jee', 'iit', 'engineering', 'math', 'maths', 'main', 'advanced', 'जेईई', 'आईआईटी', 'इंजीनियरिंग', 'गणित', 'मेंस', 'एडवांस्ड'],
+    answerEn: "Our IIT-JEE (Main & Advanced) classroom coaching covers Physics, Chemistry, and Mathematics with rigorous conceptual clarity, advanced problem-solving techniques, and doubt counters. We prepare students for top IITs and NITs. Would you like to check the batch timings or meet our faculty?",
+    answerHi: "हमारे यहाँ IIT-JEE (Main और Advanced) के लिए फिजिक्स, केमिस्ट्री और मैथ्स की बेहतरीन क्लासरूम कोचिंग दी जाती है। इसमें कॉन्सेप्ट क्लैरिटी, शॉर्टकट्स और डाउट काउंटर्स की सुविधा है जिससे छात्र IITs और NITs में टॉप रैंक हासिल कर सकें। क्या आप बैच टाइमिंग जानना चाहते हैं?"
+  },
+  {
+    category: 'foundation',
+    keywords: ['foundation', '9th', '10th', 'ninth', 'tenth', 'olympiad', 'ntse', 'फाउंडेशन', '9वीं', '10वीं', 'ओलंपियाड'],
+    answerEn: "Our Junior Foundation Program for Class 9th and 10th builds rock-solid fundamentals in Science and Mathematics. It prepares students for School Boards (CBSE & HBSE) as well as future competitive exams like NTSE, Olympiads, and NEET/JEE early prep.",
+    answerHi: "कक्षा 9वीं और 10वीं के लिए हमारा फाउंडेशन प्रोग्राम साइंस और मैथ्स की मजबूत नींव तैयार करता है। यह स्कूल बोर्ड (CBSE/HBSE) में टॉप करने के साथ-साथ NTSE, ओलंपियाड और भविष्य के NEET/JEE की अग्रिम तैयारी कराता है।"
+  },
+  {
+    category: 'scholarship',
+    keywords: ['scholarship', 'asat', 'discount', 'concession', 'test', 'exam', 'स्कॉलरशिप', 'छात्रवृत्ति', 'छूट', 'टेस्ट', 'परीक्षा'],
+    answerEn: "We conduct the APEX Scholarship Admission Test (ASAT), where meritorious and hardworking students can earn up to 90% fee scholarships on their tuition fees. You can register for the next ASAT test directly through our website or visit the institute.",
+    answerHi: "हम APEX स्कॉलरशिप एडमिशन टेस्ट (ASAT) आयोजित करते हैं, जिसके माध्यम से मेधावी और मेहनती छात्रों को ट्यूशन फीस पर 90% तक की स्कॉलरशिप (फीस छूट) दी जाती है। आप वेबसाइट से या सीधे इंस्टीट्यूट आकर टेस्ट दे सकते हैं।"
+  },
+  {
+    category: 'fee',
+    keywords: ['fee', 'fees', 'cost', 'price', 'charges', 'installment', 'फीस', 'खर्च', 'किस्त', 'रुपये'],
+    answerEn: "Institute APEX offers very affordable and competitive fee structures compared to large corporate institutes, with flexible easy installment options. Additional fee waivers are awarded through our ASAT scholarship test. Call us at 94677-52374 for the exact fee quote for your course.",
+    answerHi: "इंस्टीट्यूट APEX की फीस जींद में सबसे किफायती और पारदर्शी है, जिसमें आसान किस्तों (Installments) की सुविधा भी है। ASAT स्कॉलरशिप टेस्ट द्वारा 90% तक फीस में छूट भी मिलती है। अपने पसंदीदा कोर्स की सटीक फीस के लिए आप 94677-52374 पर कॉल कर सकते हैं।"
+  },
+  {
+    category: 'demo',
+    keywords: ['demo', 'trial', 'free class', 'डेमो', 'ट्रायल', 'फ्री क्लास', 'क्लास'],
+    answerEn: "Yes! We welcome students and parents to attend 2 to 3 days of Free Trial Demo Classes to experience our classroom teaching quality, faculty interaction, and study material firsthand before taking admission.",
+    answerHi: "हाँ बिल्कुल! हम सभी नए विद्यार्थियों को 2 से 3 दिन की फ्री ट्रायल डेमो क्लास प्रदान करते हैं, ताकि आप एडमिशन लेने से पहले शिक्षकों के पढ़ाने के तरीके और स्टडी मटेरियल को खुद अनुभव कर सकें।"
+  },
+  {
+    category: 'address',
+    keywords: ['address', 'location', 'where', 'map', 'directions', 'huda', 'urban estate', 'पता', 'कहाँ', 'लोकेशन', 'रास्ता', 'हुड्डा', 'अर्बन एस्टेट', 'जींद'],
+    answerEn: "Institute APEX is located at: #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana). It is centrally located with convenient connectivity from all parts of Jind district.",
+    answerHi: "इंस्टीट्यूट APEX का मुख्य पता है: #1257, अर्बन एस्टेट, हुड्डा ग्राउंड के पास, जींद-126102 (हरियाणा)। यह जींद शहर के केंद्र में स्थित है और यहाँ पहुँचना बेहद आसान है।"
+  },
+  {
+    category: 'contact',
+    keywords: ['phone', 'contact', 'call', 'mobile', 'number', 'telephone', 'email', 'फोन', 'संपर्क', 'कॉल', 'मोबाइल', 'नंबर', 'ईमेल'],
+    answerEn: "You can reach our counseling desk directly at Mobile: 94677-52374 or Landline: 01681-247700. Our email address is instituteapexjind@gmail.com. Our counselors are available every day to assist you.",
+    answerHi: "आप हमारे एडमिशन काउंसलिंग डेस्क से सीधे मोबाइल नंबर 94677-52374 या लैंडलाइन 01681-247700 पर संपर्क कर सकते हैं। हमारा ईमेल पता instituteapexjind@gmail.com है।"
+  },
+  {
+    category: 'timings',
+    keywords: ['timing', 'timings', 'time', 'batch', 'schedule', 'hours', 'समय', 'टाइमिंग', 'बैच', 'घंटे'],
+    answerEn: "We operate separate Morning and Evening batches designed specifically around school hours so students have no scheduling conflicts. Batch sizes are strictly kept small (25-30 students) for individual attention.",
+    answerHi: "हमारे यहाँ सुबह और शाम के अलग-अलग बैच उपलब्ध हैं जिन्हें स्कूल के समय को ध्यान में रखकर बनाया गया है। हर बैच में छात्रों की संख्या 25-30 तक सीमित रखी जाती है ताकि प्रत्येक छात्र पर व्यक्तिगत ध्यान दिया जा सके।"
+  },
+  {
+    category: 'results',
+    keywords: ['result', 'results', 'topper', 'selection', 'rank', 'रिजल्ट', 'परिणाम', 'टॉपर', 'सलेक्शन', 'रैंक'],
+    answerEn: "Institute APEX has a 15+ year proven track record in Jind with students achieving top selections in Government Medical Colleges (AIIMS, MAMC Delhi, PGIMS Rohtak) and prestigious IITs, NITs, and BITS.",
+    answerHi: "इंस्टीट्यूट APEX का जींद में 15 से अधिक वर्षों का शानदार ट्रैक रिकॉर्ड रहा है। हमारे छात्र देश के प्रतिष्ठित मेडिकल कॉलेजों (AIIMS, MAMC दिल्ली, PGIMS रोहतक) और IITs/NITs में शानदार रैंक के साथ चयनित हुए हैं।"
+  }
+];
+
+export default function CounselorAvatar({ settings = {} }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [language, setLanguage] = useState('hi'); // 'hi' or 'en'
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [userInput, setUserInput] = useState('');
+  const [chatLog, setChatLog] = useState([
+    {
+      sender: 'counselor',
+      textHi: "नमस्ते! मैं इंस्टीट्यूट APEX जींद से आपकी अकादमिक काउंसलर हूँ। NEET, IIT-JEE, 9वीं-10वीं फाउंडेशन या स्कॉलरशिप एडमिशन के बारे में कोई भी सवाल पूछिए!",
+      textEn: "Hello! I am your Academic Counselor from Institute APEX, Jind. Feel free to ask me anything about NEET, IIT-JEE, 9th-10th Foundation, or Scholarship admissions!"
+    }
+  ]);
+  const [currentSubtitle, setCurrentSubtitle] = useState('');
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const [recognitionSupported, setRecognitionSupported] = useState(false);
+
+  const recognitionRef = useRef(null);
+  const chatBottomRef = useRef(null);
+  const synthRef = useRef(null);
+  const currentUtteranceRef = useRef(null);
+
+  // Initialize Speech Recognition & Synthesis capabilities
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      synthRef.current = window.speechSynthesis;
+      setSpeechSupported(!!window.speechSynthesis);
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        setRecognitionSupported(true);
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        recognition.onstart = () => {
+          setIsListening(true);
+        };
+
+        recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          if (transcript) {
+            handleUserQuery(transcript);
+          }
+        };
+
+        recognition.onerror = (event) => {
+          console.warn('Speech recognition error:', event.error);
+          setIsListening(false);
+        };
+
+        recognition.onend = () => {
+          setIsListening(false);
+        };
+
+        recognitionRef.current = recognition;
+      }
+    }
+
+    return () => {
+      stopSpeaking();
+      if (recognitionRef.current) {
+        try { recognitionRef.current.abort(); } catch (e) {}
+      }
+    };
+  }, []);
+
+  // Auto-scroll chat log
+  useEffect(() => {
+    if (chatBottomRef.current) {
+      chatBottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatLog, currentSubtitle, isSpeaking]);
+
+  // Voice playback logic
+  const speakText = (text, langCode) => {
+    if (!synthRef.current || isMuted) return;
+
+    try {
+      synthRef.current.cancel(); // Cancel any ongoing speech
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = langCode === 'hi' ? 0.95 : 1.0;
+      utterance.pitch = 1.05;
+
+      const voices = synthRef.current.getVoices();
+      if (voices && voices.length > 0) {
+        if (langCode === 'hi') {
+          const hindiVoice = voices.find(v => v.lang.toLowerCase().includes('hi')) ||
+                             voices.find(v => v.lang.toLowerCase().includes('in'));
+          if (hindiVoice) utterance.voice = hindiVoice;
+        } else {
+          const indianEngVoice = voices.find(v => v.lang.toLowerCase() === 'en-in') ||
+                                 voices.find(v => v.lang.toLowerCase().includes('in') && v.lang.startsWith('en')) ||
+                                 voices.find(v => v.lang.toLowerCase().includes('en'));
+          if (indianEngVoice) utterance.voice = indianEngVoice;
+        }
+      }
+
+      utterance.onstart = () => {
+        setIsSpeaking(true);
+        setCurrentSubtitle(text);
+      };
+
+      utterance.onend = () => {
+        setIsSpeaking(false);
+      };
+
+      utterance.onerror = (e) => {
+        console.warn('SpeechSynthesis error:', e);
+        setIsSpeaking(false);
+      };
+
+      currentUtteranceRef.current = utterance;
+      synthRef.current.speak(utterance);
+    } catch (err) {
+      console.warn('TTS execution error:', err);
+      setIsSpeaking(false);
+    }
+  };
+
+  const stopSpeaking = () => {
+    if (synthRef.current) {
+      try { synthRef.current.cancel(); } catch (e) {}
+    }
+    setIsSpeaking(false);
+  };
+
+  const toggleSpeechRecognition = () => {
+    if (!recognitionRef.current) {
+      alert(language === 'hi' 
+        ? 'आपके ब्राउज़र में वॉइस रिकॉग्निशन सपोर्टेड नहीं है। कृपया लिखकर सवाल पूछें।' 
+        : 'Voice input is not supported on this browser. Please type your query.');
+      return;
+    }
+
+    if (isListening) {
+      try { recognitionRef.current.stop(); } catch (e) {}
+      setIsListening(false);
+    } else {
+      stopSpeaking();
+      recognitionRef.current.lang = language === 'hi' ? 'hi-IN' : 'en-IN';
+      try {
+        recognitionRef.current.start();
+      } catch (err) {
+        console.warn('Recognition start error:', err);
+        setIsListening(false);
+      }
+    }
+  };
+
+  // Process query against Knowledge Base
+  const handleUserQuery = (queryText) => {
+    if (!queryText || !queryText.trim()) return;
+    const cleanQuery = queryText.trim().toLowerCase();
+
+    // Add user message to log
+    const newChatLog = [...chatLog, { sender: 'user', text: queryText }];
+
+    // Match query against knowledge base
+    let matchedItem = null;
+    let highestScore = 0;
+
+    for (const item of KNOWLEDGE_BASE) {
+      let score = 0;
+      for (const kw of item.keywords) {
+        if (cleanQuery.includes(kw.toLowerCase())) {
+          score += 1;
+        }
+      }
+      if (score > highestScore) {
+        highestScore = score;
+        matchedItem = item;
+      }
+    }
+
+    let answerHi = "";
+    let answerEn = "";
+
+    if (matchedItem && highestScore > 0) {
+      answerHi = matchedItem.answerHi;
+      answerEn = matchedItem.answerEn;
+    } else {
+      answerHi = "धन्यवाद! अधिक जानकारी और सीधे काउंसलिंग के लिए आप हमारे हेल्पलाइन नंबर 94677-52374 पर कॉल कर सकते हैं या हमारे जींद इंस्टीट्यूट (हुड्डा ग्राउंड के पास) पधार सकते हैं।";
+      answerEn = "Thank you! For specific queries, personalized batch guidance, or instant admissions support, please call our counselor directly at 94677-52374 or visit our institute near HUDA Ground, Jind.";
+    }
+
+    const counselorMsg = {
+      sender: 'counselor',
+      textHi: answerHi,
+      textEn: answerEn
+    };
+
+    setChatLog([...newChatLog, counselorMsg]);
+    setUserInput('');
+
+    // Speak response
+    const textToSpeak = language === 'hi' ? answerHi : answerEn;
+    speakText(textToSpeak, language);
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    handleUserQuery(userInput);
+  };
+
+  const openAvatar = () => {
+    setIsOpen(true);
+    setIsMinimized(false);
+    // Play greeting if first time
+    if (!isSpeaking && !isMuted) {
+      const greeting = language === 'hi' 
+        ? "नमस्ते! मैं इंस्टीट्यूट APEX जींद से आपकी अकादमिक काउंसलर हूँ। आप मुझसे क्या पूछना चाहते हैं?"
+        : "Hello! I am your Academic Counselor from Institute APEX Jind. How can I help you today?";
+      speakText(greeting, language);
+    }
+  };
+
+  const closeAvatar = () => {
+    stopSpeaking();
+    if (isListening && recognitionRef.current) {
+      try { recognitionRef.current.stop(); } catch (e) {}
+    }
+    setIsOpen(false);
+  };
+
+  const toggleLanguage = (lang) => {
+    stopSpeaking();
+    setLanguage(lang);
+    const switchMsg = lang === 'hi'
+      ? "नमस्ते! अब आप मुझसे हिंदी में बात कर सकते हैं। पूछिए अपना सवाल!"
+      : "Switched to English! You can now ask questions about NEET, IIT-JEE, and Admissions.";
+    speakText(switchMsg, lang);
+  };
+
+  const quickQuestions = language === 'hi' ? [
+    { label: "NEET बैच जानकारी", query: "NEET बैच की जानकारी दीजिए" },
+    { label: "IIT-JEE कोचिंग", query: "IIT-JEE कोचिंग की जानकारी दीजिए" },
+    { label: "स्कॉलरशिप टेस्ट (ASAT)", query: "स्कॉलरशिप टेस्ट ASAT क्या है?" },
+    { label: "फ्री डेमो क्लास", query: "फ्री डेमो क्लास कैसे मिलेगी?" },
+    { label: "इंस्टीट्यूट का पता", query: "इंस्टीट्यूट का पता और फोन नंबर क्या है?" }
+  ] : [
+    { label: "NEET Batches", query: "Tell me about NEET batches" },
+    { label: "IIT-JEE Coaching", query: "Tell me about IIT-JEE coaching" },
+    { label: "Scholarship Test (ASAT)", query: "What is the ASAT scholarship test?" },
+    { label: "Free Demo Class", query: "How to book a free demo class?" },
+    { label: "Institute Location", query: "What is the address and contact number?" }
+  ];
+
+  const counselorName = language === 'hi' ? "पूजा शर्मा (काउंसलर)" : "Pooja Sharma (Counselor)";
+  const statusLabel = language === 'hi' ? "लाइव काउंसलर" : "Live Counselor";
+
+  return (
+    <>
+      {/* Floating Avatar Launcher Bubble */}
+      {!isOpen && (
+        <div className="counselor-bubble-wrapper">
+          <button
+            className="counselor-bubble-btn"
+            onClick={openAvatar}
+            title={language === 'hi' ? "काउंसलर से वीडियो व वॉयस चैट करें" : "Talk to AI Counselor (Voice & Video)"}
+            aria-label="Academic Counselor"
+          >
+            <div className="counselor-bubble-img-wrap">
+              <picture>
+                <source srcSet="/images/counselor_avatar.webp" type="image/webp" />
+                <img 
+                  src="/images/counselor_avatar.jpg" 
+                  alt="Academic Counselor" 
+                  className="counselor-bubble-img"
+                  loading="lazy"
+                />
+              </picture>
+              <span className="counselor-live-dot" />
+            </div>
+            <div className="counselor-bubble-text">
+              <span className="counselor-bubble-badge">
+                <span className="live-pulse" /> {statusLabel}
+              </span>
+              <span className="counselor-bubble-sub">
+                {language === 'hi' ? "वीडियो व वॉयस चैट" : "Free Voice & Chat"}
+              </span>
+            </div>
+          </button>
+        </div>
+      )}
+
+      {/* Main Interactive Counselor Window */}
+      {isOpen && (
+        <div className={`counselor-modal-overlay ${isMinimized ? 'minimized' : ''}`}>
+          <div className="counselor-card" role="dialog" aria-label="AI Counselor Chat">
+            
+            {/* Window Header */}
+            <div className="counselor-header">
+              <div className="counselor-header-left">
+                <div className="counselor-header-avatar-wrap">
+                  <picture>
+                    <source srcSet="/images/counselor_avatar.webp" type="image/webp" />
+                    <img 
+                      src="/images/counselor_avatar.jpg" 
+                      alt="Counselor" 
+                      className="counselor-header-avatar"
+                    />
+                  </picture>
+                  <span className={`counselor-status-dot ${isSpeaking ? 'speaking' : ''}`} />
+                </div>
+                <div className="counselor-header-info">
+                  <h4 className="counselor-name">{counselorName}</h4>
+                  <span className="counselor-title">
+                    {language === 'hi' ? "इंस्टीट्यूट APEX • ऑनलाइन" : "Institute APEX • Online"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Language Switcher & Controls */}
+              <div className="counselor-header-actions">
+                <div className="counselor-lang-toggle" title="Switch Language">
+                  <button 
+                    className={`lang-btn ${language === 'hi' ? 'active' : ''}`} 
+                    onClick={() => toggleLanguage('hi')}
+                  >
+                    हिंदी
+                  </button>
+                  <button 
+                    className={`lang-btn ${language === 'en' ? 'active' : ''}`} 
+                    onClick={() => toggleLanguage('en')}
+                  >
+                    EN
+                  </button>
+                </div>
+
+                <button 
+                  className={`counselor-icon-btn ${isMuted ? 'muted' : ''}`}
+                  onClick={() => {
+                    if (!isMuted) stopSpeaking();
+                    setIsMuted(!isMuted);
+                  }}
+                  title={isMuted ? "Unmute Voice" : "Mute Voice"}
+                  aria-label="Toggle Mute"
+                >
+                  {isMuted ? (
+                    <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.757 3.63 8.25 4.51 8.25H9z" />
+                    </svg>
+                  ) : (
+                    <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.757 3.63 8.25 4.51 8.25H6.75z" />
+                    </svg>
+                  )}
+                </button>
+
+                <button 
+                  className="counselor-icon-btn close"
+                  onClick={closeAvatar}
+                  title="Close"
+                  aria-label="Close"
+                >
+                  <svg fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Video Face Avatar Viewport */}
+            <div className="counselor-video-stage">
+              <div className={`counselor-video-frame ${isSpeaking ? 'is-speaking' : ''}`}>
+                <picture>
+                  <source srcSet="/images/counselor_avatar.webp" type="image/webp" />
+                  <img 
+                    src="/images/counselor_avatar.jpg" 
+                    alt="Indian Academic Counselor" 
+                    className={`counselor-face-img ${isSpeaking ? 'animating-mouth' : ''}`}
+                  />
+                </picture>
+
+                {/* Animated Voice Equalizer overlay when speaking */}
+                {isSpeaking && (
+                  <div className="counselor-audio-wave-bars">
+                    <span className="wave-bar bar-1" />
+                    <span className="wave-bar bar-2" />
+                    <span className="wave-bar bar-3" />
+                    <span className="wave-bar bar-4" />
+                    <span className="wave-bar bar-5" />
+                  </div>
+                )}
+
+                {/* Video HUD Badges */}
+                <div className="counselor-hud-badge">
+                  <span className={`hud-rec-dot ${isSpeaking ? 'active' : ''}`} />
+                  <span>{isSpeaking ? (language === 'hi' ? "काउंसलर बोल रही हैं..." : "Counselor Speaking...") : (language === 'hi' ? "लाइव परामर्श" : "Live Consultation")}</span>
+                </div>
+              </div>
+
+              {/* Subtitle Teleprompter Banner */}
+              <div className="counselor-teleprompter">
+                <span className="teleprompter-label">{language === 'hi' ? "काउंसलर का उत्तर:" : "Counselor:"}</span>
+                <p className="teleprompter-text">
+                  {currentSubtitle || (language === 'hi' 
+                    ? "नमस्ते! NEET, IIT-JEE या स्कॉलरशिप संबंधी सहायता के लिए पूछिए।" 
+                    : "Hello! Ask any question about NEET, IIT-JEE, or admissions.")}
+                </p>
+              </div>
+            </div>
+
+            {/* Chat Transcript / Dialogue Scroll */}
+            <div className="counselor-chat-stream">
+              {chatLog.map((msg, idx) => (
+                <div key={idx} className={`counselor-bubble-row ${msg.sender === 'user' ? 'user-row' : 'counselor-row'}`}>
+                  {msg.sender === 'counselor' && (
+                    <div className="row-avatar">
+                      <img src="/images/counselor_avatar.webp" alt="Avatar" />
+                    </div>
+                  )}
+                  <div className={`counselor-chat-bubble ${msg.sender === 'user' ? 'user-bubble' : 'counselor-bubble'}`}>
+                    <p>
+                      {msg.sender === 'user' 
+                        ? msg.text 
+                        : (language === 'hi' ? msg.textHi : msg.textEn)}
+                    </p>
+                    {msg.sender === 'counselor' && (
+                      <button 
+                        className="repeat-audio-btn"
+                        onClick={() => speakText(language === 'hi' ? msg.textHi : msg.textEn, language)}
+                        title="Replay Voice"
+                      >
+                        <svg fill="currentColor" viewBox="0 0 24 24" style={{ width: 12, height: 12 }}>
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                        <span>{language === 'hi' ? "सुनिए" : "Listen"}</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+              <div ref={chatBottomRef} />
+            </div>
+
+            {/* Quick Suggestion Chips */}
+            <div className="counselor-chips-container">
+              <span className="chips-title">{language === 'hi' ? "त्वरित सवाल:" : "Quick Questions:"}</span>
+              <div className="chips-scroll">
+                {quickQuestions.map((chip, idx) => (
+                  <button 
+                    key={idx} 
+                    className="counselor-chip"
+                    onClick={() => handleUserQuery(chip.query)}
+                  >
+                    {chip.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Voice & Text Input Section */}
+            <form className="counselor-input-form" onSubmit={handleFormSubmit}>
+              <button 
+                type="button"
+                className={`counselor-mic-btn ${isListening ? 'listening' : ''}`}
+                onClick={toggleSpeechRecognition}
+                title={isListening 
+                  ? (language === 'hi' ? "सुनना बंद करें" : "Stop listening") 
+                  : (language === 'hi' ? "बोलकर सवाल पूछें (माइक)" : "Speak your question (Mic)")}
+                aria-label="Voice Input"
+              >
+                {isListening ? (
+                  <div className="mic-pulsing-wave">
+                    <span className="mic-dot" />
+                    <svg fill="currentColor" viewBox="0 0 24 24" style={{ width: 18, height: 18 }}>
+                      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                    </svg>
+                  </div>
+                ) : (
+                  <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ width: 18, height: 18 }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15a3 3 0 003-3V6a3 3 0 00-6 0v6a3 3 0 003 3z" />
+                  </svg>
+                )}
+              </button>
+
+              <input 
+                type="text" 
+                className="counselor-text-input"
+                placeholder={isListening 
+                  ? (language === 'hi' ? "बोलिए, मैं सुन रही हूँ..." : "Listening... speak now") 
+                  : (language === 'hi' ? "यहाँ सवाल लिखें या बोलें..." : "Type or speak your question...")}
+                value={userInput}
+                onChange={(e) => setUserInput(e.target.value)}
+              />
+
+              <button 
+                type="submit" 
+                className="counselor-send-btn"
+                disabled={!userInput.trim()}
+                title="Send Question"
+                aria-label="Send"
+              >
+                <svg fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ width: 16, height: 16 }}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                </svg>
+              </button>
+            </form>
+
+            {/* Direct Connect Quick Actions */}
+            <div className="counselor-quick-footer">
+              <a 
+                href={`tel:${(settings.phone || '94677-52374').replace(/[^0-9+]/g, '')}`} 
+                className="counselor-footer-action call"
+              >
+                <svg fill="currentColor" viewBox="0 0 24 24" style={{ width: 14, height: 14 }}>
+                  <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24c1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                </svg>
+                <span>{language === 'hi' ? "सीधे कॉल करें" : "Direct Call"}</span>
+              </a>
+
+              <a 
+                href={`https://wa.me/91${(settings.whatsappNumber || '9467752374').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(language === 'hi' ? 'नमस्ते APEX इंस्टीट्यूट, मुझे कोचिंग एडमिशन के बारे में मार्गदर्शन चाहिए।' : 'Hello APEX Institute, I would like to get admission details.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="counselor-footer-action whatsapp"
+              >
+                <svg fill="currentColor" viewBox="0 0 24 24" style={{ width: 14, height: 14 }}>
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.517 2.266 2.27 3.51 5.284 3.508 8.489-.005 6.66-5.343 11.999-11.957 11.999-2.005-.001-3.973-.504-5.714-1.463L0 24zm6.59-4.846c1.6.95 3.197 1.451 4.82 1.452 5.518 0 10.006-4.486 10.01-10.002.002-2.673-1.037-5.186-2.927-7.079-1.889-1.89-4.4-2.932-7.08-2.933-5.524 0-10.014 4.487-10.018 10.004-.002 1.699.444 3.361 1.293 4.81l-.963 3.518 3.606-.945zm11.367-7.795c-.3-.15-1.772-.875-2.046-.975-.276-.1-.476-.15-.676.15-.2.3-.776.975-.95 1.175-.175.2-.35.225-.65.075-.3-.15-1.267-.467-2.414-1.492-.893-.797-1.497-1.782-1.672-2.082-.175-.3-.018-.462.13-.61.135-.133.3-.35.45-.525.15-.175.2-.3.3-.5.1-.2.05-.375-.025-.525-.075-.15-.676-1.63-1.026-2.47-.3-.72-.6-1.125-.676-1.125-.175 0-.35-.025-.525-.025-.175 0-.476.075-.726.35-.25.275-.95.925-.95 2.25s.965 2.6 1.1 2.775c.135.175 1.9 2.9 4.6 4.075.642.28 1.144.446 1.534.57.645.205 1.233.176 1.7.106.52-.078 1.772-.725 2.022-1.425.25-.7.25-1.3.175-1.425-.075-.125-.275-.2-.575-.35z"/>
+                </svg>
+                <span>WhatsApp</span>
+              </a>
+            </div>
+
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
