@@ -666,6 +666,108 @@ function SettingsForm({ onUpdateSettings }) {
           <label htmlFor="showEnquiryInline" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Contact Enquiry Inline Form</label>
         </div>
       </div>
+      {/* AI COUNSELOR & NATURAL VOICE CONFIGURATION */}
+      <div style={{ 
+        backgroundColor: '#f8fafc', 
+        border: '1px solid #e2e8f0', 
+        borderRadius: 'var(--radius-md)', 
+        padding: '20px', 
+        margin: '25px 0' 
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+          <span style={{ 
+            background: 'linear-gradient(135deg, #be185d, #ec4899)', 
+            color: '#fff', 
+            padding: '4px 10px', 
+            borderRadius: '9999px', 
+            fontSize: '0.72rem', 
+            fontWeight: 800,
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em'
+          }}>
+            AI Brain & Natural Voice Engine
+          </span>
+          <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--navy-blue)', fontWeight: 700 }}>
+            AI Counselor API Configuration
+          </h4>
+        </div>
+        <p style={{ fontSize: '0.82rem', color: '#64748b', lineHeight: 1.5, margin: '0 0 16px 0' }}>
+          Configure Google Gemini for intelligent, human-like reasoning and ElevenLabs for 100% natural, studio-quality female voice playback. Leave empty to use built-in offline modes.
+        </p>
+
+        <div className="admin-form-row">
+          <div className="admin-input-group">
+            <label style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Google Gemini API Key (Natural Conversational AI)</span>
+              <a 
+                href="https://aistudio.google.com/app/apikey" 
+                target="_blank" 
+                rel="noreferrer" 
+                style={{ color: '#be185d', fontSize: '0.75rem', fontWeight: 600, textDecoration: 'underline' }}
+              >
+                Get Free Gemini Key ↗
+              </a>
+            </label>
+            <input 
+              type="password" 
+              name="geminiApiKey" 
+              value={settings.geminiApiKey || ''} 
+              onChange={handleChange} 
+              placeholder="AIzaSy... (Free via Google AI Studio)" 
+            />
+          </div>
+
+          <div className="admin-input-group">
+            <label style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>ElevenLabs API Key (Ultra-Realistic Human Voice)</span>
+              <a 
+                href="https://elevenlabs.io" 
+                target="_blank" 
+                rel="noreferrer" 
+                style={{ color: '#be185d', fontSize: '0.75rem', fontWeight: 600, textDecoration: 'underline' }}
+              >
+                Get Free ElevenLabs Key ↗
+              </a>
+            </label>
+            <input 
+              type="password" 
+              name="elevenLabsApiKey" 
+              value={settings.elevenLabsApiKey || ''} 
+              onChange={handleChange} 
+              placeholder="sk_... (Free 10,000 characters/month)" 
+            />
+          </div>
+        </div>
+
+        <div className="admin-form-row">
+          <div className="admin-input-group">
+            <label>ElevenLabs Voice ID (Female Counselor Voice)</label>
+            <input 
+              type="text" 
+              name="elevenLabsVoiceId" 
+              value={settings.elevenLabsVoiceId || '21m00Tcm4TlvDq8ikWAM'} 
+              onChange={handleChange} 
+              placeholder="e.g. 21m00Tcm4TlvDq8ikWAM (Rachel / Indian Female)" 
+            />
+          </div>
+          
+          <div className="admin-input-group" style={{ display: 'flex', alignItems: 'center', marginTop: '22px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', margin: 0 }}>
+              <input 
+                type="checkbox" 
+                name="enableElevenLabsVoice" 
+                checked={!!settings.enableElevenLabsVoice} 
+                onChange={handleChange} 
+                style={{ width: '18px', height: '18px', cursor: 'pointer' }} 
+              />
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#be185d' }}>
+                Enable ElevenLabs Natural Human Voice (Studio Quality)
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+
       <button type="submit" className="admin-btn" style={{ padding: '10px 24px' }} disabled={isSaving}>
         {isSaving ? 'Saving to Database...' : 'Save Settings'}
       </button>
@@ -2393,7 +2495,109 @@ function AdminScholarships() {
               <label>Slab Description / Terms</label>
               <textarea value={description} onChange={e => setDescription(e.target.value)} rows="3" placeholder="Provide detailed guidelines about required documents or eligibility criteria..." required></textarea>
             </div>
-            <button type="submit" className="admin-btn" style={{ padding: '10px 24px' }} disabled={isSaving}>
+            {/* AI COUNSELOR & NATURAL VOICE CONFIGURATION */}
+      <div style={{ 
+        backgroundColor: '#f8fafc', 
+        border: '1px solid #e2e8f0', 
+        borderRadius: 'var(--radius-md)', 
+        padding: '20px', 
+        margin: '25px 0' 
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+          <span style={{ 
+            background: 'linear-gradient(135deg, #be185d, #ec4899)', 
+            color: '#fff', 
+            padding: '4px 10px', 
+            borderRadius: '9999px', 
+            fontSize: '0.72rem', 
+            fontWeight: 800,
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em'
+          }}>
+            AI Brain & Natural Voice Engine
+          </span>
+          <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--navy-blue)', fontWeight: 700 }}>
+            AI Counselor API Configuration
+          </h4>
+        </div>
+        <p style={{ fontSize: '0.82rem', color: '#64748b', lineHeight: 1.5, margin: '0 0 16px 0' }}>
+          Configure Google Gemini for intelligent, human-like reasoning and ElevenLabs for 100% natural, studio-quality female voice playback. Leave empty to use built-in offline modes.
+        </p>
+
+        <div className="admin-form-row">
+          <div className="admin-input-group">
+            <label style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Google Gemini API Key (Natural Conversational AI)</span>
+              <a 
+                href="https://aistudio.google.com/app/apikey" 
+                target="_blank" 
+                rel="noreferrer" 
+                style={{ color: '#be185d', fontSize: '0.75rem', fontWeight: 600, textDecoration: 'underline' }}
+              >
+                Get Free Gemini Key ↗
+              </a>
+            </label>
+            <input 
+              type="password" 
+              name="geminiApiKey" 
+              value={settings.geminiApiKey || ''} 
+              onChange={handleChange} 
+              placeholder="AIzaSy... (Free via Google AI Studio)" 
+            />
+          </div>
+
+          <div className="admin-input-group">
+            <label style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>ElevenLabs API Key (Ultra-Realistic Human Voice)</span>
+              <a 
+                href="https://elevenlabs.io" 
+                target="_blank" 
+                rel="noreferrer" 
+                style={{ color: '#be185d', fontSize: '0.75rem', fontWeight: 600, textDecoration: 'underline' }}
+              >
+                Get Free ElevenLabs Key ↗
+              </a>
+            </label>
+            <input 
+              type="password" 
+              name="elevenLabsApiKey" 
+              value={settings.elevenLabsApiKey || ''} 
+              onChange={handleChange} 
+              placeholder="sk_... (Free 10,000 characters/month)" 
+            />
+          </div>
+        </div>
+
+        <div className="admin-form-row">
+          <div className="admin-input-group">
+            <label>ElevenLabs Voice ID (Female Counselor Voice)</label>
+            <input 
+              type="text" 
+              name="elevenLabsVoiceId" 
+              value={settings.elevenLabsVoiceId || '21m00Tcm4TlvDq8ikWAM'} 
+              onChange={handleChange} 
+              placeholder="e.g. 21m00Tcm4TlvDq8ikWAM (Rachel / Indian Female)" 
+            />
+          </div>
+          
+          <div className="admin-input-group" style={{ display: 'flex', alignItems: 'center', marginTop: '22px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', margin: 0 }}>
+              <input 
+                type="checkbox" 
+                name="enableElevenLabsVoice" 
+                checked={!!settings.enableElevenLabsVoice} 
+                onChange={handleChange} 
+                style={{ width: '18px', height: '18px', cursor: 'pointer' }} 
+              />
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#be185d' }}>
+                Enable ElevenLabs Natural Human Voice (Studio Quality)
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" className="admin-btn" style={{ padding: '10px 24px' }} disabled={isSaving}>
               {isSaving ? 'Saving...' : (editingSlab ? 'Update Scholarship' : 'Create Scholarship')}
             </button>
           </form>

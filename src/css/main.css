@@ -3334,6 +3334,18 @@
   color: #fecdd3;
 }
 
+.counselor-hud-badge.hud-thinking {
+  background: rgba(14, 116, 144, 0.85);
+  border-color: #06b6d4;
+  color: #cffafe;
+}
+
+.thinking-pulse {
+  background: #06b6d4 !important;
+  box-shadow: 0 0 6px #06b6d4;
+  animation: liveDotPulse 0.8s infinite;
+}
+
 .hud-rec-dot {
   width: 6px;
   height: 6px;

@@ -68,6 +68,10 @@ const DEFAULT_SETTINGS = {
   showQuickLinks: true,
   showTestimonials: true,
   showEnquiryInline: true,
+  geminiApiKey: "",
+  elevenLabsApiKey: "",
+  elevenLabsVoiceId: "21m00Tcm4TlvDq8ikWAM",
+  enableElevenLabsVoice: false,
   allowedAdminEmails: "instituteapex12@gmail.com, instituteapexjind@gmail.com, mbarahul99@gmail.com",
   ...(snapshot.settings || {})
 };

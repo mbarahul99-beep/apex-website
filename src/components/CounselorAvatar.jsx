@@ -75,6 +75,7 @@ export default function CounselorAvatar({ settings = {} }) {
   const [language, setLanguage] = useState('hi'); // 'hi' or 'en'
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [isThinking, setIsThinking] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [handsFree, setHandsFree] = useState(true); // Continuous Auto Follow-up
   const [systemVoices, setSystemVoices] = useState([]);
@@ -91,6 +92,7 @@ export default function CounselorAvatar({ settings = {} }) {
   const recognitionRef = useRef(null);
   const chatBottomRef = useRef(null);
   const synthRef = useRef(null);
+  const audioPlayerRef = useRef(null);
   const handsFreeRef = useRef(handsFree);
   const isSpeakingRef = useRef(false);
   const isOpenRef = useRef(false);
@@ -164,6 +166,9 @@ export default function CounselorAvatar({ settings = {} }) {
       if (recognitionRef.current) {
         try { recognitionRef.current.abort(); } catch (e) {}
       }
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+      }
     };
   }, []);
 
@@ -172,7 +177,7 @@ export default function CounselorAvatar({ settings = {} }) {
     if (chatBottomRef.current) {
       chatBottomRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [chatLog, currentSubtitle, isSpeaking, isListening]);
+  }, [chatLog, currentSubtitle, isSpeaking, isListening, isThinking]);
 
   // Select the highest quality natural Indian female voice
   const getNaturalFemaleVoice = (langCode) => {
@@ -203,37 +208,30 @@ export default function CounselorAvatar({ settings = {} }) {
     };
 
     if (langCode === 'hi') {
-      // 1. Natural Hindi Female voice (e.g., Microsoft Swara, Google हिन्दी, Kalpana)
       const hiFemale = voices.find(v => 
         (v.lang.toLowerCase().startsWith('hi') || v.lang.toLowerCase().includes('hi-in')) && 
         isFemaleVoice(v.name)
       );
       if (hiFemale) return hiFemale;
 
-      // 2. Any Hindi voice
       const anyHi = voices.find(v => v.lang.toLowerCase().startsWith('hi') || v.lang.toLowerCase().includes('hi-in'));
       if (anyHi) return anyHi;
 
-      // 3. Indian English Female voice (clear pronunciation)
       const inFemale = voices.find(v => 
         (v.lang.toLowerCase().includes('in') || v.lang.toLowerCase().startsWith('en-in')) && 
         isFemaleVoice(v.name)
       );
       if (inFemale) return inFemale;
 
-      // 4. Any female voice (prevent falling back to Microsoft David)
       const anyFemale = voices.find(v => isFemaleVoice(v.name));
       if (anyFemale) return anyFemale;
     } else {
-      // English Mode:
-      // 1. Indian English Female (e.g. Heera, Neerja, Veena)
       const inFemale = voices.find(v => 
         (v.lang.toLowerCase() === 'en-in' || v.lang.toLowerCase().includes('in')) && 
         isFemaleVoice(v.name)
       );
       if (inFemale) return inFemale;
 
-      // 2. Natural English Female (Zira, Google Female, Samantha)
       const engFemale = voices.find(v => 
         v.lang.toLowerCase().startsWith('en') && 
         isFemaleVoice(v.name)
@@ -241,7 +239,6 @@ export default function CounselorAvatar({ settings = {} }) {
       if (engFemale) return engFemale;
     }
 
-    // Safety fallback: any voice that is NOT David or Mark
     return voices.find(v => !isRoboticOrMale(v.name)) || voices[0];
   };
 
@@ -267,10 +264,85 @@ export default function CounselorAvatar({ settings = {} }) {
     setIsListening(false);
   };
 
-  // Voice playback logic with follow-up continuous trigger
-  const speakText = (text, langCode, autoFollowUp = true) => {
-    if (!synthRef.current || isMuted) {
-      // If muted or TTS unavailable, still trigger hands-free listening follow-up
+  // Voice playback logic (ElevenLabs Natural Human Voice API or Enhanced Offline Female Voice)
+  const speakText = async (text, langCode, autoFollowUp = true) => {
+    if (isMuted) {
+      if (autoFollowUp && handsFreeRef.current && isOpenRef.current) {
+        setTimeout(startListening, 600);
+      }
+      return;
+    }
+
+    stopListening();
+    setCurrentSubtitle(text);
+
+    // 1. Check if ElevenLabs Natural Voice API is configured
+    if (settings.enableElevenLabsVoice && settings.elevenLabsApiKey) {
+      try {
+        setIsSpeaking(true);
+        const voiceId = settings.elevenLabsVoiceId || '21m00Tcm4TlvDq8ikWAM';
+        const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+          method: 'POST',
+          headers: {
+            'Accept': 'audio/mpeg',
+            'Content-Type': 'application/json',
+            'xi-api-key': settings.elevenLabsApiKey
+          },
+          body: JSON.stringify({
+            text: text,
+            model_id: 'eleven_multilingual_v2',
+            voice_settings: {
+              stability: 0.5,
+              similarity_boost: 0.8
+            }
+          })
+        });
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const audioUrl = URL.createObjectURL(blob);
+          if (audioPlayerRef.current) {
+            audioPlayerRef.current.pause();
+          }
+          const audio = new Audio(audioUrl);
+          audioPlayerRef.current = audio;
+
+          audio.onended = () => {
+            setIsSpeaking(false);
+            if (autoFollowUp && handsFreeRef.current && isOpenRef.current && !isMuted) {
+              setTimeout(() => {
+                if (isOpenRef.current && !isSpeakingRef.current) {
+                  startListening();
+                }
+              }, 450);
+            }
+          };
+
+          audio.onerror = () => {
+            console.warn('ElevenLabs playback error, using fallback');
+            playBrowserSynth(text, langCode, autoFollowUp);
+          };
+
+          await audio.play();
+          return;
+        } else {
+          console.warn('ElevenLabs API returned status:', response.status);
+          playBrowserSynth(text, langCode, autoFollowUp);
+          return;
+        }
+      } catch (err) {
+        console.warn('ElevenLabs fetch error:', err);
+        playBrowserSynth(text, langCode, autoFollowUp);
+        return;
+      }
+    }
+
+    // 2. Default browser female voice synthesis
+    playBrowserSynth(text, langCode, autoFollowUp);
+  };
+
+  const playBrowserSynth = (text, langCode, autoFollowUp) => {
+    if (!synthRef.current) {
       if (autoFollowUp && handsFreeRef.current && isOpenRef.current) {
         setTimeout(startListening, 600);
       }
@@ -278,12 +350,9 @@ export default function CounselorAvatar({ settings = {} }) {
     }
 
     try {
-      stopListening();
-      synthRef.current.cancel(); // Cancel any ongoing speech
+      synthRef.current.cancel();
 
       const utterance = new SpeechSynthesisUtterance(text);
-      
-      // Warm, natural female pitch & conversational rate
       utterance.pitch = 1.16;
       utterance.rate = langCode === 'hi' ? 0.94 : 0.98;
 
@@ -294,12 +363,10 @@ export default function CounselorAvatar({ settings = {} }) {
 
       utterance.onstart = () => {
         setIsSpeaking(true);
-        setCurrentSubtitle(text);
       };
 
       utterance.onend = () => {
         setIsSpeaking(false);
-        // Hands-Free Follow-Up: Automatically turn mic on to listen for student's next question!
         if (autoFollowUp && handsFreeRef.current && isOpenRef.current && !isMuted) {
           setTimeout(() => {
             if (isOpenRef.current && !isSpeakingRef.current) {
@@ -328,6 +395,9 @@ export default function CounselorAvatar({ settings = {} }) {
   };
 
   const stopSpeaking = () => {
+    if (audioPlayerRef.current) {
+      try { audioPlayerRef.current.pause(); } catch (e) {}
+    }
     if (synthRef.current) {
       try { synthRef.current.cancel(); } catch (e) {}
     }
@@ -350,54 +420,86 @@ export default function CounselorAvatar({ settings = {} }) {
     }
   };
 
-  // Process query against Knowledge Base
-  const handleUserQuery = (queryText) => {
+  // Process query against Google Gemini AI API (or Local Knowledge Base)
+  const handleUserQuery = async (queryText) => {
     if (!queryText || !queryText.trim()) return;
-    const cleanQuery = queryText.trim().toLowerCase();
+    const cleanQuery = queryText.trim();
 
     // Add user message to log
     const newChatLog = [...chatLog, { sender: 'user', text: queryText }];
+    setChatLog(newChatLog);
+    setUserInput('');
+    setIsThinking(true);
 
-    // Match query against knowledge base
-    let matchedItem = null;
-    let highestScore = 0;
+    let answerText = "";
 
-    for (const item of KNOWLEDGE_BASE) {
-      let score = 0;
-      for (const kw of item.keywords) {
-        if (cleanQuery.includes(kw.toLowerCase())) {
-          score += 1;
+    // 1. Try Google Gemini API if configured
+    if (settings.geminiApiKey) {
+      try {
+        const systemPrompt = `You are Pooja Sharma, Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 94677-52374, 01681-247700). 
+Coaching offered: NEET (Medical) Class 11, 12, Droppers (100% NCERT mastery, DPPs, OMR tests); IIT-JEE (Main & Adv) 11, 12; Foundation 9th-10th (Olympiads, NTSE, CBSE/HBSE Boards). Scholarships: APEX Scholarship Admission Test (ASAT) offers up to 90% fee scholarship. Free 2-3 day trial demo classes available. Small batches (25-30 students).
+Answer the following student query warmly, politely, and concisely in 2-3 sentences in ${language === 'hi' ? 'Hindi (Devanagari script)' : 'English'}. Query: "${cleanQuery}"`;
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${settings.geminiApiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: systemPrompt }] }]
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const generated = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (generated && generated.trim()) {
+            answerText = generated.trim();
+          }
+        }
+      } catch (err) {
+        console.warn('Gemini API query error, using local knowledge base fallback:', err);
+      }
+    }
+
+    // 2. Fallback to Local Knowledge Base if Gemini API is not configured or failed
+    if (!answerText) {
+      const lower = cleanQuery.toLowerCase();
+      let matchedItem = null;
+      let highestScore = 0;
+
+      for (const item of KNOWLEDGE_BASE) {
+        let score = 0;
+        for (const kw of item.keywords) {
+          if (lower.includes(kw.toLowerCase())) {
+            score += 1;
+          }
+        }
+        if (score > highestScore) {
+          highestScore = score;
+          matchedItem = item;
         }
       }
-      if (score > highestScore) {
-        highestScore = score;
-        matchedItem = item;
+
+      if (matchedItem && highestScore > 0) {
+        answerText = language === 'hi' ? matchedItem.answerHi : matchedItem.answerEn;
+      } else {
+        answerText = language === 'hi'
+          ? "धन्यवाद! अधिक जानकारी, सटीक बैच टाइमिंग और व्यक्तिगत मार्गदर्शन के लिए आप हमारे हेल्पलाइन नंबर 94677-52374 पर कॉल कर सकते हैं या हमारे जींद इंस्टीट्यूट (हुड्डा ग्राउंड के पास) पधार सकते हैं। क्या आप कुछ और जानना चाहते हैं?"
+          : "Thank you! For specific queries, batch timings, or instant admissions guidance, please call our counselor directly at 94677-52374 or visit our institute near HUDA Ground, Jind. Would you like to know anything else?";
       }
     }
 
-    let answerHi = "";
-    let answerEn = "";
-
-    if (matchedItem && highestScore > 0) {
-      answerHi = matchedItem.answerHi;
-      answerEn = matchedItem.answerEn;
-    } else {
-      answerHi = "धन्यवाद! अधिक जानकारी, सटीक बैच टाइमिंग और व्यक्तिगत मार्गदर्शन के लिए आप हमारे हेल्पलाइन नंबर 94677-52374 पर कॉल कर सकते हैं या हमारे जींद इंस्टीट्यूट (हुड्डा ग्राउंड के पास) पधार सकते हैं। क्या आप कुछ और जानना चाहते हैं?";
-      answerEn = "Thank you! For specific queries, batch timings, or instant admissions guidance, please call our counselor directly at 94677-52374 or visit our institute near HUDA Ground, Jind. Would you like to know anything else?";
-    }
+    setIsThinking(false);
 
     const counselorMsg = {
       sender: 'counselor',
-      textHi: answerHi,
-      textEn: answerEn
+      textHi: answerText,
+      textEn: answerText
     };
 
     setChatLog([...newChatLog, counselorMsg]);
-    setUserInput('');
 
     // Speak response with automatic follow-up listening enabled
-    const textToSpeak = language === 'hi' ? answerHi : answerEn;
-    speakText(textToSpeak, language, true);
+    speakText(answerText, language, true);
   };
 
   const handleFormSubmit = (e) => {
@@ -617,14 +719,16 @@ export default function CounselorAvatar({ settings = {} }) {
               </div>
 
               {/* HUD Consultation State Badge */}
-              <div className={`counselor-hud-badge ${isListening ? 'hud-listening' : isSpeaking ? 'hud-speaking' : ''}`}>
-                <span className={`hud-rec-dot ${isSpeaking ? 'active' : isListening ? 'listening-pulse' : ''}`} />
+              <div className={`counselor-hud-badge ${isThinking ? 'hud-thinking' : isListening ? 'hud-listening' : isSpeaking ? 'hud-speaking' : ''}`}>
+                <span className={`hud-rec-dot ${isThinking ? 'thinking-pulse' : isSpeaking ? 'active' : isListening ? 'listening-pulse' : ''}`} />
                 <span>
-                  {isSpeaking 
-                    ? (language === 'hi' ? "काउंसलर बोल रही हैं..." : "Counselor Speaking...") 
-                    : isListening 
-                      ? (language === 'hi' ? "सुन रही हूँ, बोलिए..." : "Listening... Speak now")
-                      : (language === 'hi' ? "ऑडियो वॉयस परामर्श" : "Voice Consultation")}
+                  {isThinking
+                    ? (language === 'hi' ? "AI सोच रही हैं..." : "AI Thinking...")
+                    : isSpeaking 
+                      ? (language === 'hi' ? "काउंसलर बोल रही हैं..." : "Counselor Speaking...") 
+                      : isListening 
+                        ? (language === 'hi' ? "सुन रही हूँ, बोलिए..." : "Listening... Speak now")
+                        : (language === 'hi' ? "ऑडियो वॉयस परामर्श" : "Voice Consultation")}
                 </span>
               </div>
 
@@ -632,9 +736,11 @@ export default function CounselorAvatar({ settings = {} }) {
               <div className="counselor-teleprompter">
                 <div className="teleprompter-top-row">
                   <span className="teleprompter-label">
-                    {isListening 
-                      ? (language === 'hi' ? "आपकी आवाज़:" : "Your Voice:")
-                      : (language === 'hi' ? "काउंसलर का उत्तर:" : "Counselor:")}
+                    {isThinking
+                      ? (language === 'hi' ? "AI विश्लेषण:" : "AI Processing:")
+                      : isListening 
+                        ? (language === 'hi' ? "आपकी आवाज़:" : "Your Voice:")
+                        : (language === 'hi' ? "काउंसलर का उत्तर:" : "Counselor:")}
                   </span>
                   {handsFree && (
                     <span className="teleprompter-hf-badge">
@@ -643,11 +749,13 @@ export default function CounselorAvatar({ settings = {} }) {
                   )}
                 </div>
                 <p className="teleprompter-text">
-                  {isListening 
-                    ? (language === 'hi' ? "मैं आपकी बात सुन रही हूँ, अपना सवाल पूछिए..." : "Listening... Speak your question now...")
-                    : currentSubtitle || (language === 'hi' 
-                        ? "नमस्ते! NEET, IIT-JEE या स्कॉलरशिप संबंधी सहायता के लिए पूछिए।" 
-                        : "Hello! Ask any question about NEET, IIT-JEE, or admissions.")}
+                  {isThinking
+                    ? (language === 'hi' ? "आपके प्रश्न का उत्तर तैयार किया जा रहा है..." : "Analyzing query and preparing response...")
+                    : isListening 
+                      ? (language === 'hi' ? "मैं आपकी बात सुन रही हूँ, अपना सवाल पूछिए..." : "Listening... Speak your question now...")
+                      : currentSubtitle || (language === 'hi' 
+                          ? "नमस्ते! NEET, IIT-JEE या स्कॉलरशिप संबंधी सहायता के लिए पूछिए।" 
+                          : "Hello! Ask any question about NEET, IIT-JEE, or admissions.")}
                 </p>
               </div>
             </div>
