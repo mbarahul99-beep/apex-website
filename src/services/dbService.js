@@ -69,6 +69,8 @@ const DEFAULT_SETTINGS = {
   showTestimonials: true,
   showEnquiryInline: true,
   geminiApiKey: "",
+  aiVoiceName: "Aoede",
+  aiCounselorPrompt: "You are the Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 94677-52374, Landline: 01681-247700).\nWe offer premier coaching for: NEET (UG) for Class 11, 12, and Droppers; IIT-JEE (Main & Advanced) for Class 11 and 12; Foundation for Class 9th and 10th (Olympiads, NTSE, School Boards); and ASAT Scholarship Test with up to 90% fee waiver. Free 2-3 day trial demo classes are available.\nPlease reply strictly in clear, professional English in 2 to 3 concise, helpful sentences.",
   elevenLabsApiKey: "",
   elevenLabsVoiceId: "21m00Tcm4TlvDq8ikWAM",
   enableElevenLabsVoice: false,

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createAudioUrlFromInlineData, requestGeminiSpeech } from '../utils/geminiAudio';
 
-// Comprehensive Knowledge Base for Institute APEX (English Only)
+// Fallback Knowledge Base for Institute APEX (English Only)
 const KNOWLEDGE_BASE = [
   {
     category: 'neet',
@@ -84,7 +85,7 @@ export default function CounselorAvatar({ settings = {} }) {
   useEffect(() => { isSpeakingRef.current = isSpeaking; }, [isSpeaking]);
   useEffect(() => { isOpenRef.current = isOpen; }, [isOpen]);
 
-  // Voice Loading for Clean Natural English Output
+  // Voice Loading for Fallback Speech Synthesis
   const refreshVoices = () => {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       const v = window.speechSynthesis.getVoices();
@@ -103,7 +104,6 @@ export default function CounselorAvatar({ settings = {} }) {
         window.speechSynthesis.onvoiceschanged = refreshVoices;
       }
 
-      // Speech Recognition for Hands-Free voice input
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
@@ -123,7 +123,7 @@ export default function CounselorAvatar({ settings = {} }) {
           }
         };
 
-        recognition.onerror = (event) => {
+        recognition.onerror = () => {
           setIsListening(false);
         };
 
@@ -153,7 +153,7 @@ export default function CounselorAvatar({ settings = {} }) {
     }
   }, [chatLog, isSpeaking, isListening, isThinking]);
 
-  // Get Clean Natural English Female Voice
+  // Fallback English voice filter
   const getNaturalEnglishVoice = () => {
     const voices = systemVoices.length > 0 
       ? systemVoices 
@@ -187,42 +187,48 @@ export default function CounselorAvatar({ settings = {} }) {
     setIsListening(false);
   };
 
-  // Play Speech (Gemini Audio or Browser Speech)
-  const speakText = (text, customAudioBase64 = null) => {
+  // Play Spoken Audio: Prioritizes Gemini Studio Audio over browser synth
+  const playSpeechAudio = (text, audioBlobUrl = null) => {
     if (isMuted) return;
     stopListening();
 
-    // 1. If Gemini returned native studio-quality audio
-    if (customAudioBase64) {
+    // 1. Play Gemini Studio-Grade Spoken Audio
+    if (audioBlobUrl) {
       try {
         setIsSpeaking(true);
         if (audioPlayerRef.current) {
           audioPlayerRef.current.pause();
         }
-        const audio = new Audio(`data:audio/mp3;base64,${customAudioBase64}`);
+        const audio = new Audio(audioBlobUrl);
         audioPlayerRef.current = audio;
         audio.onended = () => {
           setIsSpeaking(false);
           if (isOpenRef.current && !isMuted) {
-            setTimeout(startListening, 400);
+            setTimeout(startListening, 450);
           }
         };
-        audio.onerror = () => {
+        audio.onerror = (e) => {
+          console.warn('Audio playback error, falling back:', e);
           setIsSpeaking(false);
-          fallbackBrowserSpeak(text);
+          playFallbackVoice(text);
         };
-        audio.play();
+        audio.play().catch(err => {
+          console.warn('Audio play promise rejected:', err);
+          playFallbackVoice(text);
+        });
         return;
       } catch (err) {
-        fallbackBrowserSpeak(text);
+        console.warn('Error with studio audio playback:', err);
+        playFallbackVoice(text);
         return;
       }
     }
 
-    fallbackBrowserSpeak(text);
+    // 2. Fallback to browser voice synthesis
+    playFallbackVoice(text);
   };
 
-  const fallbackBrowserSpeak = (text) => {
+  const playFallbackVoice = (text) => {
     if (!synthRef.current) return;
     try {
       synthRef.current.cancel();
@@ -270,7 +276,7 @@ export default function CounselorAvatar({ settings = {} }) {
     }
   };
 
-  // Process User Query via Google Gemini (or Knowledge Base)
+  // Process User Query via Google Gemini 2.0 (with Audio + Text) or Knowledge Base
   const handleUserQuery = async (queryText) => {
     if (!queryText || !queryText.trim()) return;
     const cleanQuery = queryText.trim();
@@ -280,27 +286,30 @@ export default function CounselorAvatar({ settings = {} }) {
     setIsThinking(true);
 
     let answerText = "";
-    let audioData = null;
+    let audioBlobUrl = null;
 
-    // 1. Check if Gemini API is provided
+    // Check if Gemini API Key is configured in settings
     if (settings.geminiApiKey) {
       try {
-        const systemPrompt = `You are the Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 94677-52374).
+        const customPrompt = settings.aiCounselorPrompt || `You are the Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 94677-52374).
 We offer premier coaching for: NEET (UG) for Class 11, 12, and Droppers; IIT-JEE (Main & Advanced) for Class 11 and 12; Foundation for Class 9th and 10th (Olympiads, NTSE, School Boards); and ASAT Scholarship Test with up to 90% fee waiver. Free 2-3 day trial demo classes are available.
-Please reply strictly in clear, professional English in 2 to 3 concise, helpful sentences. Student Query: "${cleanQuery}"`;
+Please reply strictly in clear, professional English in 2 to 3 concise, helpful sentences.`;
 
-        // Request Gemini 2.0 Flash with audio + text generation
+        const fullPrompt = `${customPrompt}\nStudent Query: "${cleanQuery}"`;
+
+        // Request Gemini 2.0 Flash with audio modality (Aoede / Kore female voice)
+        const voiceName = settings.aiVoiceName || "Aoede";
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${settings.geminiApiKey}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            contents: [{ parts: [{ text: systemPrompt }] }],
+            contents: [{ parts: [{ text: fullPrompt }] }],
             generationConfig: {
               responseModalities: ["TEXT", "AUDIO"],
               speechConfig: {
                 voiceConfig: {
                   prebuiltVoiceConfig: {
-                    voiceName: "Aoede" // Warm natural studio female voice
+                    voiceName: voiceName
                   }
                 }
               }
@@ -313,15 +322,18 @@ Please reply strictly in clear, professional English in 2 to 3 concise, helpful 
           const parts = data.candidates?.[0]?.content?.parts || [];
           for (const p of parts) {
             if (p.text) answerText = p.text.trim();
-            if (p.inlineData && p.inlineData.data) audioData = p.inlineData.data;
+            if (p.inlineData && p.inlineData.data) {
+              audioBlobUrl = createAudioUrlFromInlineData(p.inlineData);
+            }
           }
         } else {
-          // Fallback to text-only Gemini if audio modality is unavailable
+          // If Gemini 2.0 audio rate-limited or not available, fallback to text Gemini 1.5
+          console.warn('Gemini 2.0 audio status:', response.status, 'trying text fallback');
           const textResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${settings.geminiApiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              contents: [{ parts: [{ text: systemPrompt }] }]
+              contents: [{ parts: [{ text: fullPrompt }] }]
             })
           });
           if (textResp.ok) {
@@ -330,11 +342,11 @@ Please reply strictly in clear, professional English in 2 to 3 concise, helpful 
           }
         }
       } catch (err) {
-        console.warn('Gemini API call failed, falling back to knowledge base:', err);
+        console.warn('Gemini API call failed, using knowledge base:', err);
       }
     }
 
-    // 2. Knowledge Base Fallback if no Gemini key or network issue
+    // Fallback Knowledge Base if Gemini API call did not succeed
     if (!answerText) {
       const lower = cleanQuery.toLowerCase();
       let best = null;
@@ -355,16 +367,38 @@ Please reply strictly in clear, professional English in 2 to 3 concise, helpful 
     }
 
     setIsThinking(false);
-    setChatLog(prev => [...prev, { sender: 'counselor', text: answerText }]);
+    setChatLog(prev => [...prev, { sender: 'counselor', text: answerText, audioBlobUrl }]);
 
-    // Speak response
-    speakText(answerText, audioData);
+    // Play Voice Output (Gemini Studio Audio or Fallback Voice)
+    playSpeechAudio(answerText, audioBlobUrl);
   };
 
-  const openAvatar = () => {
+  const defaultWelcome = "Hello! I am your Academic Counselor at Institute APEX, Jind. How can I assist you with admissions or courses today?";
+
+  const openAvatar = async () => {
     setIsOpen(true);
+    if (settings.geminiApiKey) {
+      try {
+        setIsThinking(true);
+        const result = await requestGeminiSpeech({
+          apiKey: settings.geminiApiKey,
+          prompt: `Say strictly and warmly: "${defaultWelcome}"`,
+          voiceName: settings.aiVoiceName || 'Aoede'
+        });
+        setIsThinking(false);
+        if (result && result.audioBlobUrl) {
+          setChatLog(prev => [{ ...prev[0], audioBlobUrl: result.audioBlobUrl }]);
+          playSpeechAudio(defaultWelcome, result.audioBlobUrl);
+          return;
+        }
+      } catch (err) {
+        setIsThinking(false);
+        console.warn('Welcome speech generation failed:', err);
+      }
+    }
+
     setTimeout(() => {
-      speakText("Hello! I am your Academic Counselor at Institute APEX. How can I assist you with admissions or courses today?");
+      playFallbackVoice(defaultWelcome);
     }, 300);
   };
 
@@ -512,7 +546,7 @@ Please reply strictly in clear, professional English in 2 to 3 concise, helpful 
                     {msg.sender === 'counselor' && (
                       <button 
                         className="repeat-audio-btn"
-                        onClick={() => speakText(msg.text)}
+                        onClick={() => playSpeechAudio(msg.text, msg.audioBlobUrl)}
                         title="Replay Voice"
                       >
                         <svg fill="currentColor" viewBox="0 0 24 24" style={{ width: 12, height: 12 }}>

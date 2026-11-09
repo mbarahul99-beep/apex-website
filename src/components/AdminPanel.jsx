@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../css/admin.css';
 import { dbService } from '../services/dbService';
 import { isDefault } from '../services/firebase';
+import { requestGeminiSpeech } from '../utils/geminiAudio';
 import { 
   IconBook, 
   IconStar, 
@@ -306,6 +307,50 @@ function SettingsForm({ onUpdateSettings }) {
   const [success, setSuccess] = useState(false);
   const [saveError, setSaveError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isTestingVoice, setIsTestingVoice] = useState(false);
+  const [testVoiceStatus, setTestVoiceStatus] = useState(null);
+
+  const handleTestAiVoice = async () => {
+    if (!settings.geminiApiKey) {
+      setTestVoiceStatus({ type: 'error', message: 'Please paste your Gemini API key above first.' });
+      return;
+    }
+    setIsTestingVoice(true);
+    setTestVoiceStatus({ type: 'info', message: 'Connecting to Google Gemini 2.0 and generating natural studio voice...' });
+
+    try {
+      const testPrompt = `Say: "Hello! This is the AI Academic Counselor at Institute APEX, Jind. I am ready to guide students for NEET, IIT-JEE, and scholarship admissions."`;
+      const result = await requestGeminiSpeech({
+        apiKey: settings.geminiApiKey,
+        prompt: testPrompt,
+        voiceName: settings.aiVoiceName || 'Aoede'
+      });
+
+      if (result && result.audioBlobUrl) {
+        const audio = new Audio(result.audioBlobUrl);
+        await audio.play().catch(e => console.warn('Audio play error:', e));
+        setTestVoiceStatus({
+          type: 'success',
+          message: `✓ Natural Studio Voice (${settings.aiVoiceName || 'Aoede'}) Playing Successfully!`,
+          text: result.text || 'Audio playback active.'
+        });
+      } else {
+        setTestVoiceStatus({
+          type: 'info',
+          message: '✓ Gemini responded with text, but no audio stream was returned.',
+          text: result?.text
+        });
+      }
+    } catch (err) {
+      console.error('Test voice error:', err);
+      setTestVoiceStatus({
+        type: 'error',
+        message: `Gemini Voice Error: ${err.message || 'Check your Gemini API Key.'}`
+      });
+    } finally {
+      setIsTestingVoice(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -666,39 +711,53 @@ function SettingsForm({ onUpdateSettings }) {
           <label htmlFor="showEnquiryInline" style={{ fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Contact Enquiry Inline Form</label>
         </div>
       </div>
-      {/* GOOGLE GEMINI AI CONFIGURATION */}
+      {/* GOOGLE GEMINI AI COUNSELOR TRAINING & VOICE CONFIGURATION */}
       <div style={{ 
-        backgroundColor: '#f8fafc', 
+        backgroundColor: '#ffffff', 
         border: '1px solid #e2e8f0', 
-        borderRadius: 'var(--radius-md)', 
-        padding: '20px', 
-        margin: '25px 0' 
+        borderRadius: 'var(--radius-lg)', 
+        padding: '24px', 
+        margin: '30px 0',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.04)'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-          <span style={{ 
-            background: 'linear-gradient(135deg, #be185d, #ec4899)', 
-            color: '#fff', 
-            padding: '4px 10px', 
-            borderRadius: '9999px', 
-            fontSize: '0.72rem', 
-            fontWeight: 800,
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em'
-          }}>
-            AI Voice & Intelligence
-          </span>
-          <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--navy-blue)', fontWeight: 700 }}>
-            Google Gemini API Key
-          </h4>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '14px', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ 
+              background: 'linear-gradient(135deg, #be185d, #ec4899)', 
+              color: '#fff', 
+              padding: '4px 12px', 
+              borderRadius: '9999px', 
+              fontSize: '0.75rem', 
+              fontWeight: 800,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}>
+              AI Counselor Center
+            </span>
+            <h4 style={{ margin: 0, fontSize: '1.05rem', color: 'var(--navy-blue)', fontWeight: 800 }}>
+              AI Counselor Training, Knowledge & Voice Settings
+            </h4>
+          </div>
+          {settings.geminiApiKey ? (
+            <span style={{ fontSize: '0.78rem', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '4px 10px', borderRadius: '9999px', fontWeight: 700 }}>
+              ● Gemini Key Active
+            </span>
+          ) : (
+            <span style={{ fontSize: '0.78rem', background: '#fef2f2', color: '#b91c1c', border: '1px solid #fecaca', padding: '4px 10px', borderRadius: '9999px', fontWeight: 700 }}>
+              ○ No Key Provided (Using Built-in Knowledge Base)
+            </span>
+          )}
         </div>
-        <p style={{ fontSize: '0.82rem', color: '#64748b', lineHeight: 1.5, margin: '0 0 14px 0' }}>
-          Connect your free Google Gemini API key to power both natural conversational answers and natural spoken voice in the counselor widget.
+
+        <p style={{ fontSize: '0.84rem', color: '#64748b', lineHeight: 1.5, margin: '0 0 18px 0' }}>
+          Configure your AI Counselor's institutional training and human studio voice. Powered by <strong>Google Gemini 2.0 Flash</strong> for real-time natural human speech and expert admissions counseling.
         </p>
 
-        <div className="admin-form-row">
-          <div className="admin-input-group" style={{ flex: 1 }}>
-            <label style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>Google Gemini API Key</span>
+        {/* 1. API KEY & VOICE SELECTION */}
+        <div className="admin-form-row" style={{ gap: '20px', marginBottom: '18px' }}>
+          <div className="admin-input-group" style={{ flex: 1.3 }}>
+            <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontWeight: 700 }}>Google Gemini API Key</span>
               <a 
                 href="https://aistudio.google.com/app/apikey" 
                 target="_blank" 
@@ -714,8 +773,119 @@ function SettingsForm({ onUpdateSettings }) {
               value={settings.geminiApiKey || ''} 
               onChange={handleChange} 
               placeholder="AIzaSy... (Paste your free Gemini key here)" 
+              style={{ fontFamily: 'monospace' }}
             />
           </div>
+
+          <div className="admin-input-group" style={{ flex: 1 }}>
+            <label style={{ fontWeight: 700 }}>AI Counselor Voice (Studio Spoken)</label>
+            <select 
+              name="aiVoiceName" 
+              value={settings.aiVoiceName || 'Aoede'} 
+              onChange={handleChange}
+              style={{ height: '42px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '0 12px', fontSize: '0.85rem' }}
+            >
+              <option value="Aoede">Aoede — Natural Female (Warm & Melodious - Recommended)</option>
+              <option value="Kore">Kore — Professional Female (Clear & Dignified)</option>
+              <option value="Puck">Puck — Natural Male (Friendly & Energetic)</option>
+              <option value="Charon">Charon — Deep Male (Authoritative & Calm)</option>
+              <option value="Fenrir">Fenrir — Confident Male (Crisp Studio)</option>
+            </select>
+          </div>
+        </div>
+
+        {/* 2. SYSTEM TRAINING PROMPT */}
+        <div className="admin-input-group" style={{ marginBottom: '18px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+            <label style={{ margin: 0, fontWeight: 700 }}>
+              AI Counselor Training & Knowledge Prompt (System Instructions)
+            </label>
+            <button 
+              type="button" 
+              className="admin-btn secondary" 
+              style={{ padding: '3px 10px', fontSize: '0.72rem' }}
+              onClick={() => {
+                const defaultPrompt = "You are the Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 94677-52374, Landline: 01681-247700).\nWe offer premier coaching for: NEET (UG) for Class 11, 12, and Droppers; IIT-JEE (Main & Advanced) for Class 11 and 12; Foundation for Class 9th and 10th (Olympiads, NTSE, School Boards); and ASAT Scholarship Test with up to 90% fee waiver. Free 2-3 day trial demo classes are available.\nPlease reply strictly in clear, professional English in 2 to 3 concise, helpful sentences.";
+                setSettings(prev => ({ ...prev, aiCounselorPrompt: defaultPrompt }));
+              }}
+            >
+              ↺ Reset to APEX Knowledge
+            </button>
+          </div>
+          <p style={{ fontSize: '0.76rem', color: '#64748b', margin: '0 0 8px 0' }}>
+            Train your AI counselor here. You can add courses, batch timings, fee structures, scholarship rules, phone numbers, or admission deadlines. The counselor will follow these exact guidelines.
+          </p>
+          <textarea 
+            name="aiCounselorPrompt" 
+            value={settings.aiCounselorPrompt !== undefined ? settings.aiCounselorPrompt : "You are the Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 94677-52374, Landline: 01681-247700).\nWe offer premier coaching for: NEET (UG) for Class 11, 12, and Droppers; IIT-JEE (Main & Advanced) for Class 11 and 12; Foundation for Class 9th and 10th (Olympiads, NTSE, School Boards); and ASAT Scholarship Test with up to 90% fee waiver. Free 2-3 day trial demo classes are available.\nPlease reply strictly in clear, professional English in 2 to 3 concise, helpful sentences."} 
+            onChange={handleChange} 
+            rows="6"
+            style={{ width: '100%', fontSize: '0.85rem', lineHeight: 1.5, fontFamily: 'inherit', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '10px' }}
+            placeholder="Enter institutional training details and counseling guidelines here..."
+          />
+        </div>
+
+        {/* 3. LIVE VOICE & INTELLIGENCE TESTER */}
+        <div style={{ 
+          backgroundColor: '#f8fafc', 
+          border: '1px solid #e2e8f0', 
+          borderRadius: 'var(--radius-md)', 
+          padding: '16px',
+          marginTop: '15px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+            <div>
+              <h5 style={{ margin: 0, color: 'var(--navy-blue)', fontSize: '0.9rem', fontWeight: 700 }}>
+                Live AI Voice & Response Tester
+              </h5>
+              <p style={{ margin: '4px 0 0 0', fontSize: '0.78rem', color: '#64748b' }}>
+                Test your Gemini API Key and hear the natural studio voice right here before saving.
+              </p>
+            </div>
+            <button 
+              type="button" 
+              className="admin-btn"
+              disabled={isTestingVoice || !settings.geminiApiKey}
+              onClick={handleTestAiVoice}
+              style={{ 
+                background: settings.geminiApiKey ? 'linear-gradient(135deg, #4f46e5, #7c3aed)' : '#94a3b8', 
+                color: '#fff',
+                padding: '8px 18px',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: settings.geminiApiKey ? 'pointer' : 'not-allowed'
+              }}
+            >
+              {isTestingVoice ? 'Testing Voice...' : '▶ Test Gemini Voice Live'}
+            </button>
+          </div>
+
+          {testVoiceStatus && (
+            <div style={{ 
+              marginTop: '12px', 
+              padding: '10px 14px', 
+              borderRadius: '6px', 
+              fontSize: '0.82rem',
+              backgroundColor: testVoiceStatus.type === 'error' ? '#fef2f2' : '#f0fdf4',
+              color: testVoiceStatus.type === 'error' ? '#991b1b' : '#166534',
+              border: `1px solid ${testVoiceStatus.type === 'error' ? '#fecaca' : '#bbf7d0'}`,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px'
+            }}>
+              <div style={{ fontWeight: 700 }}>{testVoiceStatus.message}</div>
+              {testVoiceStatus.text && (
+                <div style={{ fontSize: '0.8rem', color: '#334155', fontStyle: 'italic', background: '#fff', padding: '8px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>
+                  "{testVoiceStatus.text}"
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -2446,60 +2616,8 @@ function AdminScholarships() {
               <label>Slab Description / Terms</label>
               <textarea value={description} onChange={e => setDescription(e.target.value)} rows="3" placeholder="Provide detailed guidelines about required documents or eligibility criteria..." required></textarea>
             </div>
-            {/* GOOGLE GEMINI AI CONFIGURATION */}
-      <div style={{ 
-        backgroundColor: '#f8fafc', 
-        border: '1px solid #e2e8f0', 
-        borderRadius: 'var(--radius-md)', 
-        padding: '20px', 
-        margin: '25px 0' 
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-          <span style={{ 
-            background: 'linear-gradient(135deg, #be185d, #ec4899)', 
-            color: '#fff', 
-            padding: '4px 10px', 
-            borderRadius: '9999px', 
-            fontSize: '0.72rem', 
-            fontWeight: 800,
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em'
-          }}>
-            AI Voice & Intelligence
-          </span>
-          <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--navy-blue)', fontWeight: 700 }}>
-            Google Gemini API Key
-          </h4>
-        </div>
-        <p style={{ fontSize: '0.82rem', color: '#64748b', lineHeight: 1.5, margin: '0 0 14px 0' }}>
-          Connect your free Google Gemini API key to power both natural conversational answers and natural spoken voice in the counselor widget.
-        </p>
 
-        <div className="admin-form-row">
-          <div className="admin-input-group" style={{ flex: 1 }}>
-            <label style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>Google Gemini API Key</span>
-              <a 
-                href="https://aistudio.google.com/app/apikey" 
-                target="_blank" 
-                rel="noreferrer" 
-                style={{ color: '#be185d', fontSize: '0.75rem', fontWeight: 600, textDecoration: 'underline' }}
-              >
-                Get Free Gemini Key ↗
-              </a>
-            </label>
-            <input 
-              type="password" 
-              name="geminiApiKey" 
-              value={settings.geminiApiKey || ''} 
-              onChange={handleChange} 
-              placeholder="AIzaSy... (Paste your free Gemini key here)" 
-            />
-          </div>
-        </div>
-      </div>
-
-      <button type="submit" className="admin-btn" style={{ padding: '10px 24px' }} disabled={isSaving}>
+            <button type="submit" className="admin-btn" style={{ padding: '10px 24px' }} disabled={isSaving}>
               {isSaving ? 'Saving...' : (editingSlab ? 'Update Scholarship' : 'Create Scholarship')}
             </button>
           </form>
