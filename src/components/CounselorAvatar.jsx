@@ -66,11 +66,13 @@ const KNOWLEDGE_BASE = [
 
 export default function CounselorAvatar({ settings = {} }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
   const [language, setLanguage] = useState('hi'); // 'hi' or 'en'
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [handsFree, setHandsFree] = useState(true); // Continuous conversation loop with auto follow-up
+  const [mouthOpen, setMouthOpen] = useState(false); // Dynamic talking mouth lip-sync state
+  const [systemVoices, setSystemVoices] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [chatLog, setChatLog] = useState([
     {
@@ -80,25 +82,60 @@ export default function CounselorAvatar({ settings = {} }) {
     }
   ]);
   const [currentSubtitle, setCurrentSubtitle] = useState('');
-  const [speechSupported, setSpeechSupported] = useState(false);
-  const [recognitionSupported, setRecognitionSupported] = useState(false);
 
   const recognitionRef = useRef(null);
   const chatBottomRef = useRef(null);
   const synthRef = useRef(null);
-  const currentUtteranceRef = useRef(null);
+  const mouthTimerRef = useRef(null);
+  const handsFreeRef = useRef(handsFree);
+  const isSpeakingRef = useRef(false);
+  const isOpenRef = useRef(false);
 
-  // Initialize Speech Recognition & Synthesis capabilities
+  // Keep references in sync with latest state
+  useEffect(() => { handsFreeRef.current = handsFree; }, [handsFree]);
+  useEffect(() => { isSpeakingRef.current = isSpeaking; }, [isSpeaking]);
+  useEffect(() => { isOpenRef.current = isOpen; }, [isOpen]);
+
+  // Animated mouth lip-sync effect during active speech
+  useEffect(() => {
+    if (isSpeaking) {
+      // Alternate mouth open/talking expression in cadence with speech syllables
+      mouthTimerRef.current = setInterval(() => {
+        setMouthOpen(prev => !prev);
+      }, 210);
+    } else {
+      if (mouthTimerRef.current) clearInterval(mouthTimerRef.current);
+      setMouthOpen(false);
+    }
+    return () => {
+      if (mouthTimerRef.current) clearInterval(mouthTimerRef.current);
+    };
+  }, [isSpeaking]);
+
+  // Voice Loading & Natural Female Selection
+  const refreshVoices = () => {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      const v = window.speechSynthesis.getVoices();
+      if (v && v.length > 0) {
+        setSystemVoices(v);
+      }
+    }
+  };
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       synthRef.current = window.speechSynthesis;
-      setSpeechSupported(!!window.speechSynthesis);
+      refreshVoices();
 
+      if (window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = refreshVoices;
+      }
+
+      // Initialize Speech Recognition for continuous listening
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (SpeechRecognition) {
-        setRecognitionSupported(true);
         const recognition = new SpeechRecognition();
-        recognition.continuous = false;
+        recognition.continuous = false; // We use cycle-based continuous listening for crisp boundary detection
         recognition.interimResults = false;
 
         recognition.onstart = () => {
@@ -106,15 +143,25 @@ export default function CounselorAvatar({ settings = {} }) {
         };
 
         recognition.onresult = (event) => {
+          setIsListening(false);
           const transcript = event.results[0][0].transcript;
-          if (transcript) {
+          if (transcript && transcript.trim()) {
             handleUserQuery(transcript);
           }
         };
 
         recognition.onerror = (event) => {
-          console.warn('Speech recognition error:', event.error);
+          // If silence timeout or aborted, resume hands-free if still appropriate
+          console.warn('Speech recognition status:', event.error);
           setIsListening(false);
+          if (event.error === 'no-speech' && handsFreeRef.current && isOpenRef.current && !isSpeakingRef.current) {
+            // Restart listening gently after silence
+            setTimeout(() => {
+              if (handsFreeRef.current && isOpenRef.current && !isSpeakingRef.current) {
+                startListening();
+              }
+            }, 800);
+          }
         };
 
         recognition.onend = () => {
@@ -138,31 +185,124 @@ export default function CounselorAvatar({ settings = {} }) {
     if (chatBottomRef.current) {
       chatBottomRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [chatLog, currentSubtitle, isSpeaking]);
+  }, [chatLog, currentSubtitle, isSpeaking, isListening]);
 
-  // Voice playback logic
-  const speakText = (text, langCode) => {
-    if (!synthRef.current || isMuted) return;
+  // Select the highest quality Indian female natural voice
+  const getNaturalFemaleVoice = (langCode) => {
+    const voices = systemVoices.length > 0 
+      ? systemVoices 
+      : (synthRef.current ? synthRef.current.getVoices() : []);
+    if (!voices || voices.length === 0) return null;
+
+    // Reject robotic male names strictly
+    const isRoboticOrMale = (name) => {
+      const lower = name.toLowerCase();
+      return lower.includes('david') || lower.includes('mark') || lower.includes('george') || 
+             lower.includes('ravi') || lower.includes('madhav') || lower.includes('hemant') || 
+             (lower.includes('male') && !lower.includes('female'));
+    };
+
+    // Female names / indicators across OSes
+    const isFemaleVoice = (name) => {
+      const lower = name.toLowerCase();
+      if (isRoboticOrMale(lower)) return false;
+      const femaleTokens = [
+        'swara', 'heera', 'neerja', 'kalpana', 'geeta', 'shruti', 'sunita', 
+        'priya', 'veena', 'ananya', 'pooja', 'kavya', 'female', 'zira', 
+        'google हिन्दी', 'google uk english female', 'google us english', 
+        'natural', 'samantha', 'victoria', 'karen'
+      ];
+      return femaleTokens.some(tok => lower.includes(tok));
+    };
+
+    if (langCode === 'hi') {
+      // 1. Natural Hindi Female voice (e.g., Microsoft Swara, Google हिन्दी, Kalpana)
+      const hiFemale = voices.find(v => 
+        (v.lang.toLowerCase().startsWith('hi') || v.lang.toLowerCase().includes('hi-in')) && 
+        isFemaleVoice(v.name)
+      );
+      if (hiFemale) return hiFemale;
+
+      // 2. Any Hindi voice
+      const anyHi = voices.find(v => v.lang.toLowerCase().startsWith('hi') || v.lang.toLowerCase().includes('hi-in'));
+      if (anyHi) return anyHi;
+
+      // 3. Indian English Female voice (clear pronunciation)
+      const inFemale = voices.find(v => 
+        (v.lang.toLowerCase().includes('in') || v.lang.toLowerCase().startsWith('en-in')) && 
+        isFemaleVoice(v.name)
+      );
+      if (inFemale) return inFemale;
+
+      // 4. Any female voice (prevent falling back to Microsoft David)
+      const anyFemale = voices.find(v => isFemaleVoice(v.name));
+      if (anyFemale) return anyFemale;
+    } else {
+      // English Mode:
+      // 1. Indian English Female (e.g. Heera, Neerja, Veena)
+      const inFemale = voices.find(v => 
+        (v.lang.toLowerCase() === 'en-in' || v.lang.toLowerCase().includes('in')) && 
+        isFemaleVoice(v.name)
+      );
+      if (inFemale) return inFemale;
+
+      // 2. Natural English Female (Zira, Google Female, Samantha)
+      const engFemale = voices.find(v => 
+        v.lang.toLowerCase().startsWith('en') && 
+        isFemaleVoice(v.name)
+      );
+      if (engFemale) return engFemale;
+    }
+
+    // Safety fallback: any voice that is NOT David or Mark
+    return voices.find(v => !isRoboticOrMale(v.name)) || voices[0];
+  };
+
+  // Start Voice Listening (Continuous)
+  const startListening = () => {
+    if (!recognitionRef.current) return;
+    try {
+      recognitionRef.current.abort();
+    } catch (e) {}
+
+    recognitionRef.current.lang = language === 'hi' ? 'hi-IN' : 'en-IN';
+    try {
+      recognitionRef.current.start();
+    } catch (err) {
+      // Ignore if already active
+    }
+  };
+
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      try { recognitionRef.current.stop(); } catch (e) {}
+    }
+    setIsListening(false);
+  };
+
+  // Voice playback logic with follow-up continuous trigger
+  const speakText = (text, langCode, autoFollowUp = true) => {
+    if (!synthRef.current || isMuted) {
+      // If muted or TTS unavailable, still trigger hands-free listening follow-up
+      if (autoFollowUp && handsFreeRef.current && isOpenRef.current) {
+        setTimeout(startListening, 600);
+      }
+      return;
+    }
 
     try {
+      stopListening();
       synthRef.current.cancel(); // Cancel any ongoing speech
 
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = langCode === 'hi' ? 0.95 : 1.0;
-      utterance.pitch = 1.05;
+      
+      // Warm, natural female pitch & conversational rate
+      utterance.pitch = 1.15;
+      utterance.rate = langCode === 'hi' ? 0.94 : 0.98;
 
-      const voices = synthRef.current.getVoices();
-      if (voices && voices.length > 0) {
-        if (langCode === 'hi') {
-          const hindiVoice = voices.find(v => v.lang.toLowerCase().includes('hi')) ||
-                             voices.find(v => v.lang.toLowerCase().includes('in'));
-          if (hindiVoice) utterance.voice = hindiVoice;
-        } else {
-          const indianEngVoice = voices.find(v => v.lang.toLowerCase() === 'en-in') ||
-                                 voices.find(v => v.lang.toLowerCase().includes('in') && v.lang.startsWith('en')) ||
-                                 voices.find(v => v.lang.toLowerCase().includes('en'));
-          if (indianEngVoice) utterance.voice = indianEngVoice;
-        }
+      const chosenVoice = getNaturalFemaleVoice(langCode);
+      if (chosenVoice) {
+        utterance.voice = chosenVoice;
       }
 
       utterance.onstart = () => {
@@ -172,18 +312,31 @@ export default function CounselorAvatar({ settings = {} }) {
 
       utterance.onend = () => {
         setIsSpeaking(false);
+        // Hands-Free Follow-Up: Automatically turn mic on to listen for student's next question!
+        if (autoFollowUp && handsFreeRef.current && isOpenRef.current && !isMuted) {
+          setTimeout(() => {
+            if (isOpenRef.current && !isSpeakingRef.current) {
+              startListening();
+            }
+          }, 450);
+        }
       };
 
       utterance.onerror = (e) => {
-        console.warn('SpeechSynthesis error:', e);
+        console.warn('SpeechSynthesis event:', e);
         setIsSpeaking(false);
+        if (autoFollowUp && handsFreeRef.current && isOpenRef.current) {
+          setTimeout(startListening, 500);
+        }
       };
 
-      currentUtteranceRef.current = utterance;
       synthRef.current.speak(utterance);
     } catch (err) {
       console.warn('TTS execution error:', err);
       setIsSpeaking(false);
+      if (autoFollowUp && handsFreeRef.current && isOpenRef.current) {
+        setTimeout(startListening, 500);
+      }
     }
   };
 
@@ -192,9 +345,10 @@ export default function CounselorAvatar({ settings = {} }) {
       try { synthRef.current.cancel(); } catch (e) {}
     }
     setIsSpeaking(false);
+    setMouthOpen(false);
   };
 
-  const toggleSpeechRecognition = () => {
+  const toggleMicManual = () => {
     if (!recognitionRef.current) {
       alert(language === 'hi' 
         ? 'आपके ब्राउज़र में वॉइस रिकॉग्निशन सपोर्टेड नहीं है। कृपया लिखकर सवाल पूछें।' 
@@ -203,17 +357,10 @@ export default function CounselorAvatar({ settings = {} }) {
     }
 
     if (isListening) {
-      try { recognitionRef.current.stop(); } catch (e) {}
-      setIsListening(false);
+      stopListening();
     } else {
       stopSpeaking();
-      recognitionRef.current.lang = language === 'hi' ? 'hi-IN' : 'en-IN';
-      try {
-        recognitionRef.current.start();
-      } catch (err) {
-        console.warn('Recognition start error:', err);
-        setIsListening(false);
-      }
+      startListening();
     }
   };
 
@@ -249,8 +396,8 @@ export default function CounselorAvatar({ settings = {} }) {
       answerHi = matchedItem.answerHi;
       answerEn = matchedItem.answerEn;
     } else {
-      answerHi = "धन्यवाद! अधिक जानकारी और सीधे काउंसलिंग के लिए आप हमारे हेल्पलाइन नंबर 94677-52374 पर कॉल कर सकते हैं या हमारे जींद इंस्टीट्यूट (हुड्डा ग्राउंड के पास) पधार सकते हैं।";
-      answerEn = "Thank you! For specific queries, personalized batch guidance, or instant admissions support, please call our counselor directly at 94677-52374 or visit our institute near HUDA Ground, Jind.";
+      answerHi = "धन्यवाद! अधिक जानकारी और सीधे काउंसलिंग के लिए आप हमारे हेल्पलाइन नंबर 94677-52374 पर कॉल कर सकते हैं या हमारे जींद इंस्टीट्यूट (हुड्डा ग्राउंड के पास) पधार सकते हैं। क्या आप कुछ और पूछना चाहते हैं?";
+      answerEn = "Thank you! For specific queries, personalized batch guidance, or instant admissions support, please call our counselor directly at 94677-52374 or visit our institute near HUDA Ground, Jind. Would you like to ask anything else?";
     }
 
     const counselorMsg = {
@@ -262,9 +409,9 @@ export default function CounselorAvatar({ settings = {} }) {
     setChatLog([...newChatLog, counselorMsg]);
     setUserInput('');
 
-    // Speak response
+    // Speak response with automatic follow-up listening enabled
     const textToSpeak = language === 'hi' ? answerHi : answerEn;
-    speakText(textToSpeak, language);
+    speakText(textToSpeak, language, true);
   };
 
   const handleFormSubmit = (e) => {
@@ -274,31 +421,29 @@ export default function CounselorAvatar({ settings = {} }) {
 
   const openAvatar = () => {
     setIsOpen(true);
-    setIsMinimized(false);
-    // Play greeting if first time
-    if (!isSpeaking && !isMuted) {
+    // Play greeting and automatically enter listening mode
+    setTimeout(() => {
       const greeting = language === 'hi' 
-        ? "नमस्ते! मैं इंस्टीट्यूट APEX जींद से आपकी अकादमिक काउंसलर हूँ। आप मुझसे क्या पूछना चाहते हैं?"
-        : "Hello! I am your Academic Counselor from Institute APEX Jind. How can I help you today?";
-      speakText(greeting, language);
-    }
+        ? "नमस्ते! मैं इंस्टीट्यूट APEX जींद से पूजा शर्मा हूँ। मैं NEET, IIT-JEE और एडमिशन में आपकी क्या सहायता कर सकती हूँ?"
+        : "Hello! I am Pooja Sharma from Institute APEX, Jind. How can I assist you with NEET, IIT-JEE, or admissions today?";
+      speakText(greeting, language, true);
+    }, 300);
   };
 
   const closeAvatar = () => {
     stopSpeaking();
-    if (isListening && recognitionRef.current) {
-      try { recognitionRef.current.stop(); } catch (e) {}
-    }
+    stopListening();
     setIsOpen(false);
   };
 
   const toggleLanguage = (lang) => {
     stopSpeaking();
+    stopListening();
     setLanguage(lang);
     const switchMsg = lang === 'hi'
       ? "नमस्ते! अब आप मुझसे हिंदी में बात कर सकते हैं। पूछिए अपना सवाल!"
-      : "Switched to English! You can now ask questions about NEET, IIT-JEE, and Admissions.";
-    speakText(switchMsg, lang);
+      : "Switched to English! Feel free to ask your questions.";
+    speakText(switchMsg, lang, true);
   };
 
   const quickQuestions = language === 'hi' ? [
@@ -315,8 +460,7 @@ export default function CounselorAvatar({ settings = {} }) {
     { label: "Institute Location", query: "What is the address and contact number?" }
   ];
 
-  const counselorName = language === 'hi' ? "पूजा शर्मा (काउंसलर)" : "Pooja Sharma (Counselor)";
-  const statusLabel = language === 'hi' ? "लाइव काउंसलर" : "Live Counselor";
+  const counselorName = language === 'hi' ? "पूजा शर्मा (सीनियर काउंसलर)" : "Pooja Sharma (Sr. Counselor)";
 
   return (
     <>
@@ -326,7 +470,7 @@ export default function CounselorAvatar({ settings = {} }) {
           <button
             className="counselor-bubble-btn"
             onClick={openAvatar}
-            title={language === 'hi' ? "काउंसलर से वीडियो व वॉयस चैट करें" : "Talk to AI Counselor (Voice & Video)"}
+            title={language === 'hi' ? "काउंसलर से लाइव बातचीत करें (वॉयस व वीडियो)" : "Talk to AI Counselor (Live Voice & Video)"}
             aria-label="Academic Counselor"
           >
             <div className="counselor-bubble-img-wrap">
@@ -343,10 +487,10 @@ export default function CounselorAvatar({ settings = {} }) {
             </div>
             <div className="counselor-bubble-text">
               <span className="counselor-bubble-badge">
-                <span className="live-pulse" /> {statusLabel}
+                <span className="live-pulse" /> {language === 'hi' ? "लाइव काउंसलर" : "Live Counselor"}
               </span>
               <span className="counselor-bubble-sub">
-                {language === 'hi' ? "वीडियो व वॉयस चैट" : "Free Voice & Chat"}
+                {language === 'hi' ? "हाथों-मुक्त वॉयस कॉल" : "Continuous Voice Call"}
               </span>
             </div>
           </button>
@@ -355,7 +499,7 @@ export default function CounselorAvatar({ settings = {} }) {
 
       {/* Main Interactive Counselor Window */}
       {isOpen && (
-        <div className={`counselor-modal-overlay ${isMinimized ? 'minimized' : ''}`}>
+        <div className="counselor-modal-overlay">
           <div className="counselor-card" role="dialog" aria-label="AI Counselor Chat">
             
             {/* Window Header */}
@@ -370,18 +514,35 @@ export default function CounselorAvatar({ settings = {} }) {
                       className="counselor-header-avatar"
                     />
                   </picture>
-                  <span className={`counselor-status-dot ${isSpeaking ? 'speaking' : ''}`} />
+                  <span className={`counselor-status-dot ${isSpeaking ? 'speaking' : isListening ? 'listening-dot' : ''}`} />
                 </div>
                 <div className="counselor-header-info">
                   <h4 className="counselor-name">{counselorName}</h4>
                   <span className="counselor-title">
-                    {language === 'hi' ? "इंस्टीट्यूट APEX • ऑनलाइन" : "Institute APEX • Online"}
+                    {language === 'hi' ? "इंस्टीट्यूट APEX • लाइव परामर्श" : "Institute APEX • Live Consultation"}
                   </span>
                 </div>
               </div>
 
-              {/* Language Switcher & Controls */}
+              {/* Language Switcher, Hands-Free Toggle & Controls */}
               <div className="counselor-header-actions">
+                {/* Hands-Free Duplex Auto-Listen Toggle */}
+                <button
+                  className={`handsfree-toggle-btn ${handsFree ? 'active' : ''}`}
+                  onClick={() => {
+                    const next = !handsFree;
+                    setHandsFree(next);
+                    if (!next) stopListening();
+                  }}
+                  title={handsFree 
+                    ? (language === 'hi' ? "स्वतः सुनना (ऑटो फॉलो-अप) चालू है" : "Auto-Listen (Hands-Free) is ON") 
+                    : (language === 'hi' ? "स्वतः सुनना बंद है (माइक दबाकर बोलें)" : "Auto-Listen is OFF")}
+                >
+                  <span className="hf-dot" />
+                  <span>{handsFree ? (language === 'hi' ? "ऑटो-लिसन" : "Hands-Free") : (language === 'hi' ? "मैनुअल" : "Manual")}</span>
+                </button>
+
+                {/* Language Switch */}
                 <div className="counselor-lang-toggle" title="Switch Language">
                   <button 
                     className={`lang-btn ${language === 'hi' ? 'active' : ''}`} 
@@ -397,6 +558,7 @@ export default function CounselorAvatar({ settings = {} }) {
                   </button>
                 </div>
 
+                {/* Mute Toggle */}
                 <button 
                   className={`counselor-icon-btn ${isMuted ? 'muted' : ''}`}
                   onClick={() => {
@@ -417,6 +579,7 @@ export default function CounselorAvatar({ settings = {} }) {
                   )}
                 </button>
 
+                {/* Close Button */}
                 <button 
                   className="counselor-icon-btn close"
                   onClick={closeAvatar}
@@ -430,19 +593,34 @@ export default function CounselorAvatar({ settings = {} }) {
               </div>
             </div>
 
-            {/* Video Face Avatar Viewport */}
+            {/* Video Face Avatar Viewport with Real Talking Lip-Sync and Listening States */}
             <div className="counselor-video-stage">
-              <div className={`counselor-video-frame ${isSpeaking ? 'is-speaking' : ''}`}>
-                <picture>
-                  <source srcSet="/images/counselor_avatar.webp" type="image/webp" />
-                  <img 
-                    src="/images/counselor_avatar.jpg" 
-                    alt="Indian Academic Counselor" 
-                    className={`counselor-face-img ${isSpeaking ? 'animating-mouth' : ''}`}
-                  />
-                </picture>
+              <div className={`counselor-video-frame ${isSpeaking ? 'is-speaking' : isListening ? 'is-listening' : ''}`}>
+                
+                {/* Active Talking Face Frame vs Attentive Listening Face Frame */}
+                <div className="counselor-portrait-container">
+                  <picture>
+                    <source 
+                      srcSet={isSpeaking && mouthOpen ? "/images/counselor_speaking.webp" : "/images/counselor_avatar.webp"} 
+                      type="image/webp" 
+                    />
+                    <img 
+                      src={isSpeaking && mouthOpen ? "/images/counselor_speaking.jpg" : "/images/counselor_avatar.jpg"} 
+                      alt="Indian Academic Counselor" 
+                      className={`counselor-face-img ${isSpeaking ? 'animating-talk' : isListening ? 'animating-listen' : 'animating-idle'}`}
+                    />
+                  </picture>
 
-                {/* Animated Voice Equalizer overlay when speaking */}
+                  {/* Pulsing Listening Radar Waves when user is speaking */}
+                  {isListening && (
+                    <div className="listening-radar-pulse">
+                      <span className="radar-ring r1" />
+                      <span className="radar-ring r2" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Animated Voice Equalizer overlay when counselor is speaking */}
                 {isSpeaking && (
                   <div className="counselor-audio-wave-bars">
                     <span className="wave-bar bar-1" />
@@ -453,20 +631,39 @@ export default function CounselorAvatar({ settings = {} }) {
                   </div>
                 )}
 
-                {/* Video HUD Badges */}
-                <div className="counselor-hud-badge">
-                  <span className={`hud-rec-dot ${isSpeaking ? 'active' : ''}`} />
-                  <span>{isSpeaking ? (language === 'hi' ? "काउंसलर बोल रही हैं..." : "Counselor Speaking...") : (language === 'hi' ? "लाइव परामर्श" : "Live Consultation")}</span>
+                {/* Video HUD State Badges */}
+                <div className={`counselor-hud-badge ${isListening ? 'hud-listening' : isSpeaking ? 'hud-speaking' : ''}`}>
+                  <span className={`hud-rec-dot ${isSpeaking ? 'active' : isListening ? 'listening-pulse' : ''}`} />
+                  <span>
+                    {isSpeaking 
+                      ? (language === 'hi' ? "काउंसलर बोल रही हैं..." : "Counselor Speaking...") 
+                      : isListening 
+                        ? (language === 'hi' ? "सुन रही हूँ, बोलिए..." : "Listening... Speak now")
+                        : (language === 'hi' ? "लाइव परामर्श" : "Live Consultation")}
+                  </span>
                 </div>
               </div>
 
               {/* Subtitle Teleprompter Banner */}
               <div className="counselor-teleprompter">
-                <span className="teleprompter-label">{language === 'hi' ? "काउंसलर का उत्तर:" : "Counselor:"}</span>
+                <div className="teleprompter-top-row">
+                  <span className="teleprompter-label">
+                    {isListening 
+                      ? (language === 'hi' ? "आपकी आवाज़:" : "Your Voice:")
+                      : (language === 'hi' ? "काउंसलर का उत्तर:" : "Counselor:")}
+                  </span>
+                  {handsFree && (
+                    <span className="teleprompter-hf-badge">
+                      {isListening ? (language === 'hi' ? "● माइक खुला है" : "● Mic Active") : (language === 'hi' ? "ऑटो फॉलो-अप" : "Auto Follow-up")}
+                    </span>
+                  )}
+                </div>
                 <p className="teleprompter-text">
-                  {currentSubtitle || (language === 'hi' 
-                    ? "नमस्ते! NEET, IIT-JEE या स्कॉलरशिप संबंधी सहायता के लिए पूछिए।" 
-                    : "Hello! Ask any question about NEET, IIT-JEE, or admissions.")}
+                  {isListening 
+                    ? (language === 'hi' ? "मैं आपकी बात सुन रही हूँ, अपना सवाल पूछिए..." : "Listening... Speak your question now...")
+                    : currentSubtitle || (language === 'hi' 
+                        ? "नमस्ते! NEET, IIT-JEE या स्कॉलरशिप संबंधी सहायता के लिए पूछिए।" 
+                        : "Hello! Ask any question about NEET, IIT-JEE, or admissions.")}
                 </p>
               </div>
             </div>
@@ -489,7 +686,7 @@ export default function CounselorAvatar({ settings = {} }) {
                     {msg.sender === 'counselor' && (
                       <button 
                         className="repeat-audio-btn"
-                        onClick={() => speakText(language === 'hi' ? msg.textHi : msg.textEn, language)}
+                        onClick={() => speakText(language === 'hi' ? msg.textHi : msg.textEn, language, false)}
                         title="Replay Voice"
                       >
                         <svg fill="currentColor" viewBox="0 0 24 24" style={{ width: 12, height: 12 }}>
@@ -506,7 +703,7 @@ export default function CounselorAvatar({ settings = {} }) {
 
             {/* Quick Suggestion Chips */}
             <div className="counselor-chips-container">
-              <span className="chips-title">{language === 'hi' ? "त्वरित सवाल:" : "Quick Questions:"}</span>
+              <span className="chips-title">{language === 'hi' ? "त्वरित सवाल (क्लिक करें):" : "Quick Questions (Click to Ask):"}</span>
               <div className="chips-scroll">
                 {quickQuestions.map((chip, idx) => (
                   <button 
@@ -520,15 +717,15 @@ export default function CounselorAvatar({ settings = {} }) {
               </div>
             </div>
 
-            {/* Voice & Text Input Section */}
+            {/* Continuous Voice & Text Input Section */}
             <form className="counselor-input-form" onSubmit={handleFormSubmit}>
               <button 
                 type="button"
                 className={`counselor-mic-btn ${isListening ? 'listening' : ''}`}
-                onClick={toggleSpeechRecognition}
+                onClick={toggleMicManual}
                 title={isListening 
-                  ? (language === 'hi' ? "सुनना बंद करें" : "Stop listening") 
-                  : (language === 'hi' ? "बोलकर सवाल पूछें (माइक)" : "Speak your question (Mic)")}
+                  ? (language === 'hi' ? "सुनना रोकें" : "Pause listening") 
+                  : (language === 'hi' ? "बोलिए (माइक)" : "Speak your question (Mic)")}
                 aria-label="Voice Input"
               >
                 {isListening ? (
@@ -549,7 +746,7 @@ export default function CounselorAvatar({ settings = {} }) {
                 type="text" 
                 className="counselor-text-input"
                 placeholder={isListening 
-                  ? (language === 'hi' ? "बोलिए, मैं सुन रही हूँ..." : "Listening... speak now") 
+                  ? (language === 'hi' ? "सुन रही हूँ, बोलिए..." : "Listening... speak now") 
                   : (language === 'hi' ? "यहाँ सवाल लिखें या बोलें..." : "Type or speak your question...")}
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
