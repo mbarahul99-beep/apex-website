@@ -1116,7 +1116,10 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
         {/* Large Banner Intro */}
       <section className="hero-title-section" style={{ borderBottom: 'none' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: '#e2e8f0', color: 'var(--navy-blue)', padding: '5px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700, marginBottom: '12px' }}>
-          <span>📍 Urban Estate, Jind (Near HUDA Ground)</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <span style={{ width: '13px', height: '13px', display: 'inline-flex', alignItems: 'center' }}><IconMapPin /></span>
+            <span>Urban Estate, Jind (Near HUDA Ground)</span>
+          </span>
           <span style={{ color: '#94a3b8' }}>•</span>
           <span>16+ Years of Proven Medical & Engineering Ranks</span>
         </div>
@@ -1493,6 +1496,77 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
         </section>
       )}
 
+      {/* Visit Our Campus in Jind - Google Maps Section */}
+      <section className="campus-map-section" style={{ padding: '30px 0 20px 0', borderBottom: '8px solid var(--border-light)' }}>
+        <div className="section-header" style={{ marginBottom: '20px' }}>
+          <h2 className="section-title">Visit Our Campus in Jind</h2>
+          <p className="section-subtitle">Conveniently located at Urban Estate, Near HUDA Ground — easily accessible from all parts of Jind</p>
+        </div>
+
+        <div style={{
+          backgroundColor: '#ffffff',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--border-light)',
+          overflow: 'hidden',
+          boxShadow: 'var(--shadow-sm)',
+          marginBottom: '20px'
+        }}>
+          {/* Location info bar */}
+          <div style={{
+            padding: '16px 20px',
+            backgroundColor: '#f8fafc',
+            borderBottom: '1px solid var(--border-light)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '14px'
+          }}>
+            <div>
+              <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--navy-blue)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ width: '16px', height: '16px', display: 'inline-flex', alignItems: 'center', color: 'var(--navy-blue)' }}><IconMapPin /></span>
+                <span>Institute APEX — Urban Estate Campus</span>
+              </div>
+              <div style={{ fontSize: '0.84rem', color: '#64748b', marginTop: '3px' }}>
+                {settings.address || '#1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana)'}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <a 
+                href="https://www.google.com/maps/search/?api=1&query=Apex+Institute+1257+Urban+Estate+Jind+Haryana" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="courses-action-btn"
+                style={{ padding: '9px 16px', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px', textDecoration: 'none' }}
+              >
+                <span style={{ width: '14px', height: '14px', display: 'inline-flex', alignItems: 'center' }}><IconMapPin /></span>
+                <span>Get Directions</span>
+              </a>
+              <a 
+                href="https://www.google.com/maps/search/?api=1&query=Apex+Institute+1257+Urban+Estate+Jind+Haryana"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="courses-action-btn secondary"
+                style={{ padding: '9px 16px', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: '#ffffff', color: 'var(--navy-blue)', border: '1px solid var(--border-light)', textDecoration: 'none' }}
+              >
+                <span style={{ width: '14px', height: '14px', display: 'inline-flex', alignItems: 'center', color: '#f59e0b' }}><IconStar /></span>
+                <span>Review Us on Google</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Interactive Google Map iframe */}
+          <iframe 
+            title="Institute APEX Jind Campus Location Map"
+            src="https://maps.google.com/maps?q=1257+Urban+Estate+Jind+Haryana&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+            style={{ width: '100%', height: '360px', border: 0, display: 'block' }}
+            loading="lazy"
+            allowFullScreen
+          />
+        </div>
+      </section>
+
       {/* Enquiry Form */}
       {settings.showEnquiryInline !== false && (
         <section className="contact-section">
@@ -1634,7 +1708,7 @@ function OnlinePrepView({ navigate, openEnquiry }) {
 
       <div className="section-header">
         <h1 className="section-title" style={{ fontSize: '1.75rem', margin: '0 0 8px 0' }}>APEX Online Prep & CBT Test Series in Jind</h1>
-        <p className="section-subtitle">Excellence driven by smart assessments and comprehensive diagnostics</p>
+        <p className="section-subtitle">Excellence driven by comprehensive performance diagnostics and test series</p>
       </div>
 
       {/* Offline Classroom Notice */}
@@ -1646,8 +1720,10 @@ function OnlinePrepView({ navigate, openEnquiry }) {
         marginBottom: '30px',
         boxShadow: 'var(--shadow-sm)'
       }}>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <span style={{ fontSize: '1.5rem' }}>📝</span>
+        <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
+          <div style={{ color: '#d97706', flexShrink: 0, marginTop: '2px' }}>
+            <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ width: '22px', height: '22px' }}><path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg>
+          </div>
           <div>
             <h4 style={{ margin: '0 0 4px 0', color: '#92400e', fontWeight: 700 }}>Important Academic Notice</h4>
             <p style={{ margin: 0, fontSize: '0.88rem', color: '#b45309', lineHeight: 1.5 }}>
@@ -1732,8 +1808,10 @@ function ScholarshipView({ navigate, openEnquiry }) {
                 {slab.title}
               </h3>
               
-              <div style={{ display: 'flex', gap: '8px', fontSize: '0.82rem', color: 'var(--navy-blue)', fontWeight: 700, backgroundColor: '#f0f4f8', padding: '10px', borderRadius: 'var(--radius-sm)', marginBottom: '15px' }}>
-                <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>🏆</span>
+              <div style={{ display: 'flex', gap: '8px', fontSize: '0.82rem', color: 'var(--navy-blue)', fontWeight: 700, backgroundColor: '#f0f4f8', padding: '10px', borderRadius: 'var(--radius-sm)', marginBottom: '15px', alignItems: 'center' }}>
+                <span style={{ width: '16px', height: '16px', display: 'inline-flex', alignItems: 'center', color: '#d97706', flexShrink: 0 }}>
+                  <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.504-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.004 0H9.496m5.004 0a3.75 3.75 0 003.75-3.75V5.25A2.25 2.25 0 0016 3H8a2.25 2.25 0 00-2.25 2.25v6.75a3.75 3.75 0 003.746 3.75" /></svg>
+                </span>
                 <div>
                   <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', color: 'var(--light-gray)', fontWeight: 600 }}>Criteria:</div>
                   <div style={{ marginTop: '2px' }}>{slab.criteria}</div>
@@ -1757,8 +1835,10 @@ function ScholarshipView({ navigate, openEnquiry }) {
       </div>
 
       {/* Meritorious Track Record notice */}
-      <div className="info-card" style={{ padding: '24px', display: 'flex', gap: '15px', border: '1px solid var(--border-light)', boxShadow: 'var(--shadow-sm)', marginBottom: '30px' }}>
-        <div style={{ fontSize: '2rem' }}>💡</div>
+      <div className="info-card" style={{ padding: '24px', display: 'flex', gap: '15px', border: '1px solid var(--border-light)', boxShadow: 'var(--shadow-sm)', marginBottom: '30px', alignItems: 'flex-start' }}>
+        <div style={{ color: 'var(--navy-blue)', flexShrink: 0, marginTop: '2px' }}>
+          <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ width: '24px', height: '24px' }}><path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg>
+        </div>
         <div>
           <h4 style={{ margin: '0 0 6px 0', color: 'var(--navy-blue)', fontWeight: 700 }}>Applying with Merit Documents</h4>
           <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--light-gray)', lineHeight: 1.55 }}>
