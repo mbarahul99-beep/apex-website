@@ -796,14 +796,14 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
     return () => unsubscribe();
   }, []);
 
-  // Slide rotation
+  // Slide rotation (7 seconds per slide)
   useEffect(() => {
     if (sliders.length === 0) return;
     const interval = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % sliders.length);
-    }, 5000);
+    }, 7000);
     return () => clearInterval(interval);
-  }, [sliders]);
+  }, [sliders, currentSlide]);
 
   const handleNextSlide = () => {
     setCurrentSlide(prev => (prev + 1) % sliders.length);
