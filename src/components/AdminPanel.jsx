@@ -358,6 +358,17 @@ function SettingsForm({ onUpdateSettings }) {
     }
   };
 
+  const handleResetSeoDefaults = () => {
+    setSettings(prev => ({
+      ...prev,
+      seoTitle: "Best NEET & IIT-JEE Coaching in Jind | Institute APEX (Class 9-12 CBSE)",
+      seoDescription: "Looking for the best coaching for NEET, IIT-JEE, 10th CBSE & 12th Science in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches at Urban Estate, Jind. Call 94677-52374.",
+      seoKeywords: "Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best Coaching for 12th Science in Jind, apex institute jind, coaching institute in jind haryana, cbse tuition jind",
+      canonicalDomain: "https://instituteapex.in",
+      ogImage: "/logo_full.webp"
+    }));
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const updated = { 
@@ -915,6 +926,156 @@ function SettingsForm({ onUpdateSettings }) {
               )}
             </div>
           )}
+        </div>
+      </div>
+
+      {/* SEARCH ENGINE OPTIMIZATION (SEO & LOCAL JIND RANKING) */}
+      <div style={{
+        backgroundColor: '#ffffff',
+        border: '1.5px solid #cbd5e1',
+        borderRadius: 'var(--radius-lg)',
+        padding: '24px',
+        margin: '25px 0',
+        boxShadow: '0 4px 16px rgba(15, 23, 42, 0.05)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '16px', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'linear-gradient(135deg, #0284c7, #0369a1)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ width: '20px', height: '20px' }}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+            </div>
+            <div>
+              <h4 style={{ margin: 0, color: 'var(--navy-blue)', fontSize: '1rem', fontWeight: 800 }}>
+                Search Engine Optimization (SEO & Local Google Ranking)
+              </h4>
+              <p style={{ margin: '2px 0 0 0', fontSize: '0.8rem', color: '#64748b' }}>
+                Control Google search titles, meta descriptions, focus keywords, and verification tags
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="admin-btn secondary"
+            onClick={handleResetSeoDefaults}
+            style={{ padding: '6px 14px', fontSize: '0.78rem', fontWeight: 700 }}
+            title="Reset SEO fields to high-ranking defaults for Jind"
+          >
+            ↺ Reset to Winning Jind Keywords
+          </button>
+        </div>
+
+        {/* SEO Meta Title */}
+        <div className="admin-input-group" style={{ marginBottom: '16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+            <label style={{ margin: 0 }}>Homepage SEO Meta Title (Google Search Headline) *</label>
+            <span style={{ fontSize: '0.72rem', color: (settings.seoTitle || '').length > 65 ? '#dc2626' : '#64748b', fontWeight: 600 }}>
+              {(settings.seoTitle || '').length} / 60 characters (Optimal: 50–60)
+            </span>
+          </div>
+          <input
+            type="text"
+            name="seoTitle"
+            value={settings.seoTitle !== undefined ? settings.seoTitle : 'Best NEET & IIT-JEE Coaching in Jind | Institute APEX (Class 9-12 CBSE)'}
+            onChange={handleChange}
+            placeholder="e.g. Best NEET & IIT-JEE Coaching in Jind | Institute APEX (Class 9-12 CBSE)"
+            required
+          />
+        </div>
+
+        {/* SEO Meta Description */}
+        <div className="admin-input-group" style={{ marginBottom: '16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+            <label style={{ margin: 0 }}>Homepage Meta Description (Google Search Snippet) *</label>
+            <span style={{ fontSize: '0.72rem', color: (settings.seoDescription || '').length > 165 ? '#dc2626' : '#64748b', fontWeight: 600 }}>
+              {(settings.seoDescription || '').length} / 160 characters (Optimal: 150–160)
+            </span>
+          </div>
+          <textarea
+            name="seoDescription"
+            rows={3}
+            value={settings.seoDescription !== undefined ? settings.seoDescription : 'Looking for the best coaching for NEET, IIT-JEE, 10th CBSE & 12th Science in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches at Urban Estate, Jind. Call 94677-52374.'}
+            onChange={handleChange}
+            placeholder="Looking for the best coaching for NEET, IIT-JEE, 10th CBSE & 12th Science in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches..."
+            required
+          />
+        </div>
+
+        {/* Focus Keywords */}
+        <div className="admin-input-group" style={{ marginBottom: '16px' }}>
+          <label>Primary Focus Keywords (Comma separated)</label>
+          <textarea
+            name="seoKeywords"
+            rows={2}
+            value={settings.seoKeywords !== undefined ? settings.seoKeywords : 'Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best Coaching for 12th Science in Jind, apex institute jind, coaching institute in jind haryana, cbse tuition jind'}
+            onChange={handleChange}
+            placeholder="Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best Coaching for 12th Science in Jind"
+          />
+          <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '3px' }}>
+            Injected into site meta tags and used to guide search engine topical authority.
+          </span>
+        </div>
+
+        <div className="admin-form-row">
+          {/* Canonical Domain */}
+          <div className="admin-input-group">
+            <label>Canonical Live Website Domain</label>
+            <input
+              type="text"
+              name="canonicalDomain"
+              value={settings.canonicalDomain !== undefined ? settings.canonicalDomain : 'https://instituteapex.in'}
+              onChange={handleChange}
+              placeholder="https://instituteapex.in"
+            />
+            <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '3px' }}>
+              Used for canonical tags and XML sitemaps to prevent duplicate content penalties.
+            </span>
+          </div>
+
+          {/* Social Sharing Image */}
+          <div className="admin-input-group">
+            <label>Social Share Preview Image (OG Image)</label>
+            <input
+              type="text"
+              name="ogImage"
+              value={settings.ogImage !== undefined ? settings.ogImage : '/logo_full.webp'}
+              onChange={handleChange}
+              placeholder="/logo_full.webp"
+            />
+            <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '3px' }}>
+              Preview thumbnail displayed when someone shares your website link on WhatsApp or Facebook.
+            </span>
+          </div>
+        </div>
+
+        <div className="admin-form-row" style={{ marginTop: '10px' }}>
+          {/* Google Search Console Verification Meta */}
+          <div className="admin-input-group">
+            <label>Google Search Console Verification Code</label>
+            <input
+              type="text"
+              name="googleSiteVerification"
+              value={settings.googleSiteVerification || ''}
+              onChange={handleChange}
+              placeholder="e.g. 4z7... (Paste the verification token or meta content string)"
+            />
+            <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '3px' }}>
+              Paste your Google Search Console verification meta token to verify site ownership.
+            </span>
+          </div>
+
+          {/* Google Analytics GA4 ID */}
+          <div className="admin-input-group">
+            <label>Google Analytics (GA4) Measurement ID</label>
+            <input
+              type="text"
+              name="googleAnalyticsId"
+              value={settings.googleAnalyticsId || ''}
+              onChange={handleChange}
+              placeholder="e.g. G-XXXXXXXXXX"
+            />
+            <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '3px' }}>
+              Paste your GA4 ID to automatically track visitors, page views, and search rankings.
+            </span>
+          </div>
         </div>
       </div>
 

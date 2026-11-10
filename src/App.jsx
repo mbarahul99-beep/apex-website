@@ -398,13 +398,56 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Phase 1 Dynamic SEO Metadata Calculations
+  const baseCanonical = settings.canonicalDomain ? settings.canonicalDomain.replace(/\/$/, '') : window.location.origin;
+  const canonicalUrl = `${baseCanonical}${currentPath === '/' ? '' : currentPath}`;
+  const siteTitle = settings.seoTitle || `${settings.instituteName || 'APEX INSTITUTE'} - Best NEET & IIT-JEE Coaching in Jind`;
+  const siteDesc = settings.seoDescription || `${settings.tagline || 'Premier Coaching for NEET, IIT-JEE & Board Exams'} located at ${settings.address}. Call: ${settings.phone}`;
+  const siteKeywords = settings.seoKeywords || "Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best Coaching for 12th Science in Jind, apex institute jind, coaching classes in jind haryana";
+  const ogImg = settings.ogImage 
+    ? (settings.ogImage.startsWith('http') ? settings.ogImage : `${baseCanonical}${settings.ogImage.startsWith('/') ? '' : '/'}${settings.ogImage}`)
+    : `${baseCanonical}/logo_full.webp`;
+
   return (
     <div className="app-container">
       <Helmet>
-        <title>{settings.instituteName} - IIT-JEE & NEET Coaching</title>
-        <meta name="description" content={settings.tagline + ' located at ' + settings.address} />
-        <meta name="keywords" content="apex institute jind, iit-jee coaching, neet preparation, foundations tuitions, cbse board classes, hbse haryana coaching" />
-        <link rel="canonical" href={window.location.origin + currentPath} />
+        <title>{siteTitle}</title>
+        <meta name="description" content={siteDesc} />
+        <meta name="keywords" content={siteKeywords} />
+        <link rel="canonical" href={canonicalUrl} />
+
+        {/* Open Graph / WhatsApp / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:title" content={siteTitle} />
+        <meta property="og:description" content={siteDesc} />
+        <meta property="og:image" content={ogImg} />
+        <meta property="og:site_name" content={settings.instituteName || "Institute APEX Jind"} />
+
+        {/* Twitter Cards */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={canonicalUrl} />
+        <meta name="twitter:title" content={siteTitle} />
+        <meta name="twitter:description" content={siteDesc} />
+        <meta name="twitter:image" content={ogImg} />
+
+        {/* Google Site Verification (Search Console) */}
+        {settings.googleSiteVerification && (
+          <meta name="google-site-verification" content={settings.googleSiteVerification} />
+        )}
+
+        {/* Google Analytics GA4 */}
+        {settings.googleAnalyticsId && (
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=${settings.googleAnalyticsId}`}></script>
+        )}
+        {settings.googleAnalyticsId && (
+          <script>{`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${settings.googleAnalyticsId}');
+          `}</script>
+        )}
       </Helmet>
 
       {/* Navigation Header */}
