@@ -2139,190 +2139,320 @@
   margin: 0 auto;
 }
 
-.about-cards-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
+/* Director's Message Section */
+.about-director-card {
+  background: #ffffff;
+  border: 1px solid #fbcfe8;
+  border-radius: 20px;
+  padding: 30px 24px;
+  box-shadow: 0 8px 30px -4px rgba(190, 24, 93, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  margin-bottom: 40px;
 }
 
 @media (min-width: 768px) {
-  .about-cards-row {
+  .about-director-card {
+    flex-direction: row;
+    padding: 38px 34px;
+    gap: 36px;
+    align-items: flex-start;
+  }
+}
+
+.about-director-photo-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.about-director-photo-frame {
+  width: 200px;
+  height: 200px;
+  border-radius: 16px;
+  border: 4px solid #ec4899;
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.28);
+  background-color: #ffffff;
+  padding: 4px;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+@media (min-width: 768px) {
+  .about-director-photo-frame {
+    width: 220px;
+    height: 220px;
+  }
+}
+
+.about-director-photo-frame:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 24px rgba(236, 72, 153, 0.35);
+}
+
+.about-director-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  border-radius: 10px;
+  display: block;
+}
+
+.about-director-meta {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.about-director-meta-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #be185d;
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.about-director-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 4px 0 2px;
+}
+
+.about-director-deg {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.about-director-content-col {
+  flex: 1;
+}
+
+.about-director-greeting {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.about-director-p {
+  font-size: 0.94rem;
+  color: #334155;
+  line-height: 1.72;
+  margin-bottom: 14px;
+}
+
+.about-director-signoff {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.about-director-signoff-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.about-director-signoff-sub {
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* Academic Patterns Section (Class XI & XII) */
+.about-patterns-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+  margin-bottom: 30px;
+}
+
+@media (min-width: 860px) {
+  .about-patterns-grid {
     grid-template-columns: 1fr 1fr;
     gap: 24px;
   }
 }
 
-.about-mission-card {
+.about-pattern-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-top: 3.5px solid #be185d;
-  border-radius: 16px;
+  border-radius: 18px;
   padding: 26px 22px;
-  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-.about-mission-card:hover {
+.about-pattern-card.class-11 {
+  border-top: 4px solid #2563eb;
+}
+
+.about-pattern-card.class-12 {
+  border-top: 4px solid #be185d;
+}
+
+.about-pattern-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px -4px rgba(190, 24, 93, 0.08);
+  box-shadow: 0 10px 28px -4px rgba(15, 23, 42, 0.08);
 }
 
-.about-card-badge {
-  font-size: 0.82rem;
+.about-pattern-badge {
+  font-size: 0.72rem;
   font-weight: 800;
-  color: #be185d;
-  background: #fdf2f8;
-  border: 1px solid #fbcfe8;
   padding: 3px 10px;
-  border-radius: 6px;
+  border-radius: 9999px;
   display: inline-block;
   width: fit-content;
-  margin-bottom: 14px;
-  letter-spacing: 0.04em;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.about-mission-card h3 {
+.about-pattern-card.class-11 .about-pattern-badge {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+}
+
+.about-pattern-card.class-12 .about-pattern-badge {
+  background: #fdf2f8;
+  color: #be185d;
+  border: 1px solid #fbcfe8;
+}
+
+.about-pattern-title {
   font-size: 1.15rem;
-  font-weight: 700;
+  font-weight: 800;
   color: #0f172a;
   margin-bottom: 10px;
+  line-height: 1.35;
 }
 
-.about-mission-card p {
-  font-size: 0.92rem;
-  color: #334155;
-  line-height: 1.65;
-  margin: 0;
-}
-
-.about-pillars-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-
-@media (min-width: 560px) {
-  .about-pillars-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 900px) {
-  .about-pillars-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.about-pillar-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 22px 18px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.about-pillar-card:hover {
-  transform: translateY(-2px);
-  border-color: #f472b6;
-  box-shadow: 0 6px 18px rgba(190, 24, 93, 0.08);
-}
-
-.about-pillar-num {
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: #be185d;
-  background: #fdf2f8;
-  border: 1px solid #fbcfe8;
-  padding: 3px 9px;
-  border-radius: 6px;
-  display: inline-block;
-  margin-bottom: 12px;
-}
-
-.about-pillar-card h4 {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 6px;
-}
-
-.about-pillar-card p {
-  font-size: 0.86rem;
+.about-pattern-desc {
+  font-size: 0.9rem;
   color: #475569;
-  line-height: 1.55;
-  margin: 0;
+  line-height: 1.65;
+  margin-bottom: 16px;
 }
 
-.about-programs-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
-}
-
-@media (min-width: 600px) {
-  .about-programs-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
-  }
-}
-
-.about-program-card {
+.about-test-series-box {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 18px;
-  transition: all 0.2s ease;
+  border-radius: 12px;
+  padding: 16px 14px;
+  margin-top: auto;
 }
 
-.about-program-card:hover {
-  background: #ffffff;
-  border-color: #fbcfe8;
-  box-shadow: 0 6px 18px -3px rgba(190, 24, 93, 0.08);
-}
-
-.about-program-tag {
-  display: inline-block;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #be185d;
-  background: #fdf2f8;
-  border: 1px solid #fbcfe8;
-  padding: 3px 10px;
-  border-radius: 6px;
-  margin-bottom: 8px;
-}
-
-.about-program-card h4 {
-  font-size: 1.05rem;
-  font-weight: 700;
+.about-test-series-header {
+  font-size: 0.88rem;
+  font-weight: 800;
   color: #0f172a;
-  margin-bottom: 6px;
-}
-
-.about-program-card p {
-  font-size: 0.85rem;
-  color: #475569;
-  line-height: 1.55;
   margin-bottom: 10px;
-}
-
-.about-program-link {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #be185d;
-  cursor: pointer;
-  text-decoration: none;
+  gap: 6px;
 }
 
-.about-program-link:hover {
-  color: #9d174d;
-  text-decoration: underline;
+.about-test-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.about-test-item {
+  font-size: 0.85rem;
+  color: #334155;
+  line-height: 1.55;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.about-test-bullet {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-top: 7px;
+  flex-shrink: 0;
+}
+
+.about-pattern-card.class-11 .about-test-bullet {
+  background-color: #2563eb;
+}
+
+.about-pattern-card.class-12 .about-test-bullet {
+  background-color: #be185d;
+}
+
+/* Special Weekend Session Callout */
+.about-weekend-banner {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #ffffff;
+  border-radius: 16px;
+  border-left: 5px solid #ec4899;
+  padding: 24px 22px;
+  margin-bottom: 40px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+}
+
+.about-weekend-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(236, 72, 153, 0.2);
+  border: 1px solid rgba(236, 72, 153, 0.4);
+  color: #f472b6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.about-weekend-text-wrap {
+  flex: 1;
+}
+
+.about-weekend-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #f472b6;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.about-weekend-text {
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: #f8fafc;
+  line-height: 1.55;
+  margin: 0;
 }
 
 .about-custom-content {

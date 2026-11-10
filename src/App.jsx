@@ -1603,154 +1603,159 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
 
       {/* Main Container */}
       <div className="about-container">
-        {/* Mission & Vision Section */}
-        <section className="about-section">
-          <div className="about-section-header">
-            <span className="about-section-tag">Vision & Mission</span>
-            <h2 className="about-section-title">Rooted in Jind, Focused on Global Standards</h2>
-            <p className="about-section-desc">
-              We bridge the gap between school curriculum and competitive examinations, ensuring students from Jind and surrounding regions achieve national ranks without having to migrate to distant cities.
-            </p>
+        {/* 1. Director's Message Section */}
+        <section className="about-director-section">
+          <div className="about-section-header" style={{ marginBottom: '22px' }}>
+            <span className="about-section-tag">Leadership & Vision</span>
+            <h2 className="about-section-title">Director's Message</h2>
           </div>
 
-          <div className="about-cards-row">
-            <div className="about-mission-card">
-              <span className="about-card-badge">01</span>
-              <h3>Our Core Mission</h3>
-              <p>
-                To provide accessible, high-caliber coaching with deep conceptual learning rather than rote memorization. We train students to dissect complex scientific concepts, apply analytical thinking, and tackle high-stakes national competitions with calm confidence.
-              </p>
+          <div className="about-director-card">
+            {/* Director's Photo with Square Pink Outline Frame */}
+            <div className="about-director-photo-col">
+              <div className="about-director-photo-frame">
+                <picture>
+                  <source srcSet="/images/director.webp" type="image/webp" />
+                  <img 
+                    src="/images/director.jpg" 
+                    alt="Director N. Dhanda" 
+                    className="about-director-img" 
+                    loading="eager"
+                  />
+                </picture>
+              </div>
+              <div className="about-director-meta">
+                <span className="about-director-meta-title">Institute Director</span>
+                <h3 className="about-director-name">N. Dhanda</h3>
+                <span className="about-director-deg">M.Sc. (Maths), M.A. (Eng.), B.Ed.</span>
+              </div>
             </div>
 
-            <div className="about-mission-card">
-              <span className="about-card-badge">02</span>
-              <h3>Our Pedagogical Vision</h3>
-              <p>
-                To foster an ecosystem of relentless curiosity and disciplined work ethics. By maintaining small batch sizes, our faculty knows each student by name, closely monitoring individual strengths and systematically overcoming weaknesses.
+            {/* Director's Written Message */}
+            <div className="about-director-content-col">
+              <h3 className="about-director-greeting">
+                Dear Students and Parents,
+              </h3>
+              
+              <p className="about-director-p">
+                This gives us immense pleasure to announce that with wholehearted co-operation of teaching staff, Parents & Students, we have successfully entered the 16<sup>th</sup> year under the banner of Apex Institute. Institute APEX was started in March 2011 to provide platform to those students who want to make their career in the field of Medical Science. Our goal at Apex is to impart knowledge and guidance by creating an environment that guides them for Board exams, IIT-JEE, NEET & other Medical Entrance Exams that is why in a short period of only 16 years we have become one of the leading institute in the area.
               </p>
-            </div>
-          </div>
-        </section>
 
-        {/* Custom Admin Content (if edited in Admin Panel) */}
-        {page && page.content && page.content.trim() && (
-          <section className="about-section">
-            <div className="about-section-header">
-              <span className="about-section-tag">Institute Overview</span>
-              <h2 className="about-section-title">{page.title || 'Welcome to Institute APEX'}</h2>
-            </div>
-            <div 
-              className="about-custom-content"
-              dangerouslySetInnerHTML={{ __html: page.content }}
-            />
-          </section>
-        )}
-
-        {/* Key Pillars Section */}
-        <section className="about-section">
-          <div className="about-section-header">
-            <span className="about-section-tag">Academic Excellence</span>
-            <h2 className="about-section-title">The Pillars of Our Consistent Results</h2>
-            <p className="about-section-desc">
-              Every aspect of our learning methodology is engineered to maximize student retention, problem-solving speed, and exam accuracy.
-            </p>
-          </div>
-
-          <div className="about-pillars-grid">
-            <div className="about-pillar-card">
-              <span className="about-pillar-num">01</span>
-              <h4>Distinguished Faculty</h4>
-              <p>
-                Experienced subject teachers with proven track records in guiding students through NEET and JEE Advanced syllabi.
+              <p className="about-director-p">
+                Over the years, the name of APEX has become synonyms with success in PMT/NEET. Students get taught by highly acclaimed and well known faculty. Every member of APEX faculty has impeccable educational qualification and years of experience in coaching students to excel in the toughest Medical Entrance Examinations like AIIMS, AFMC, NEET & others.
               </p>
-            </div>
 
-            <div className="about-pillar-card">
-              <span className="about-pillar-num">02</span>
-              <h4>Daily Doubt Resolution</h4>
-              <p>
-                Dedicated one-on-one doubt counters every day after class so no student leaves with unresolved questions.
+              <p className="about-director-p">
+                We feel proud on the achievements of our students. Finally I sum up by saying that our main objective is to model this establishment as a center of excellence for the students wishing to choose their career path in IIT-JEE & Medical fields.
               </p>
-            </div>
 
-            <div className="about-pillar-card">
-              <span className="about-pillar-num">03</span>
-              <h4>All-India Mock Test Series</h4>
-              <p>
-                Regular OMR-based and computer-adaptive tests that replicate genuine exam pressure and time management.
-              </p>
-            </div>
-
-            <div className="about-pillar-card">
-              <span className="about-pillar-num">04</span>
-              <h4>Exhaustive Study Material</h4>
-              <p>
-                Curated chapter-wise theory, graded practice assignments, NCERT drill sheets, and 15+ years of solved PYQs.
-              </p>
-            </div>
-
-            <div className="about-pillar-card">
-              <span className="about-pillar-num">05</span>
-              <h4>Air-Conditioned Classrooms</h4>
-              <p>
-                Quiet, well-ventilated, ergonomic study spaces fostering deep concentration and peer-learning synergy.
-              </p>
-            </div>
-
-            <div className="about-pillar-card">
-              <span className="about-pillar-num">06</span>
-              <h4>Parental Progress Connect</h4>
-              <p>
-                Frequent SMS, WhatsApp, and in-person progress reviews keeping parents informed about attendance and test marks.
-              </p>
+              <div className="about-director-signoff">
+                <div className="about-director-signoff-name">Director: N. Dhanda</div>
+                <div className="about-director-signoff-sub">M.Sc. (Maths), M.A. (Eng.), B.Ed.</div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Academic Offerings */}
-        <section className="about-section">
+        {/* 2. Academic Patterns (Class XI & Class XII) */}
+        <section className="about-patterns-section">
           <div className="about-section-header">
-            <span className="about-section-tag">Coaching Programs</span>
-            <h2 className="about-section-title">Comprehensive Coaching Courses</h2>
+            <span className="about-section-tag">Teaching Methodology</span>
+            <h2 className="about-section-title">The Academic Pattern We Follow</h2>
             <p className="about-section-desc">
-              Structured batches designed for students at various academic levels.
+              Structured preparation blueprint designed to deliver dual excellence in school board results and competitive entrance ranks.
             </p>
           </div>
 
-          <div className="about-programs-grid">
-            <div className="about-program-card">
-              <span className="about-program-tag">Medical Entrance</span>
-              <h4>NEET (UG) Intensive Prep</h4>
-              <p>Two-year and one-year classroom programs for Class 11, 12, and Droppers covering Physics, Chemistry, and Biology.</p>
-              <a className="about-program-link" onClick={() => navigate('/courses')}>View Course Details &rarr;</a>
+          <div className="about-patterns-grid">
+            {/* Pattern for Class XI */}
+            <div className="about-pattern-card class-11">
+              <span className="about-pattern-badge">Class XI Blueprint</span>
+              <h3 className="about-pattern-title">The pattern we follow for Class XI :-</h3>
+              <p className="about-pattern-desc">
+                The syllabus of Class XI is covered keeping in view the school as well as the base for Medical Entrance Exams. Students are let off in 3<sup>rd</sup> week of January, 2026 after full syllabus test for their final examinations.
+              </p>
+
+              <div className="about-test-series-box">
+                <div className="about-test-series-header">
+                  <svg fill="currentColor" viewBox="0 0 20 20" style={{ width: 16, height: 16, color: '#2563eb' }}>
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                  </svg>
+                  <span>Test Series :-</span>
+                </div>
+                <ul className="about-test-list">
+                  <li className="about-test-item">
+                    <span className="about-test-bullet"></span>
+                    <span>Regular tests (Subjective & objective separately) after completion of each chapter and each unit.</span>
+                  </li>
+                  <li className="about-test-item">
+                    <span className="about-test-bullet"></span>
+                    <span>Half syllabus test (Subjective & objective separately) in the 3<sup>rd</sup> week of August, 2025.</span>
+                  </li>
+                  <li className="about-test-item">
+                    <span className="about-test-bullet"></span>
+                    <span>Full syllabus Subjective test for preparation of final exams in the 3<sup>rd</sup> week of January, 2026.</span>
+                  </li>
+                </ul>
+              </div>
             </div>
 
-            <div className="about-program-card">
-              <span className="about-program-tag">Engineering Entrance</span>
-              <h4>IIT-JEE (Main & Advanced)</h4>
-              <p>Rigorous concept drilling and multi-concept problem solving in Physics, Chemistry, and Mathematics.</p>
-              <a className="about-program-link" onClick={() => navigate('/courses')}>View Course Details &rarr;</a>
-            </div>
+            {/* Pattern for Class XII */}
+            <div className="about-pattern-card class-12">
+              <span className="about-pattern-badge">Class XII Blueprint</span>
+              <h3 className="about-pattern-title">The pattern we follow for Class XII :-</h3>
+              <p className="about-pattern-desc">
+                The syllabus is taught thoroughly for Board Exams, IIT-JEE, NEET and other Medical Entrance Exams. The entire syllabus is completed in the 2<sup>nd</sup> week of December, 2025.
+              </p>
 
-            <div className="about-program-card">
-              <span className="about-program-tag">Class 9th & 10th</span>
-              <h4>Junior Foundation & Olympiads</h4>
-              <p>Early head-start for NTSE, NSEJS, Math Olympiads, and strong school board basics (CBSE/HBSE/ICSE).</p>
-              <a className="about-program-link" onClick={() => navigate('/courses')}>View Course Details &rarr;</a>
-            </div>
-
-            <div className="about-program-card">
-              <span className="about-program-tag">Academic Tuitions</span>
-              <h4>Board Exams Excellence</h4>
-              <p>Targeted board-level revision, descriptive answer writing practice, and NCERT master-classes.</p>
-              <a className="about-program-link" onClick={() => navigate('/courses')}>View Course Details &rarr;</a>
+              <div className="about-test-series-box">
+                <div className="about-test-series-header">
+                  <svg fill="currentColor" viewBox="0 0 20 20" style={{ width: 16, height: 16, color: '#be185d' }}>
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                  </svg>
+                  <span>Test Series :-</span>
+                </div>
+                <ul className="about-test-list">
+                  <li className="about-test-item">
+                    <span className="about-test-bullet"></span>
+                    <span>Regular tests (Subjective & objective separately) after completion of each chapter and each unit.</span>
+                  </li>
+                  <li className="about-test-item">
+                    <span className="about-test-bullet"></span>
+                    <span>Half syllabus test (Subjective & objective separately) in the 3<sup>rd</sup> week of August, 2025.</span>
+                  </li>
+                  <li className="about-test-item">
+                    <span className="about-test-bullet"></span>
+                    <span>After completion of class XII full syllabus a special revision test series (for IIT-JEE & PMT preparation of objective test) based on class XI-XII syllabus will be conducted from 15<sup>th</sup> December, 2025 to 15<sup>th</sup> January, 2026.</span>
+                  </li>
+                  <li className="about-test-item">
+                    <span className="about-test-bullet"></span>
+                    <span>10 full syllabus Sample Paper Test will be held keeping in view the attemptation of board exams in the month of January & February, 2026.</span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Call-to-Action Banner */}
+        {/* 3. Special Weekend Sessions Callout */}
+        <div className="about-weekend-banner">
+          <div className="about-weekend-icon-wrap">
+            <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ width: 24, height: 24 }}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div className="about-weekend-text-wrap">
+            <span className="about-weekend-tag">Weekend Advantage</span>
+            <p className="about-weekend-text">
+              Special 2 hours session on Saturday & Sunday including doubt clearing, objective test & revision of syllabus covered in 5 days regular class.
+            </p>
+          </div>
+        </div>
+
+        {/* 4. Learn from the Best CTA Banner */}
         <div className="about-cta-banner">
-          <h3 className="about-cta-title">Visit Our Institute or Consult with Counselors</h3>
+          <h2 className="about-cta-title">Learn from the Best</h2>
           <p className="about-cta-desc">
             Admissions are open for upcoming batches. Meet our senior educators, explore our study materials, and take a free diagnostic scholarship test.
           </p>
