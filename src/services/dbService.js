@@ -76,9 +76,9 @@ const DEFAULT_SETTINGS = {
   enableElevenLabsVoice: false,
   allowedAdminEmails: "instituteapex12@gmail.com, instituteapexjind@gmail.com, mbarahul99@gmail.com",
   // Phase 1 SEO & Dynamic Meta Engine
-  seoTitle: "Best NEET & IIT-JEE Coaching in Jind | Institute APEX (Class 9-12 CBSE)",
-  seoDescription: "Looking for the best coaching for NEET, IIT-JEE, 10th CBSE & 12th Science in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches at Urban Estate, Jind. Call 94677-52374.",
-  seoKeywords: "Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best Coaching for 12th Science in Jind, apex institute jind, coaching institute in jind haryana, cbse tuition jind",
+  seoTitle: "Best NEET & IIT-JEE Coaching in Jind | Institute APEX (CBSE & ICSE)",
+  seoDescription: "Looking for the best coaching for NEET, IIT-JEE, CBSE & ICSE in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches for Class 9th-12th at Urban Estate, Jind. Call 94677-52374.",
+  seoKeywords: "Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best ICSE Coaching in Jind, Best Coaching for 12th Science in Jind, ICSE tuition Jind, apex institute jind, coaching institute in jind haryana, cbse tuition jind",
   canonicalDomain: "https://instituteapex.in",
   googleSiteVerification: "",
   googleAnalyticsId: "",

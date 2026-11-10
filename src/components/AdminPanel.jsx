@@ -361,9 +361,9 @@ function SettingsForm({ onUpdateSettings }) {
   const handleResetSeoDefaults = () => {
     setSettings(prev => ({
       ...prev,
-      seoTitle: "Best NEET & IIT-JEE Coaching in Jind | Institute APEX (Class 9-12 CBSE)",
-      seoDescription: "Looking for the best coaching for NEET, IIT-JEE, 10th CBSE & 12th Science in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches at Urban Estate, Jind. Call 94677-52374.",
-      seoKeywords: "Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best Coaching for 12th Science in Jind, apex institute jind, coaching institute in jind haryana, cbse tuition jind",
+      seoTitle: "Best NEET & IIT-JEE Coaching in Jind | Institute APEX (CBSE & ICSE)",
+      seoDescription: "Looking for the best coaching for NEET, IIT-JEE, CBSE & ICSE in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches for Class 9th-12th at Urban Estate, Jind. Call 94677-52374.",
+      seoKeywords: "Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best ICSE Coaching in Jind, Best Coaching for 12th Science in Jind, ICSE tuition Jind, apex institute jind, coaching institute in jind haryana, cbse tuition jind",
       canonicalDomain: "https://instituteapex.in",
       ogImage: "/logo_full.webp"
     }));
@@ -974,9 +974,9 @@ function SettingsForm({ onUpdateSettings }) {
           <input
             type="text"
             name="seoTitle"
-            value={settings.seoTitle !== undefined ? settings.seoTitle : 'Best NEET & IIT-JEE Coaching in Jind | Institute APEX (Class 9-12 CBSE)'}
+            value={settings.seoTitle !== undefined ? settings.seoTitle : 'Best NEET & IIT-JEE Coaching in Jind | Institute APEX (CBSE & ICSE)'}
             onChange={handleChange}
-            placeholder="e.g. Best NEET & IIT-JEE Coaching in Jind | Institute APEX (Class 9-12 CBSE)"
+            placeholder="e.g. Best NEET & IIT-JEE Coaching in Jind | Institute APEX (CBSE & ICSE)"
             required
           />
         </div>
@@ -992,9 +992,9 @@ function SettingsForm({ onUpdateSettings }) {
           <textarea
             name="seoDescription"
             rows={3}
-            value={settings.seoDescription !== undefined ? settings.seoDescription : 'Looking for the best coaching for NEET, IIT-JEE, 10th CBSE & 12th Science in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches at Urban Estate, Jind. Call 94677-52374.'}
+            value={settings.seoDescription !== undefined ? settings.seoDescription : 'Looking for the best coaching for NEET, IIT-JEE, CBSE & ICSE in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches for Class 9th-12th at Urban Estate, Jind. Call 94677-52374.'}
             onChange={handleChange}
-            placeholder="Looking for the best coaching for NEET, IIT-JEE, 10th CBSE & 12th Science in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches..."
+            placeholder="Looking for the best coaching for NEET, IIT-JEE, CBSE & ICSE in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches..."
             required
           />
         </div>
@@ -1005,9 +1005,9 @@ function SettingsForm({ onUpdateSettings }) {
           <textarea
             name="seoKeywords"
             rows={2}
-            value={settings.seoKeywords !== undefined ? settings.seoKeywords : 'Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best Coaching for 12th Science in Jind, apex institute jind, coaching institute in jind haryana, cbse tuition jind'}
+            value={settings.seoKeywords !== undefined ? settings.seoKeywords : 'Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best ICSE Coaching in Jind, Best Coaching for 12th Science in Jind, ICSE tuition Jind, apex institute jind, coaching institute in jind haryana, cbse tuition jind'}
             onChange={handleChange}
-            placeholder="Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best Coaching for 12th Science in Jind"
+            placeholder="Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best ICSE Coaching in Jind, Best Coaching for 12th Science in Jind"
           />
           <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '3px' }}>
             Injected into site meta tags and used to guide search engine topical authority.

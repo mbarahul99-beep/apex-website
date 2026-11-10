@@ -550,10 +550,18 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
           },
           {
             "@type": "Question",
-            "name": "Is there a foundation coaching program for Class 9th and 10th CBSE students in Jind?",
+            "name": "Is there a foundation coaching program for Class 9th and 10th CBSE and ICSE students in Jind?",
             "acceptedAnswer": {
               "@type": "Answer",
               "text": "Yes, Institute APEX offers the Junior Science & Maths Foundation course for Class 9th and 10th students across CBSE, ICSE, and HBSE boards. The curriculum strengthens fundamental concepts in Science and Mathematics, laying the groundwork for board exam distinctions, NTSE, and Olympiads."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which is the best coaching institute for ICSE Board in Jind?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Institute APEX is Jind's top coaching center for ICSE board students in Science (Physics, Chemistry, Biology) and Mathematics. Our experienced faculty provides concept-focused instruction and numerical practice tailored to the CISCE curriculum for Classes 9, 10, 11, and 12."
             }
           },
           {
