@@ -28,6 +28,240 @@
         }
       } catch(e) {}
     </script>
+    <!-- Schema.org Knowledge Graph (JSON-LD) for LocalBusiness, Courses & FAQ Rich Snippets -->
+    <script type="application/ld+json" id="apex-schema-graph">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": ["EducationalOrganization", "LocalBusiness"],
+          "@id": "https://instituteapex.in/#organization",
+          "name": "Institute APEX",
+          "alternateName": [
+            "Apex Institute Jind",
+            "Institute APEX Jind",
+            "Apex Coaching Jind"
+          ],
+          "url": "https://instituteapex.in",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://instituteapex.in/logo_full.webp",
+            "width": "260",
+            "height": "60"
+          },
+          "image": [
+            "https://instituteapex.in/logo_full.webp",
+            "https://instituteapex.in/images/director.webp"
+          ],
+          "description": "Premier classroom coaching institute in Jind for NEET (Medical), IIT-JEE (Main & Advanced), Class 10th CBSE and Class 12th Science boards with 16+ years of proven ranks.",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "#1257, Urban Estate, Near HUDA Ground",
+            "addressLocality": "Jind",
+            "addressRegion": "Haryana",
+            "postalCode": "126102",
+            "addressCountry": "IN"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 29.3140,
+            "longitude": 76.3145
+          },
+          "hasMap": "https://maps.google.com/?q=Institute+APEX+Jind+Urban+Estate",
+          "telephone": "+91-94677-52374",
+          "email": "instituteapexjind@gmail.com",
+          "priceRange": "₹₹",
+          "currenciesAccepted": "INR",
+          "paymentAccepted": "Cash, UPI, Net Banking, Cheque",
+          "openingHoursSpecification": [
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday"
+              ],
+              "opens": "08:00",
+              "closes": "19:00"
+            }
+          ],
+          "founder": {
+            "@type": "Person",
+            "name": "N. Dhanda",
+            "jobTitle": "Director & Academic Head",
+            "honorificSuffix": "M.Sc. (Maths), M.A. (Eng.), B.Ed."
+          },
+          "areaServed": [
+            { "@type": "City", "name": "Jind" },
+            { "@type": "City", "name": "Narwana" },
+            { "@type": "City", "name": "Safidon" },
+            { "@type": "City", "name": "Julana" },
+            { "@type": "City", "name": "Uchana" },
+            { "@type": "AdministrativeArea", "name": "Haryana" }
+          ],
+          "sameAs": [
+            "https://www.facebook.com/instituteapexjind",
+            "https://www.youtube.com/@instituteapexjind"
+          ]
+        },
+        {
+          "@type": "Course",
+          "@id": "https://instituteapex.in/courses#c1",
+          "name": "NEET Integrated Classroom Program",
+          "description": "Comprehensive classroom coaching in Jind for 11th & 12th Medical students preparing for NEET entrance examination alongside CBSE, ICSE & State Board tuitions. Covers Physics, Chemistry, and Biology with regular mock tests and doubt clearing.",
+          "provider": {
+            "@type": "EducationalOrganization",
+            "name": "Institute APEX",
+            "sameAs": "https://instituteapex.in"
+          },
+          "educationalLevel": "11th & 12th Classes (Medical Entrance Exams & Tuitions)",
+          "coursePrerequisites": "CBSE, ICSE & State Board Students",
+          "timeRequired": "P1Y/P2Y",
+          "hasCourseInstance": {
+            "@type": "CourseInstance",
+            "courseMode": "onsite",
+            "courseWorkload": "Mon - Sat (3 hrs) • Sun - Test (3 hrs)",
+            "location": {
+              "@type": "Place",
+              "name": "Institute APEX Campus",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "#1257, Urban Estate, Near HUDA Ground",
+                "addressLocality": "Jind",
+                "addressRegion": "Haryana",
+                "postalCode": "126102",
+                "addressCountry": "IN"
+              }
+            },
+            "instructor": {
+              "@type": "Person",
+              "name": "N. Dhanda"
+            }
+          }
+        },
+        {
+          "@type": "Course",
+          "@id": "https://instituteapex.in/courses#c2",
+          "name": "IIT-JEE Entrance & Board Preparation",
+          "description": "Focused classroom coaching in Jind for 11th & 12th Engineering aspirants preparing for JEE Main, JEE Advanced and CBSE, ICSE & State Board Tuitions. In-depth analytical problem solving in Physics, Chemistry, and Mathematics.",
+          "provider": {
+            "@type": "EducationalOrganization",
+            "name": "Institute APEX",
+            "sameAs": "https://instituteapex.in"
+          },
+          "educationalLevel": "11th & 12th Classes (JEE Main, Advanced & Board Tuitions)",
+          "coursePrerequisites": "CBSE, ICSE & State Board Students",
+          "timeRequired": "P1Y/P2Y",
+          "offers": {
+            "@type": "Offer",
+            "price": "50000",
+            "priceCurrency": "INR",
+            "category": "Tuition Fee",
+            "availability": "https://schema.org/InStock",
+            "url": "https://instituteapex.in/courses"
+          },
+          "hasCourseInstance": {
+            "@type": "CourseInstance",
+            "courseMode": "onsite",
+            "courseWorkload": "Mon - Sat (3 hrs) • Sun - Test (3 hrs)",
+            "location": {
+              "@type": "Place",
+              "name": "Institute APEX Campus",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "#1257, Urban Estate, Near HUDA Ground",
+                "addressLocality": "Jind",
+                "addressRegion": "Haryana",
+                "postalCode": "126102",
+                "addressCountry": "IN"
+              }
+            },
+            "instructor": {
+              "@type": "Person",
+              "name": "N. Dhanda"
+            }
+          }
+        },
+        {
+          "@type": "Course",
+          "@id": "https://instituteapex.in/courses#c3",
+          "name": "Junior Science & Maths Foundation",
+          "description": "Dedicated foundation coaching in Jind for Class 9th and 10th students in Mathematics and Science, building core conceptual clarity for CBSE, ICSE & HBSE school examinations, NTSE and Olympiads.",
+          "provider": {
+            "@type": "EducationalOrganization",
+            "name": "Institute APEX",
+            "sameAs": "https://instituteapex.in"
+          },
+          "educationalLevel": "9th & 10th Classes (Tuition, NTSE & Olympiads Prep)",
+          "coursePrerequisites": "ICSE, CBSE & HBSE Board Students",
+          "timeRequired": "P1Y",
+          "hasCourseInstance": {
+            "@type": "CourseInstance",
+            "courseMode": "onsite",
+            "courseWorkload": "Mon - Sat (2 hrs) • Sun - Test (1 hour)",
+            "location": {
+              "@type": "Place",
+              "name": "Institute APEX Campus",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "#1257, Urban Estate, Near HUDA Ground",
+                "addressLocality": "Jind",
+                "addressRegion": "Haryana",
+                "postalCode": "126102",
+                "addressCountry": "IN"
+              }
+            },
+            "instructor": {
+              "@type": "Person",
+              "name": "N. Dhanda"
+            }
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://instituteapex.in/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Which is the best coaching institute for NEET in Jind?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Institute APEX, located at #1257, Urban Estate, Near HUDA Ground, Jind, is widely considered the top coaching institute for NEET in Jind. APEX provides comprehensive classroom coaching for Physics, Chemistry, and Biology with 16+ years of proven ranks, small batch sizes, daily doubt removal sessions, and regular OMR-based test series producing top selections in government medical colleges."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does Institute APEX in Jind provide coaching for IIT-JEE and Class 12th Science boards?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, Institute APEX offers an integrated IIT-JEE Entrance & Board Preparation program for 11th & 12th Science students (PCM/PCB). The program prepares students simultaneously for JEE Main, JEE Advanced, and CBSE, ICSE & State Board examinations with rigorous numerical practice and conceptual mastery."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is there a foundation coaching program for Class 9th and 10th CBSE students in Jind?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, Institute APEX offers the Junior Science & Maths Foundation course for Class 9th and 10th students across CBSE, ICSE, and HBSE boards. The curriculum strengthens fundamental concepts in Science and Mathematics, laying the groundwork for board exam distinctions, NTSE, and Olympiads."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Where is Institute APEX located in Jind and how can I contact for admissions?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Institute APEX is located at #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana). You can contact the institute administration at 94677-52374 or 01681-247700, or enquire online at instituteapex.in."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root">
