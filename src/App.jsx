@@ -1115,17 +1115,21 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
       <div className="student-content-wrap" style={{ marginTop: '20px' }}>
         {/* Large Banner Intro */}
       <section className="hero-title-section" style={{ borderBottom: 'none' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: '#e2e8f0', color: 'var(--navy-blue)', padding: '5px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700, marginBottom: '12px' }}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ width: '13px', height: '13px', display: 'inline-flex', alignItems: 'center' }}><IconMapPin /></span>
-            <span>Urban Estate, Jind (Near HUDA Ground)</span>
-          </span>
-          <span style={{ color: '#94a3b8' }}>•</span>
-          <span>16+ Years of Proven Medical & Engineering Ranks</span>
+        <div className="hero-badges-wrapper">
+          <div className="hero-badge-pill">
+            <span className="hero-badge-item">
+              <span className="hero-badge-icon"><IconMapPin /></span>
+              <span>Urban Estate, Jind (Near HUDA Ground)</span>
+            </span>
+            <span className="hero-badge-dot">•</span>
+            <span className="hero-badge-item highlight">
+              <span className="hero-badge-icon star"><IconStar /></span>
+              <span>16+ Years of Proven Medical & Engineering Ranks</span>
+            </span>
+          </div>
         </div>
         <h1 className="hero-heading">
-          Best Coaching for NEET, IIT-JEE,<br />
-          <span>CBSE & ICSE Boards in Jind</span>
+          Best Coaching for NEET, IIT-JEE, <span className="hero-accent">CBSE & ICSE Boards in Jind</span>
         </h1>
         <p className="hero-subheading">{settings.tagline}</p>
       </section>
