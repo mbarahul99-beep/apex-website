@@ -178,9 +178,18 @@ const notifyDbUpdates = () => {
 };
 
 // Memory cache object for synchronous reads (Pre-seeded immediately from LocalStorage on Frame 0)
+const ensureMobileSliders = (sliders) => {
+  return (sliders || []).map(s => {
+    if ((s.id === 's_1792327505092' || s.orderIndex === 1) && (!s.mobileImageUrl || s.mobileImageUrl === '')) {
+      return { ...s, mobileImageUrl: '/images/slides/mobile_slide_2.webp' };
+    }
+    return s;
+  });
+};
+
 const cache = {
   settings: { ...DEFAULT_SETTINGS, ...loadData(DB_KEYS.SETTINGS, DEFAULT_SETTINGS) },
-  sliders: loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0)),
+  sliders: ensureMobileSliders(loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS)).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0)),
   courses: loadData(DB_KEYS.COURSES, DEFAULT_COURSES),
   resources: loadData(DB_KEYS.RESOURCES, DEFAULT_RESOURCES),
   testimonials: loadData(DB_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS),
@@ -334,7 +343,7 @@ export const dbService = {
 
   // Sliders
   getSliders() {
-    return cache.sliders;
+    return ensureMobileSliders(cache.sliders);
   },
   async saveSliders(sliders) {
     const sorted = [...sliders].sort((a,b) => a.orderIndex - b.orderIndex);

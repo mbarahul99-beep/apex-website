@@ -3,7 +3,6 @@ import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { dbService } from './services/dbService';
 import { isDefault } from './services/firebase';
 import './css/main.css';
-import CounselorAvatar from './components/CounselorAvatar';
 // admin.css is imported inside AdminPanel.jsx to keep it out of the critical path
 
 // SVG Icons and shared utilities from standalone module
@@ -622,9 +621,6 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
         </button>
       </div>
 
-      {/* Free Interactive Video & Voice Academic Counselor Avatar */}
-      <CounselorAvatar settings={settings} />
-
       {/* Sticky Bottom Navigation Footer (Mobile Only) */}
       <nav className="bottom-nav">
         <div className={`bottom-nav-item ${currentPath === '/' || currentPath === '/home' ? 'active' : ''}`} onClick={() => navigate('/')}>
@@ -858,7 +854,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                     loading={idx === 0 ? "eager" : "lazy"}
                     fetchpriority={idx === 0 ? "high" : "auto"}
                     decoding={idx === 0 ? "sync" : "async"}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0' }} 
+                    className="slide-banner-img"
                   />
                 </picture>
               </div>
