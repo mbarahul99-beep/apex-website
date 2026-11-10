@@ -1673,116 +1673,75 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
 
           <div className="about-patterns-grid">
             {/* Pattern for Class XI */}
-            <div className="academic-pattern-card">
-              <div className="academic-card-topbar">
-                <span className="academic-class-badge">CLASS XI</span>
-                <span className="academic-timeline-chip">
-                  <span className="chip-dot"></span>
-                  Completion: 3<sup>rd</sup> Week of Jan, 2026
-                </span>
+            <div className="about-pattern-card">
+              <div className="about-pattern-header">
+                <h3 className="about-pattern-title">The pattern we follow for Class XI :-</h3>
               </div>
+              <div className="about-pattern-body">
+                <p className="about-pattern-desc">
+                  The syllabus of Class XI is covered keeping in view the school as well as the base for Medical Entrance Exams. Students are let off in 3<sup>rd</sup> week of January, 2026 after full syllabus test for their final examinations.
+                </p>
 
-              <h3 className="academic-pattern-title">The pattern we follow for Class XI :-</h3>
-              <p className="academic-syllabus-summary">
-                The syllabus of Class XI is covered keeping in view the school as well as the base for Medical Entrance Exams. Students are let off in 3<sup>rd</sup> week of January, 2026 after full syllabus test for their final examinations.
-              </p>
-
-              <div className="academic-schedule-divider">
-                <span>Test Series Schedule</span>
-              </div>
-
-              <div className="academic-milestones-list">
-                <div className="academic-milestone-item">
-                  <span className="milestone-index">01</span>
-                  <div className="milestone-content">
-                    <div className="milestone-label">Periodic Chapter & Unit Assessments</div>
-                    <p className="milestone-detail">Regular tests (Subjective & objective separately) after completion of each chapter and each unit.</p>
+                <div className="about-test-series-box">
+                  <div className="about-test-series-header">
+                    <svg fill="currentColor" viewBox="0 0 20 20" style={{ width: 18, height: 18, color: '#be185d' }}>
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                    </svg>
+                    <span>Test Series :-</span>
                   </div>
-                </div>
-
-                <div className="academic-milestone-item">
-                  <span className="milestone-index">02</span>
-                  <div className="milestone-content">
-                    <div className="milestone-label">
-                      <span>Half Syllabus Comprehensive Test</span>
-                      <span className="milestone-timing">3<sup>rd</sup> Week of August, 2025</span>
-                    </div>
-                    <p className="milestone-detail">Half syllabus test (Subjective & objective separately) in the 3<sup>rd</sup> week of August, 2025.</p>
-                  </div>
-                </div>
-
-                <div className="academic-milestone-item">
-                  <span className="milestone-index">03</span>
-                  <div className="milestone-content">
-                    <div className="milestone-label">
-                      <span>Final Exams Full Syllabus Test</span>
-                      <span className="milestone-timing">3<sup>rd</sup> Week of January, 2026</span>
-                    </div>
-                    <p className="milestone-detail">Full syllabus Subjective test for preparation of final exams in the 3<sup>rd</sup> week of January, 2026.</p>
-                  </div>
+                  <ul className="about-test-list">
+                    <li className="about-test-item">
+                      <span className="about-test-bullet"></span>
+                      <span>Regular tests (Subjective & objective separately) after completion of each chapter and each unit.</span>
+                    </li>
+                    <li className="about-test-item">
+                      <span className="about-test-bullet"></span>
+                      <span>Half syllabus test (Subjective & objective separately) in the 3<sup>rd</sup> week of August, 2025.</span>
+                    </li>
+                    <li className="about-test-item">
+                      <span className="about-test-bullet"></span>
+                      <span>Full syllabus Subjective test for preparation of final exams in the 3<sup>rd</sup> week of January, 2026.</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
 
             {/* Pattern for Class XII */}
-            <div className="academic-pattern-card">
-              <div className="academic-card-topbar">
-                <span className="academic-class-badge">CLASS XII</span>
-                <span className="academic-timeline-chip">
-                  <span className="chip-dot"></span>
-                  Completion: 2<sup>nd</sup> Week of Dec, 2025
-                </span>
+            <div className="about-pattern-card">
+              <div className="about-pattern-header">
+                <h3 className="about-pattern-title">The pattern we follow for Class XII :-</h3>
               </div>
+              <div className="about-pattern-body">
+                <p className="about-pattern-desc">
+                  The syllabus is taught thoroughly for Board Exams, IIT-JEE, NEET and other Medical Entrance Exams. The entire syllabus is completed in the 2<sup>nd</sup> week of December, 2025.
+                </p>
 
-              <h3 className="academic-pattern-title">The pattern we follow for Class XII :-</h3>
-              <p className="academic-syllabus-summary">
-                The syllabus is taught thoroughly for Board Exams, IIT-JEE, NEET and other Medical Entrance Exams. The entire syllabus is completed in the 2<sup>nd</sup> week of December, 2025.
-              </p>
-
-              <div className="academic-schedule-divider">
-                <span>Test Series Schedule</span>
-              </div>
-
-              <div className="academic-milestones-list">
-                <div className="academic-milestone-item">
-                  <span className="milestone-index">01</span>
-                  <div className="milestone-content">
-                    <div className="milestone-label">Regular Chapter & Unit Assessments</div>
-                    <p className="milestone-detail">Regular tests (Subjective & objective separately) after completion of each chapter and each unit.</p>
+                <div className="about-test-series-box">
+                  <div className="about-test-series-header">
+                    <svg fill="currentColor" viewBox="0 0 20 20" style={{ width: 18, height: 18, color: '#be185d' }}>
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                    </svg>
+                    <span>Test Series :-</span>
                   </div>
-                </div>
-
-                <div className="academic-milestone-item">
-                  <span className="milestone-index">02</span>
-                  <div className="milestone-content">
-                    <div className="milestone-label">
-                      <span>Half Syllabus Benchmark Test</span>
-                      <span className="milestone-timing">3<sup>rd</sup> Week of August, 2025</span>
-                    </div>
-                    <p className="milestone-detail">Half syllabus test (Subjective & objective separately) in the 3<sup>rd</sup> week of August, 2025.</p>
-                  </div>
-                </div>
-
-                <div className="academic-milestone-item">
-                  <span className="milestone-index">03</span>
-                  <div className="milestone-content">
-                    <div className="milestone-label">
-                      <span>Special Revision Test Series (Class XI-XII)</span>
-                      <span className="milestone-timing">15<sup>th</sup> Dec, 2025 – 15<sup>th</sup> Jan, 2026</span>
-                    </div>
-                    <p className="milestone-detail">After completion of class XII full syllabus a special revision test series (for IIT-JEE & PMT preparation of objective test) based on class XI-XII syllabus will be conducted from 15<sup>th</sup> December, 2025 to 15<sup>th</sup> January, 2026.</p>
-                  </div>
-                </div>
-
-                <div className="academic-milestone-item">
-                  <span className="milestone-index">04</span>
-                  <div className="milestone-content">
-                    <div className="milestone-label">
-                      <span>10 Full Syllabus Sample Paper Tests</span>
-                      <span className="milestone-timing">January & February, 2026</span>
-                    </div>
-                    <p className="milestone-detail">10 full syllabus Sample Paper Test will be held keeping in view the attemptation of board exams in the month of January & February, 2026.</p>
-                  </div>
+                  <ul className="about-test-list">
+                    <li className="about-test-item">
+                      <span className="about-test-bullet"></span>
+                      <span>Regular tests (Subjective & objective separately) after completion of each chapter and each unit.</span>
+                    </li>
+                    <li className="about-test-item">
+                      <span className="about-test-bullet"></span>
+                      <span>Half syllabus test (Subjective & objective separately) in the 3<sup>rd</sup> week of August, 2025.</span>
+                    </li>
+                    <li className="about-test-item">
+                      <span className="about-test-bullet"></span>
+                      <span>After completion of class XII full syllabus a special revision test series (for IIT-JEE & PMT preparation of objective test) based on class XI-XII syllabus will be conducted from 15<sup>th</sup> December, 2025 to 15<sup>th</sup> January, 2026.</span>
+                    </li>
+                    <li className="about-test-item">
+                      <span className="about-test-bullet"></span>
+                      <span>10 full syllabus Sample Paper Test will be held keeping in view the attemptation of board exams in the month of January & February, 2026.</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
