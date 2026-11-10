@@ -1115,9 +1115,14 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
       <div className="student-content-wrap" style={{ marginTop: '20px' }}>
         {/* Large Banner Intro */}
       <section className="hero-title-section" style={{ borderBottom: 'none' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: '#e2e8f0', color: 'var(--navy-blue)', padding: '5px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700, marginBottom: '12px' }}>
+          <span>📍 Urban Estate, Jind (Near HUDA Ground)</span>
+          <span style={{ color: '#94a3b8' }}>•</span>
+          <span>16+ Years of Proven Medical & Engineering Ranks</span>
+        </div>
         <h1 className="hero-heading">
-          India's Best Coaching for<br />
-          <span>NEET, JEE & FOUNDATIONS</span>
+          Best Coaching for NEET, IIT-JEE,<br />
+          <span>CBSE & ICSE Boards in Jind</span>
         </h1>
         <p className="hero-subheading">{settings.tagline}</p>
       </section>
@@ -1127,11 +1132,11 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
         <section className="info-section" style={{ borderRadius: 'var(--radius-lg)', borderBottom: 'none', marginBottom: '20px' }}>
           <div className="info-card">
             <div className="info-card-text-wrap">
-              <span className="info-card-title">24/7 Academic Study Partner</span>
+              <span className="info-card-title">24/7 Academic Study Partner in Jind</span>
               <p className="info-card-text">Access standard practice test banks, offline subjective OMR grading, and personalized analytics for a complete competitive edge.</p>
             </div>
             <div className="info-card-image-wrap">
-              <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=600" className="info-card-image" alt="Apex Study Partner Portal Mockup" loading="lazy" decoding="async" />
+              <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=600" className="info-card-image" alt="Institute APEX Jind Classroom and Study Partner Portal" loading="lazy" decoding="async" />
             </div>
           </div>
         </section>
@@ -1141,8 +1146,8 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
       {settings.showFeaturedCourses !== false && (
         <section style={{ borderBottom: '8px solid var(--border-light)', paddingBottom: '30px' }}>
           <div className="section-header">
-            <h2 className="section-title">Featured Programs</h2>
-            <p className="section-subtitle">Explore classes tailored for CBSE, HBSE, and ICSE boards</p>
+            <h2 className="section-title">Top NEET, IIT-JEE & Board Foundation Courses in Jind</h2>
+            <p className="section-subtitle">Comprehensive classroom coaching tailored for CBSE, ICSE, and State Boards</p>
           </div>
 
           <div className="courses-container">
@@ -1150,7 +1155,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
               <div className="course-card" key={course.id}>
                 {course.showImage !== false && (
                   <div className="course-banner">
-                    <img src={course.image} alt={course.title} loading="lazy" decoding="async" />
+                    <img src={course.image} alt={`${course.title} - Best Coaching in Jind | Institute APEX`} loading="lazy" decoding="async" />
                     <div className="course-banner-overlay">
                       <button className="course-detail-btn" onClick={() => setSelectedCourseDetails(course)}>View details</button>
                     </div>
@@ -1215,8 +1220,8 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
       {settings.showToppers !== false && results.length > 0 && (
         <section className="results-section">
           <div className="section-header">
-            <h2 className="section-title">Our Excellent Results</h2>
-            <p className="section-subtitle">Outstanding ranks and achievements secured by our students</p>
+            <h2 className="section-title">Our Excellent NEET & IIT-JEE Results from Jind</h2>
+            <p className="section-subtitle">Consistent top selections in premier government medical and engineering colleges</p>
           </div>
 
           {/* Results Filters pills */}
@@ -1240,7 +1245,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                   <img 
                     src={res.photo} 
                     className={`result-photo ${res.photoFit ? `fit-${res.photoFit}` : 'fit-contain'}`} 
-                    alt={res.studentName} 
+                    alt={`${res.studentName} - ${res.achievement || 'Topper'} (${res.examType || 'NEET/JEE'}) | Apex Institute Jind`} 
                     loading="lazy"
                   />
                 </div>
@@ -1269,8 +1274,8 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
       {settings.showAlumni !== false && alumni.length > 0 && (
         <section className="alumni-section">
           <div className="section-header">
-            <h2 className="section-title">Our Proud Alumni Network</h2>
-            <p className="section-subtitle">Inspiring journeys of Apex stars studying and graduating from India's premier institutes</p>
+            <h2 className="section-title">Proven Track Record — Apex Alumni from Jind</h2>
+            <p className="section-subtitle">Inspiring doctors and engineers graduated from Dr. RML Hospital, Govt Medical Colleges, and top IITs</p>
           </div>
 
           <div className="alumni-grid">
@@ -1286,7 +1291,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                     <img 
                       src={alm.photo || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400"} 
                       className={`alumni-photo ${alm.photoFit ? `fit-${alm.photoFit}` : 'fit-contain'}`} 
-                      alt={alm.name || 'Alumni'} 
+                      alt={`${alm.name || 'Apex Alumni'} - ${alm.college || alm.currentRole || 'Premier College'} | Apex Jind`} 
                       loading="lazy"
                       onError={(e) => {
                         e.currentTarget.onerror = null;
@@ -1472,8 +1477,8 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
       {settings.showTestimonials !== false && testimonials.length > 0 && (
         <section className="testimonials-section">
           <div className="section-header">
-            <h2 className="section-title">What Students Say</h2>
-            <p className="section-subtitle">Read success reviews from our toppers</p>
+            <h2 className="section-title">Real Student & Parent Reviews in Jind</h2>
+            <p className="section-subtitle">Read how Apex Institute helped Jind students conquer NEET, JEE, and Board exams</p>
           </div>
 
           <div className="testimonials-scroll">
@@ -1519,14 +1524,14 @@ function CoursesListView({ navigate, openEnquiry, setSelectedCourseDetails }) {
   return (
     <div className="fade-in student-content-wrap" style={{ marginTop: '20px' }}>
       <Helmet>
-        <title>IIT-JEE & NEET Coaching Courses - APEX Institute</title>
-        <meta name="description" content="Explore NEET medical preparation, IIT-JEE engineering tuitions, and junior foundations classes in Jind, Haryana." />
-        <meta name="keywords" content="medical coaching jind, engineering classes, foundations class 9, cbse syllabus haryana" />
+        <title>Best Coaching Courses for NEET, IIT-JEE, CBSE & ICSE in Jind - APEX</title>
+        <meta name="description" content="Explore classroom courses for NEET Medical entrance, IIT-JEE Engineering, Class 10th CBSE & ICSE Foundations, and 12th Science board tuitions at Institute APEX Jind." />
+        <meta name="keywords" content="Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best ICSE Coaching in Jind, Best Coaching for 12th Science in Jind, cbse tuition jind, icse tuition jind" />
       </Helmet>
 
       <div className="section-header">
-        <h2 className="section-title">Our Coaching Courses</h2>
-        <p className="section-subtitle">Excellence in Medical, Engineering, and Foundation examinations</p>
+        <h1 className="section-title" style={{ fontSize: '1.75rem', margin: '0 0 8px 0' }}>Best Coaching Courses for NEET, IIT-JEE, CBSE & ICSE in Jind</h1>
+        <p className="section-subtitle">Proven classroom programs for Classes 9th to 12th with expert faculty and weekly test series</p>
       </div>
 
       {/* Course Filter Pills */}
@@ -1556,7 +1561,7 @@ function CoursesListView({ navigate, openEnquiry, setSelectedCourseDetails }) {
           <div className="course-card" key={course.id}>
             {course.showImage !== false && (
               <div className="course-banner">
-                <img src={course.image} alt={course.title} />
+                <img src={course.image} alt={`${course.title} - Best Coaching in Jind | Institute APEX`} />
                 <div className="course-banner-overlay">
                   <button className="course-detail-btn" onClick={() => setSelectedCourseDetails(course)}>View Curriculum</button>
                 </div>
@@ -1622,12 +1627,13 @@ function OnlinePrepView({ navigate, openEnquiry }) {
   return (
     <div className="fade-in student-content-wrap" style={{ marginTop: '20px' }}>
       <Helmet>
-        <title>Online Prep - APEX Institute</title>
-        <meta name="description" content="Access online mock test series, CBT mode, and detailed performance analysis reports for IIT-JEE and NEET prep." />
+        <title>Online Prep & CBT Test Series in Jind - APEX Institute</title>
+        <meta name="description" content="Access online mock test series, CBT exam simulation mode, and detailed performance analysis reports for IIT-JEE and NEET prep from Institute APEX Jind." />
+        <meta name="keywords" content="online prep jind, neet cbt test series jind, jee test practice apex, online exam portal jind" />
       </Helmet>
 
       <div className="section-header">
-        <h2 className="section-title">APEX Online Prep Portal</h2>
+        <h1 className="section-title" style={{ fontSize: '1.75rem', margin: '0 0 8px 0' }}>APEX Online Prep & CBT Test Series in Jind</h1>
         <p className="section-subtitle">Excellence driven by smart assessments and comprehensive diagnostics</p>
       </div>
 
@@ -1692,12 +1698,13 @@ function ScholarshipView({ navigate, openEnquiry }) {
   return (
     <div className="fade-in student-content-wrap" style={{ marginTop: '20px' }}>
       <Helmet>
-        <title>Merit Scholarships - APEX Institute</title>
-        <meta name="description" content="View scholarship fee waivers provided for NEET and IIT-JEE coaching based on board exam scores and qualifying ranks." />
+        <title>Merit Scholarships for NEET & IIT-JEE Coaching in Jind - APEX</title>
+        <meta name="description" content="Apply for merit-based coaching scholarships and fee concessions for NEET, IIT-JEE, and CBSE/ICSE board students at Institute APEX Jind." />
+        <meta name="keywords" content="scholarship test jind, neet coaching scholarship jind, iit jee scholarship haryana, coaching fee concession jind" />
       </Helmet>
 
       <div className="section-header">
-        <h2 className="section-title">Merit-Based Scholarships</h2>
+        <h1 className="section-title" style={{ fontSize: '1.75rem', margin: '0 0 8px 0' }}>Merit Scholarships for NEET & IIT-JEE in Jind</h1>
         <p className="section-subtitle">Supporting outstanding academic achievers in their path to medical and engineering excellence</p>
       </div>
 
@@ -1782,7 +1789,7 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
           name="description" 
           content={`Learn more about ${instituteName} Jind, Haryana's leading coaching center for NEET Medical, IIT-JEE Engineering, and secondary board tuitions.`} 
         />
-        <meta name="keywords" content="about apex institute jind, coaching institute jind, best neet coaching in jind, best iit jee coaching in jind, haryana coaching institute" />
+        <meta name="keywords" content="about apex institute jind, coaching institute jind, best neet coaching in jind, best iit jee coaching in jind, best icse coaching in jind, best cbse coaching in jind, haryana coaching institute" />
       </Helmet>
 
       {/* Hero Banner with Clean High-Contrast Palette */}
@@ -2090,7 +2097,7 @@ function ContactUsView({ settings, navigate }) {
           name="description" 
           content={`Contact ${instituteName} in Jind for NEET & IIT-JEE coaching admissions. Located at #1257, Urban Estate, Near HUDA Ground, Jind. Phone: ${phone}.`} 
         />
-        <meta name="keywords" content="contact apex institute jind, apex institute phone number, apex jind address, admission enquiry apex jind" />
+        <meta name="keywords" content="contact apex institute jind, apex institute phone number, apex jind address, admission enquiry apex jind, neet coaching admission jind, jee admission jind" />
       </Helmet>
 
       {/* Hero Header with Clean High-Contrast Palette */}
@@ -2651,13 +2658,14 @@ function AllResultsView({ navigate }) {
   return (
     <div className="fade-in student-content-wrap" style={{ marginTop: '20px', paddingBottom: '50px' }}>
       <Helmet>
-        <title>Student Achievements & Results - APEX Institute</title>
-        <meta name="description" content="Explore year-wise ranks and outstanding achievements of APEX students in NEET, IIT-JEE, and national Olympiads." />
+        <title>NEET & IIT-JEE Results & Toppers in Jind - APEX Institute</title>
+        <meta name="description" content="Discover outstanding NEET selections, IIT-JEE ranks, and Board toppers from Institute APEX Jind. Consistent government medical and engineering college selections." />
+        <meta name="keywords" content="NEET results Jind, IIT JEE toppers Jind, best coaching results jind, medical selections jind, apex results" />
       </Helmet>
 
       <div className="section-header" style={{ marginBottom: '40px' }}>
-        <h2 className="section-title">Academic Achievements Gallery</h2>
-        <p className="section-subtitle">Year-by-year honors list of our toppers who excelled in national exams</p>
+        <h1 className="section-title" style={{ fontSize: '1.75rem', margin: '0 0 8px 0' }}>NEET & IIT-JEE Results — Toppers from Jind</h1>
+        <p className="section-subtitle">Year-by-year honors list of our toppers who excelled in national exams from Apex Institute Jind</p>
       </div>
 
       {sortedYears.length === 0 ? (
@@ -2694,7 +2702,7 @@ function AllResultsView({ navigate }) {
                       <img 
                         src={res.photo} 
                         className={`result-photo ${res.photoFit ? `fit-${res.photoFit}` : 'fit-contain'}`} 
-                        alt={res.studentName} 
+                        alt={`${res.studentName} - ${res.achievement || 'Topper'} (${res.examType || 'NEET/JEE'}) | Apex Institute Jind`} 
                         loading="lazy"
                       />
                     </div>
@@ -2738,13 +2746,14 @@ function AllBlogsView({ navigate }) {
   return (
     <div className="fade-in student-content-wrap" style={{ marginTop: '20px', paddingBottom: '50px' }}>
       <Helmet>
-        <title>Latest News, Blogs & Exam Alerts - APEX Institute</title>
-        <meta name="description" content="Stay updated with the latest exam alerts, prep strategies, and academic guides for IIT-JEE and NEET from APEX experts." />
+        <title>NEET & IIT-JEE Exam Preparation Blogs & Alerts - APEX Jind</title>
+        <meta name="description" content="Stay updated with the latest exam alerts, prep strategies, and academic guides for IIT-JEE, NEET, and CBSE/ICSE Board exams from APEX experts in Jind." />
+        <meta name="keywords" content="neet exam alerts jind, jee prep blogs haryana, cbse preparation tips, board exam guides jind" />
       </Helmet>
 
       <div className="section-header" style={{ marginBottom: '40px' }}>
-        <h2 className="section-title">Latest News & Blog Guides</h2>
-        <p className="section-subtitle">Academic tips, exam alerts, and guides written by our senior educators</p>
+        <h1 className="section-title" style={{ fontSize: '1.75rem', margin: '0 0 8px 0' }}>Latest Academic News & Exam Prep Guides</h1>
+        <p className="section-subtitle">Academic tips, exam alerts, and guides written by our senior educators in Jind</p>
       </div>
 
       {posts.length === 0 ? (
