@@ -1,0 +1,10 @@
+# robots.txt for Institute APEX Jind
+# Official Website: https://instituteapex.in
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+
+# Sitemaps
+Sitemap: https://instituteapex.in/sitemap.xml
