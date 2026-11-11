@@ -627,21 +627,31 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
       {/* Navigation Header */}
       <header className="header">
         <div className="header-inner">
-          <div className="header-left" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => navigate('/')}>
+          <a 
+            href="/" 
+            className="header-left" 
+            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', textDecoration: 'none' }} 
+            onClick={(e) => { e.preventDefault(); navigate('/'); }}
+            aria-label="Institute APEX Home"
+          >
             <img 
               src={getLogoSrc(settings.logoUrl || settings.logoNameUrl || '/logo_full.png')} 
               className="header-logo-text" 
               alt={settings.instituteName || "APEX INSTITUTE"} 
               fetchPriority="high"
               loading="eager"
+              width="260"
+              height="38"
               style={{ 
                 '--logo-width': getUnitValue(settings.logoWidth, '260px'),
-                '--logo-height': getUnitValue(settings.logoHeight, '34px'),
+                '--logo-height': getUnitValue(settings.logoHeight, '38px'),
                 width: 'auto',
-                height: 'var(--logo-height, 34px)',
+                height: 'var(--logo-height, 38px)',
+                maxHeight: '38px',
                 maxWidth: 'var(--logo-width, 260px)',
                 objectFit: 'contain',
-                padding: '2px 0'
+                padding: '2px 0',
+                display: 'block'
               }} 
               onError={(e) => { 
                 if (!e.target.src.includes('/logo_full.png')) {
@@ -649,18 +659,18 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
                 }
               }} 
             />
-          </div>
+          </a>
           
           <div className="header-right">
             {/* Desktop Navigation Links */}
-            <nav className="desktop-nav">
-              <span className={`desktop-nav-link ${currentPath === '/' || currentPath === '/home' ? 'active' : ''}`} onClick={() => navigate('/')}>Home</span>
-              <span className={`desktop-nav-link ${currentPath === '/courses' ? 'active' : ''}`} onClick={() => navigate('/courses')}>Courses</span>
-              <span className={`desktop-nav-link ${currentPath === '/scholarships' ? 'active' : ''}`} onClick={() => navigate('/scholarships')}>Scholarships</span>
-              <span className={`desktop-nav-link ${currentPath === '/online-prep' || currentPath === '/student-portal' ? 'active' : ''}`} onClick={() => navigate('/online-prep')}>Online Prep</span>
-              <span className={`desktop-nav-link ${currentPath === '/blogs' ? 'active' : ''}`} onClick={() => navigate('/blogs')}>Blogs</span>
-              <span className={`desktop-nav-link ${currentPath === '/about' || currentPath === '/about-us' || currentPath === '/pages/about-apex-jind' ? 'active' : ''}`} onClick={() => navigate('/about')}>About Us</span>
-              <span className={`desktop-nav-link ${currentPath === '/contact' || currentPath === '/contact-us' ? 'active' : ''}`} onClick={() => navigate('/contact')}>Contact Us</span>
+            <nav className="desktop-nav" aria-label="Primary Navigation">
+              <a href="/" className={`desktop-nav-link ${currentPath === '/' || currentPath === '/home' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/'); }}>Home</a>
+              <a href="/courses" className={`desktop-nav-link ${currentPath === '/courses' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/courses'); }}>Courses</a>
+              <a href="/scholarships" className={`desktop-nav-link ${currentPath === '/scholarships' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/scholarships'); }}>Scholarships</a>
+              <a href="/online-prep" className={`desktop-nav-link ${currentPath === '/online-prep' || currentPath === '/student-portal' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/online-prep'); }}>Online Prep</a>
+              <a href="/blogs" className={`desktop-nav-link ${currentPath === '/blogs' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/blogs'); }}>Blogs</a>
+              <a href="/about" className={`desktop-nav-link ${currentPath === '/about' || currentPath === '/about-us' || currentPath === '/pages/about-apex-jind' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/about'); }}>About Us</a>
+              <a href="/contact" className={`desktop-nav-link ${currentPath === '/contact' || currentPath === '/contact-us' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/contact'); }}>Contact Us</a>
               
               {customPages.filter(p => !['about-apex-jind', 'about', 'about-us', 'contact', 'contact-us'].includes(p.slug)).length > 0 && (
                 <div className="nav-dropdown-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
@@ -672,7 +682,8 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
                     {customPages.filter(p => !['about-apex-jind', 'about', 'about-us', 'contact', 'contact-us'].includes(p.slug)).map(page => (
                       <a 
                         key={page.id} 
-                        onClick={() => navigate(`/pages/${page.slug}`)}
+                        href={`/pages/${page.slug}`}
+                        onClick={(e) => { e.preventDefault(); navigate(`/pages/${page.slug}`); }}
                         style={{ 
                           display: 'block', 
                           padding: '8px 16px', 
@@ -694,13 +705,14 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
               )}
             </nav>
             
-            <button className="header-btn" onClick={handleCall}>
+            <button className="header-btn" onClick={handleCall} aria-label="Call Institute APEX">
               <IconPhone />
             </button>
             <button 
               className="header-btn" 
               onClick={() => window.open(settings.examPortalUrl || 'https://app.instituteapex.in?app=student', '_blank')} 
               title="Student Exam Portal"
+              aria-label="Student Exam Portal"
             >
               <IconUser />
             </button>
@@ -709,6 +721,7 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
               className="header-btn mobile-menu-toggle-btn" 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               title="Toggle Menu"
+              aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <IconClose /> : <IconMenu />}
             </button>
@@ -722,24 +735,25 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
           <div className="mobile-drawer" onClick={e => e.stopPropagation()}>
             <div className="mobile-drawer-header">
               <span style={{ fontWeight: 800, color: 'var(--navy-blue)', fontSize: '1.1rem' }}>APEX PORTAL</span>
-              <button className="close-drawer-btn" onClick={() => setMobileMenuOpen(false)}>×</button>
+              <button className="close-drawer-btn" onClick={() => setMobileMenuOpen(false)} aria-label="Close navigation menu">×</button>
             </div>
-            <nav className="mobile-drawer-nav">
-              <span className={`mobile-nav-link ${currentPath === '/' || currentPath === '/home' ? 'active' : ''}`} onClick={() => { navigate('/'); setMobileMenuOpen(false); }}>Home</span>
-              <span className={`mobile-nav-link ${currentPath === '/courses' ? 'active' : ''}`} onClick={() => { navigate('/courses'); setMobileMenuOpen(false); }}>Courses</span>
-              <span className={`mobile-nav-link ${currentPath === '/scholarships' ? 'active' : ''}`} onClick={() => { navigate('/scholarships'); setMobileMenuOpen(false); }}>Scholarships</span>
-              <span className={`mobile-nav-link ${currentPath === '/online-prep' || currentPath === '/student-portal' ? 'active' : ''}`} onClick={() => { navigate('/online-prep'); setMobileMenuOpen(false); }}>Online Prep</span>
-              <span className={`mobile-nav-link ${currentPath === '/blogs' ? 'active' : ''}`} onClick={() => { navigate('/blogs'); setMobileMenuOpen(false); }}>Blogs</span>
-              <span className={`mobile-nav-link ${currentPath === '/about' || currentPath === '/about-us' || currentPath === '/pages/about-apex-jind' ? 'active' : ''}`} onClick={() => { navigate('/about'); setMobileMenuOpen(false); }}>About Us</span>
-              <span className={`mobile-nav-link ${currentPath === '/contact' || currentPath === '/contact-us' ? 'active' : ''}`} onClick={() => { navigate('/contact'); setMobileMenuOpen(false); }}>Contact Us</span>
+            <nav className="mobile-drawer-nav" aria-label="Mobile Navigation">
+              <a href="/" className={`mobile-nav-link ${currentPath === '/' || currentPath === '/home' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/'); setMobileMenuOpen(false); }}>Home</a>
+              <a href="/courses" className={`mobile-nav-link ${currentPath === '/courses' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/courses'); setMobileMenuOpen(false); }}>Courses</a>
+              <a href="/scholarships" className={`mobile-nav-link ${currentPath === '/scholarships' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/scholarships'); setMobileMenuOpen(false); }}>Scholarships</a>
+              <a href="/online-prep" className={`mobile-nav-link ${currentPath === '/online-prep' || currentPath === '/student-portal' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/online-prep'); setMobileMenuOpen(false); }}>Online Prep</a>
+              <a href="/blogs" className={`mobile-nav-link ${currentPath === '/blogs' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/blogs'); setMobileMenuOpen(false); }}>Blogs</a>
+              <a href="/about" className={`mobile-nav-link ${currentPath === '/about' || currentPath === '/about-us' || currentPath === '/pages/about-apex-jind' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/about'); setMobileMenuOpen(false); }}>About Us</a>
+              <a href="/contact" className={`mobile-nav-link ${currentPath === '/contact' || currentPath === '/contact-us' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/contact'); setMobileMenuOpen(false); }}>Contact Us</a>
               {customPages.filter(p => !['about-apex-jind', 'about', 'about-us', 'contact', 'contact-us'].includes(p.slug)).map(page => (
-                <span 
+                <a 
                   key={page.id}
+                  href={`/pages/${page.slug}`}
                   className={`mobile-nav-link ${currentPath === `/pages/${page.slug}` ? 'active' : ''}`} 
-                  onClick={() => { navigate(`/pages/${page.slug}`); setMobileMenuOpen(false); }}
+                  onClick={(e) => { e.preventDefault(); navigate(`/pages/${page.slug}`); setMobileMenuOpen(false); }}
                 >
                   {page.title}
-                </span>
+                </a>
               ))}
             </nav>
             <div className="mobile-drawer-footer">
@@ -829,33 +843,33 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
       {/* Floating Action Overlay stack */}
       <div className="floating-actions">
         {scrollTopVisible && (
-          <button className="floating-btn scroll-top" onClick={handleScrollTop} style={{ width: '40px', height: '40px' }}>
+          <button className="floating-btn scroll-top" onClick={handleScrollTop} aria-label="Scroll to top" title="Scroll to top" style={{ width: '40px', height: '40px' }}>
             <svg fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ width: 16, height: 16 }}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" /></svg>
           </button>
         )}
-        <button className="floating-btn whatsapp" onClick={handleWhatsApp} title="Chat on WhatsApp" style={{ width: '44px', height: '44px' }}>
+        <button className="floating-btn whatsapp" onClick={handleWhatsApp} title="Chat on WhatsApp" aria-label="Chat with Institute APEX on WhatsApp" style={{ width: '44px', height: '44px' }}>
           <svg fill="currentColor" viewBox="0 0 24 24" style={{ width: 22, height: 22 }}><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.517 2.266 2.27 3.51 5.284 3.508 8.489-.005 6.66-5.343 11.999-11.957 11.999-2.005-.001-3.973-.504-5.714-1.463L0 24zm6.59-4.846c1.6.95 3.197 1.451 4.82 1.452 5.518 0 10.006-4.486 10.01-10.002.002-2.673-1.037-5.186-2.927-7.079-1.889-1.89-4.4-2.932-7.08-2.933-5.524 0-10.014 4.487-10.018 10.004-.002 1.699.444 3.361 1.293 4.81l-.963 3.518 3.606-.945zm11.367-7.795c-.3-.15-1.772-.875-2.046-.975-.276-.1-.476-.15-.676.15-.2.3-.776.975-.95 1.175-.175.2-.35.225-.65.075-.3-.15-1.267-.467-2.414-1.492-.893-.797-1.497-1.782-1.672-2.082-.175-.3-.018-.462.13-.61.135-.133.3-.35.45-.525.15-.175.2-.3.3-.5.1-.2.05-.375-.025-.525-.075-.15-.676-1.63-1.026-2.47-.3-.72-.6-1.125-.676-1.125-.175 0-.35-.025-.525-.025-.175 0-.476.075-.726.35-.25.275-.95.925-.95 2.25s.965 2.6 1.1 2.775c.135.175 1.9 2.9 4.6 4.075.642.28 1.144.446 1.534.57.645.205 1.233.176 1.7.106.52-.078 1.772-.725 2.022-1.425.25-.7.25-1.3.175-1.425-.075-.125-.275-.2-.575-.35z"/></svg>
         </button>
       </div>
 
       {/* Sticky Bottom Navigation Footer (Mobile Only) */}
-      <nav className="bottom-nav">
-        <div className={`bottom-nav-item ${currentPath === '/' || currentPath === '/home' ? 'active' : ''}`} onClick={() => navigate('/')}>
+      <nav className="bottom-nav" aria-label="Mobile Bottom Navigation">
+        <a href="/" className={`bottom-nav-item ${currentPath === '/' || currentPath === '/home' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/'); }}>
           <IconHome />
           <span>Home</span>
-        </div>
-        <div className={`bottom-nav-item ${currentPath === '/courses' ? 'active' : ''}`} onClick={() => navigate('/courses')}>
+        </a>
+        <a href="/courses" className={`bottom-nav-item ${currentPath === '/courses' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/courses'); }}>
           <IconBook />
           <span>Courses</span>
-        </div>
-        <div className={`bottom-nav-item ${currentPath === '/about' || currentPath === '/about-us' || currentPath === '/pages/about-apex-jind' ? 'active' : ''}`} onClick={() => navigate('/about')}>
+        </a>
+        <a href="/about" className={`bottom-nav-item ${currentPath === '/about' || currentPath === '/about-us' || currentPath === '/pages/about-apex-jind' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/about'); }}>
           <IconInfo />
           <span>About</span>
-        </div>
-        <div className={`bottom-nav-item ${currentPath === '/contact' || currentPath === '/contact-us' ? 'active' : ''}`} onClick={() => navigate('/contact')}>
+        </a>
+        <a href="/contact" className={`bottom-nav-item ${currentPath === '/contact' || currentPath === '/contact-us' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); navigate('/contact'); }}>
           <IconPhone />
           <span>Contact</span>
-        </div>
+        </a>
       </nav>
     </div>
   );
@@ -1064,13 +1078,15 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
             {sliders.map((slide, idx) => (
               <div className="slide" key={slide.id || idx}>
                 <picture style={{ width: '100%', height: '100%', display: 'block' }}>
-                  <source media="(max-width: 767px)" srcSet={slide.mobileImageUrl || slide.imageUrl} />
+                  <source media="(max-width: 767px)" srcSet={slide.mobileImageUrl || slide.imageUrl} width="1024" height="900" />
                   <img 
                     src={slide.imageUrl} 
                     alt={`Apex Banner Slide ${idx + 1}`} 
                     loading={idx === 0 ? "eager" : "lazy"}
-                    fetchpriority={idx === 0 ? "high" : "auto"}
+                    fetchPriority={idx === 0 ? "high" : "auto"}
                     decoding={idx === 0 ? "sync" : "async"}
+                    width="1920"
+                    height="540"
                     className="slide-banner-img"
                   />
                 </picture>
@@ -1097,10 +1113,12 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
               
               <div className="slider-dots">
                 {sliders.map((_, idx) => (
-                  <span 
+                  <button 
+                    type="button"
                     key={idx}
                     className={`slider-dot ${idx === currentSlide ? 'active' : ''}`}
                     onClick={() => setCurrentSlide(idx)}
+                    aria-label={`Go to slide ${idx + 1}`}
                   />
                 ))}
               </div>

@@ -1,0 +1,22 @@
+{
+  "@context": "https://schema.org",
+  "host": {
+    "displayName": "Institute APEX",
+    "identifier": "did:web:instituteapex.in"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:instituteapex.in:academic:courses-info",
+      "displayName": "Institute APEX Courses & Admissions",
+      "type": "text/markdown",
+      "url": "https://instituteapex.in/llms.txt",
+      "description": "Comprehensive course catalog, admission fees, NEET and IIT-JEE coaching programs in Jind.",
+      "representativeQueries": [
+        "best coaching institute for NEET in Jind",
+        "IIT JEE classroom batches at Institute Apex",
+        "Class 9th and 10th science tuition in Jind",
+        "Apex Institute Jind admission contact number"
+      ]
+    }
+  ]
+}

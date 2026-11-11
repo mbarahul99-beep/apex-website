@@ -5,28 +5,51 @@
     <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>APEX INSTITUTE - NEET, IIT-JEE Coaching & Tuition</title>
-    <!-- Preconnect to critical origins -->
+    <!-- Preconnect to critical fonts origin -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://firestore.googleapis.com" />
-    <link rel="preconnect" href="https://images.unsplash.com" />
-    <link rel="dns-prefetch" href="https://images.unsplash.com" />
-    <!-- Preload Critical LCP Logo & Hero Banner in modern WebP format -->
-    <link rel="preload" href="/logo_full.webp" as="image" type="image/webp" fetchpriority="high" />
-    <link rel="preload" href="/images/slides/s_1792327822326.webp" as="image" type="image/webp" fetchpriority="high" />
+    <!-- Non-blocking Google Fonts with system fallback -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" />
+    </noscript>
+    <!-- Agentic Resource Discovery Manifest -->
+    <link rel="ard" href="/.well-known/ard.json" />
+    <!-- Responsive Preload for LCP Hero Banner: Mobile gets mobile slide, desktop gets wide banner -->
+    <link rel="preload" href="/images/slides/mobile_slide_2.webp" as="image" type="image/webp" media="(max-width: 767px)" fetchpriority="high" />
+    <link rel="preload" href="/images/slides/s_1792327505092.webp" as="image" type="image/webp" media="(min-width: 768px)" fetchpriority="high" />
     <link rel="preload" href="/images/director.webp" as="image" type="image/webp" fetchpriority="high" />
-    <!-- Dynamic LCP preload: reads first slide from cache so it stays accurate after admin updates -->
+    <!-- Dynamic Synchronous Preload & State Engine: Reads custom logo & slider from LocalStorage on Frame 0 -->
     <script>
-      try {
-        var _c = JSON.parse(localStorage.getItem('apex_live_v10') || localStorage.getItem('apex_live_v9') || '{}');
-        var _s = _c && _c.sliders && _c.sliders[0] && _c.sliders[0].image;
-        if (_s && (_s.startsWith('http') || _s.startsWith('/'))) {
-          var _l = document.createElement('link');
-          _l.rel = 'preload'; _l.as = 'image';
-          _l.href = _s; _l.setAttribute('fetchpriority', 'high');
-          document.head.appendChild(_l);
-        }
-      } catch(e) {}
+      (function() {
+        try {
+          var isMobile = window.innerWidth < 768;
+          var s = JSON.parse(localStorage.getItem('apex_settings') || '{}');
+          var logo = s.logoUrl || s.logoNameUrl;
+          if (logo && logo.startsWith('http')) {
+            var l = document.createElement('link');
+            l.rel = 'preload'; l.as = 'image'; l.href = logo; l.setAttribute('fetchpriority', 'high');
+            document.head.appendChild(l);
+            window.__APEX_SAVED_LOGO__ = logo;
+          } else {
+            var l2 = document.createElement('link');
+            l2.rel = 'preload'; l2.as = 'image'; l2.type = 'image/webp'; l2.href = '/logo_full.webp'; l2.setAttribute('fetchpriority', 'high');
+            document.head.appendChild(l2);
+          }
+          var sliders = JSON.parse(localStorage.getItem('apex_sliders') || '[]');
+          if (sliders && sliders.length > 0) {
+            var sorted = sliders.slice().sort(function(a, b) { return (a.orderIndex || 0) - (b.orderIndex || 0); });
+            var first = sorted[0];
+            var heroSrc = isMobile ? (first.mobileImageUrl || first.imageUrl) : (first.imageUrl || first.image);
+            if (heroSrc && heroSrc.startsWith('http')) {
+              var hl = document.createElement('link');
+              hl.rel = 'preload'; hl.as = 'image'; hl.href = heroSrc; hl.setAttribute('fetchpriority', 'high');
+              document.head.appendChild(hl);
+              window.__APEX_SAVED_HERO__ = heroSrc;
+            }
+          }
+        } catch(e) {}
+      })();
     </script>
     <!-- Schema.org Knowledge Graph (JSON-LD) for LocalBusiness, Courses & FAQ Rich Snippets -->
     <script type="application/ld+json" id="apex-schema-graph">
@@ -300,24 +323,33 @@
           align-items: center;
         }
         .shell-hero {
-          max-width: 1320px;
-          margin: 20px auto;
-          padding: 0 16px;
+          width: 100%;
+          margin: 0;
+          padding: 0;
         }
         .shell-banner {
           width: 100%;
-          aspect-ratio: 1980 / 540;
-          border-radius: 12px;
-          background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
-          background-size: 200% 100%;
-          animation: shell-shimmer 1.5s infinite;
+          aspect-ratio: 1024 / 900;
+          background-color: #fbfcf8;
+          overflow: hidden;
+          position: relative;
         }
-        @keyframes shell-shimmer {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
+        .shell-banner img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          display: block;
         }
-        @media (max-width: 768px) {
-          .shell-banner { aspect-ratio: 16 / 9; }
+        @media (min-width: 768px) {
+          .shell-banner {
+            aspect-ratio: 1920 / 540;
+            max-height: 540px;
+          }
+          .shell-banner img {
+            object-fit: cover;
+          }
+        }
+        @media (max-width: 767px) {
           .shell-topbar-text { display: none; }
         }
       </style>
@@ -329,8 +361,16 @@
             <a href="https://wa.me/919467752374" style="color:#25d366;text-decoration:none;font-weight:700;">WhatsApp</a>
           </div>
         </div>
-        <div class="shell-header">
-          <img src="/logo_full.webp" alt="Apex Institute" style="height:38px;width:auto;" />
+        <div class="shell-header" style="height:62px;">
+          <div style="height:38px;max-width:260px;display:flex;align-items:center;">
+            <img id="shell-logo" src="/logo_full.webp" alt="Apex Institute" width="260" height="38" style="height:38px;width:auto;max-height:38px;max-width:260px;object-fit:contain;display:block;" />
+          </div>
+          <script>
+            if (window.__APEX_SAVED_LOGO__) {
+              var _sl = document.getElementById('shell-logo');
+              if (_sl) _sl.src = window.__APEX_SAVED_LOGO__;
+            }
+          </script>
           <div style="display:flex;gap:16px;align-items:center;">
             <div style="width:60px;height:12px;background:#e2e8f0;border-radius:4px;"></div>
             <div style="width:60px;height:12px;background:#e2e8f0;border-radius:4px;"></div>
@@ -338,7 +378,18 @@
           </div>
         </div>
         <div class="shell-hero">
-          <div class="shell-banner"></div>
+          <div class="shell-banner">
+            <picture style="width:100%;height:100%;display:block;">
+              <source media="(max-width: 767px)" srcset="/images/slides/mobile_slide_2.webp" />
+              <img id="shell-hero-img" src="/images/slides/s_1792327505092.webp" alt="Institute APEX Jind" width="1024" height="900" style="width:100%;height:100%;display:block;" fetchpriority="high" decoding="sync" />
+            </picture>
+            <script>
+              if (window.__APEX_SAVED_HERO__) {
+                var _shi = document.getElementById('shell-hero-img');
+                if (_shi) _shi.src = window.__APEX_SAVED_HERO__;
+              }
+            </script>
+          </div>
         </div>
       </div>
     </div>

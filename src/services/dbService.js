@@ -7,8 +7,7 @@ import {
   deleteDoc,
   updateDoc
 } from "firebase/firestore";
-import { signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { db, auth, isDefault } from "./firebase";
+import { db, getAuthInstance, isDefault } from "./firebase";
 import snapshot from "./firestoreSnapshot.json";
 
 // Database Service using LocalStorage with Brochure details as default seed data
@@ -187,8 +186,9 @@ const notifyDbUpdates = () => {
 
 // Memory cache object for synchronous reads (Pre-seeded immediately from LocalStorage on Frame 0)
 const ensureMobileSliders = (sliders) => {
-  return (sliders || []).map(s => {
-    if ((s.id === 's_1792327505092' || s.orderIndex === 1) && (!s.mobileImageUrl || s.mobileImageUrl === '')) {
+  const sorted = [...(sliders || [])].sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+  return sorted.map((s, idx) => {
+    if ((idx === 0 || s.id === 's_1792327505092' || s.orderIndex === 0) && (!s.mobileImageUrl || s.mobileImageUrl === '')) {
       return { ...s, mobileImageUrl: '/images/slides/mobile_slide_2.webp' };
     }
     return s;
@@ -683,7 +683,7 @@ export const dbService = {
     }
   },
 
-  // Firebase Auth Login
+  // Firebase Auth Login (Lazily dynamically loaded to eliminate auth iframe on public visitor pages)
   async login(username, password) {
     if (isDefault) {
       if (username === 'admin' && password === 'apex2026') {
@@ -694,6 +694,9 @@ export const dbService = {
     }
     
     try {
+      const auth = await getAuthInstance();
+      if (!auth) throw new Error("Firebase Auth could not be initialized.");
+      const { signInWithEmailAndPassword } = await import("firebase/auth");
       const userCredential = await signInWithEmailAndPassword(auth, username, password);
       localStorage.setItem(DB_KEYS.AUTH, 'true');
       return true;
@@ -707,8 +710,11 @@ export const dbService = {
     if (isDefault) {
       throw new Error("Firebase configuration not found.");
     }
-    const provider = new GoogleAuthProvider();
     try {
+      const auth = await getAuthInstance();
+      if (!auth) throw new Error("Firebase Auth could not be initialized.");
+      const { GoogleAuthProvider, signInWithPopup, signOut } = await import("firebase/auth");
+      const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const email = result.user.email;
       const settings = cache.settings || DEFAULT_SETTINGS;
@@ -734,7 +740,11 @@ export const dbService = {
     localStorage.removeItem(DB_KEYS.AUTH);
     if (!isDefault) {
       try {
-        await signOut(auth);
+        const auth = await getAuthInstance();
+        if (auth) {
+          const { signOut } = await import("firebase/auth");
+          await signOut(auth);
+        }
       } catch (err) {
         console.error("❌ Sign out error:", err);
       }

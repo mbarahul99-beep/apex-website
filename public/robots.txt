@@ -6,5 +6,6 @@ Allow: /
 Disallow: /admin
 Disallow: /admin/
 
-# Sitemaps
+# Sitemaps & Agent Discovery
 Sitemap: https://instituteapex.in/sitemap.xml
+Agentmap: https://instituteapex.in/.well-known/ard.json

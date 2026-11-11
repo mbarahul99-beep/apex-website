@@ -225,6 +225,9 @@
   height: 8px;
   border-radius: var(--radius-full);
   background-color: rgba(255, 255, 255, 0.45);
+  border: none;
+  padding: 0;
+  outline: none;
   cursor: pointer;
   transition: background-color 0.2s, width 0.2s;
 }
