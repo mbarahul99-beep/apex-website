@@ -1,36 +1,36 @@
 {
   "sliders": [
     {
-      "id": "s_1792327505092",
+      "id": "s_1792327822326",
       "orderIndex": 0,
+      "mobileImageUrl": "/images/slides/mobile_slide_1.webp",
+      "active": true,
+      "imageUrl": "/images/slides/s_1792327822326.webp"
+    },
+    {
+      "id": "s_1792327505092",
+      "orderIndex": 1,
       "mobileImageUrl": "/images/slides/mobile_slide_2.webp",
       "active": true,
       "imageUrl": "/images/slides/s_1792327505092.webp"
-    },
-    {
-      "id": "s_1792327822326",
-      "active": true,
-      "mobileImageUrl": "",
-      "orderIndex": 1,
-      "imageUrl": "/images/slides/s_1792327822326.webp"
     },
     {
       "id": "s_1792327825822",
       "active": true,
       "orderIndex": 2,
       "imageUrl": "/images/slides/s_1792327825822.webp",
-      "mobileImageUrl": ""
+      "mobileImageUrl": "/images/slides/mobile_slide_3.webp"
     },
     {
       "id": "s_1792327827472",
       "orderIndex": 3,
       "active": true,
-      "mobileImageUrl": "",
+      "mobileImageUrl": "/images/slides/mobile_slide_4.webp",
       "imageUrl": "/images/slides/s_1792327827472.webp"
     },
     {
       "id": "s_1792575816493",
-      "mobileImageUrl": "",
+      "mobileImageUrl": "/images/slides/mobile_slide_5.webp",
       "imageUrl": "/images/slides/s_1792575816493.webp",
       "active": true,
       "orderIndex": 4

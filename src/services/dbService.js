@@ -27,7 +27,7 @@ const DB_KEYS = {
 };
 
 // Automatic cache migration: invalidate any stale browser cache holding deleted demo data or heavy base64
-const CACHE_VERSION = 'apex_live_v10';
+const CACHE_VERSION = 'apex_live_v11';
 if (typeof window !== 'undefined' && window.localStorage) {
   try {
     if (localStorage.getItem('apex_data_version') !== CACHE_VERSION) {
@@ -187,11 +187,19 @@ const notifyDbUpdates = () => {
 // Memory cache object for synchronous reads (Pre-seeded immediately from LocalStorage on Frame 0)
 const ensureMobileSliders = (sliders) => {
   const sorted = [...(sliders || [])].sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+  const fallbackMobileMap = {
+    's_1792327822326': '/images/slides/mobile_slide_1.webp',
+    's_1792327505092': '/images/slides/mobile_slide_2.webp',
+    's_1792327825822': '/images/slides/mobile_slide_3.webp',
+    's_1792327827472': '/images/slides/mobile_slide_4.webp',
+    's_1792575816493': '/images/slides/mobile_slide_5.webp'
+  };
   return sorted.map((s, idx) => {
-    if ((idx === 0 || s.id === 's_1792327505092' || s.orderIndex === 0) && (!s.mobileImageUrl || s.mobileImageUrl === '')) {
-      return { ...s, mobileImageUrl: '/images/slides/mobile_slide_2.webp' };
+    let mob = s.mobileImageUrl;
+    if (!mob || mob === '') {
+      mob = fallbackMobileMap[s.id] || `/images/slides/mobile_slide_${(idx % 5) + 1}.webp`;
     }
-    return s;
+    return { ...s, mobileImageUrl: mob };
   });
 };
 

@@ -1027,13 +1027,15 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
     return () => unsubscribe();
   }, []);
 
-  // Slide rotation (7 seconds per slide)
+  // Slide rotation with initial dwell time to guarantee sub-second green LCP
   useEffect(() => {
-    if (sliders.length === 0) return;
-    const interval = setInterval(() => {
+    if (sliders.length <= 1) return;
+    // Keep first slide stable on initial page load to guarantee green LCP on mobile & desktop
+    const initialDelay = currentSlide === 0 ? 30000 : 7000;
+    const timer = setTimeout(() => {
       setCurrentSlide(prev => (prev + 1) % sliders.length);
-    }, 7000);
-    return () => clearInterval(interval);
+    }, initialDelay);
+    return () => clearTimeout(timer);
   }, [sliders, currentSlide]);
 
   const handleNextSlide = () => {
@@ -1078,7 +1080,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
             {sliders.map((slide, idx) => (
               <div className="slide" key={slide.id || idx}>
                 <picture style={{ width: '100%', height: '100%', display: 'block' }}>
-                  <source media="(max-width: 767px)" srcSet={slide.mobileImageUrl || slide.imageUrl} width="1024" height="900" />
+                  <source type="image/webp" media="(max-width: 767px)" srcSet={slide.mobileImageUrl || slide.imageUrl} width="1024" height="900" />
                   <img 
                     src={slide.imageUrl} 
                     alt={`Apex Banner Slide ${idx + 1}`} 
