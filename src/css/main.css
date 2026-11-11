@@ -278,64 +278,6 @@
   overflow: hidden;
 }
 
-/* Responsive Hero Location & Legacy Badges */
-.hero-badges-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto 14px auto;
-  width: 100%;
-  max-width: 100%;
-}
-
-.hero-badge-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  border-radius: 9999px;
-  padding: 6px 16px;
-  max-width: 100%;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-}
-
-.hero-badge-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--navy-blue);
-  line-height: 1.35;
-  text-align: center;
-}
-
-.hero-badge-item.highlight {
-  color: #1e3a8a;
-}
-
-.hero-badge-icon {
-  width: 14px;
-  height: 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  color: var(--navy-blue);
-}
-
-.hero-badge-icon.star {
-  color: #f59e0b;
-}
-
-.hero-badge-dot {
-  color: #94a3b8;
-  font-weight: 700;
-  font-size: 0.9rem;
-}
-
 /* Fluid, Responsive H1 Heading */
 .hero-heading {
   font-family: var(--font-family);
@@ -370,29 +312,6 @@
 @media (max-width: 640px) {
   .hero-title-section {
     padding: 16px 8px;
-  }
-
-  .hero-badge-pill {
-    flex-direction: column;
-    gap: 6px;
-    padding: 10px 14px;
-    border-radius: 12px;
-    width: 100%;
-    max-width: 380px;
-    background: #f8fafc;
-    border-color: #cbd5e1;
-  }
-
-  .hero-badge-dot {
-    display: none;
-  }
-
-  .hero-badge-item {
-    font-size: 0.76rem;
-    justify-content: center;
-    width: 100%;
-    word-break: break-word;
-    text-align: center;
   }
 
   .hero-heading {
