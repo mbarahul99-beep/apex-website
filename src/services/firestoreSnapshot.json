@@ -8,22 +8,15 @@
       "imageUrl": "/images/slides/s_1792327822326.webp"
     },
     {
-      "id": "s_1792327505092",
-      "orderIndex": 1,
-      "mobileImageUrl": "/images/slides/mobile_slide_2.webp",
-      "active": true,
-      "imageUrl": "/images/slides/s_1792327505092.webp"
-    },
-    {
       "id": "s_1792327825822",
       "active": true,
-      "orderIndex": 2,
+      "orderIndex": 1,
       "imageUrl": "/images/slides/s_1792327825822.webp",
-      "mobileImageUrl": "/images/slides/mobile_slide_3.webp"
+      "mobileImageUrl": "/images/slides/mobile_slide_2.webp"
     },
     {
       "id": "s_1792327827472",
-      "orderIndex": 3,
+      "orderIndex": 2,
       "active": true,
       "mobileImageUrl": "/images/slides/mobile_slide_4.webp",
       "imageUrl": "/images/slides/s_1792327827472.webp"
@@ -33,7 +26,7 @@
       "mobileImageUrl": "/images/slides/mobile_slide_5.webp",
       "imageUrl": "/images/slides/s_1792575816493.webp",
       "active": true,
-      "orderIndex": 4
+      "orderIndex": 3
     }
   ],
   "courses": [
