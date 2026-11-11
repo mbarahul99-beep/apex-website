@@ -196,7 +196,7 @@ const ensureMobileSliders = (sliders) => {
   };
   return sorted.map((s, idx) => {
     let mob = s.mobileImageUrl;
-    if (!mob || mob === '') {
+    if (!mob || mob === '' || mob === s.imageUrl) {
       mob = fallbackMobileMap[s.id] || `/images/slides/mobile_slide_${(idx % 5) + 1}.webp`;
     }
     return { ...s, mobileImageUrl: mob };
@@ -223,7 +223,7 @@ export const dbService = {
     if (isDefault) {
       // LocalStorage mode
       cache.settings = { ...DEFAULT_SETTINGS, ...loadData(DB_KEYS.SETTINGS, DEFAULT_SETTINGS) };
-      cache.sliders = loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS).sort((a,b) => a.orderIndex - b.orderIndex);
+      cache.sliders = ensureMobileSliders(loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS)).sort((a,b) => a.orderIndex - b.orderIndex);
       cache.courses = loadData(DB_KEYS.COURSES, DEFAULT_COURSES);
       cache.resources = loadData(DB_KEYS.RESOURCES, DEFAULT_RESOURCES);
       cache.testimonials = loadData(DB_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS);
@@ -287,7 +287,7 @@ export const dbService = {
         return [];
       };
 
-      cache.sliders = (await loadCollection("sliders", DEFAULT_SLIDERS)).sort((a,b) => a.orderIndex - b.orderIndex);
+      cache.sliders = ensureMobileSliders(await loadCollection("sliders", DEFAULT_SLIDERS)).sort((a,b) => a.orderIndex - b.orderIndex);
       cache.courses = await loadCollection("courses", DEFAULT_COURSES);
       cache.resources = await loadCollection("resources", DEFAULT_RESOURCES);
       cache.testimonials = await loadCollection("testimonials", DEFAULT_TESTIMONIALS);
@@ -321,7 +321,7 @@ export const dbService = {
       console.error("⚠️ Firestore pre-loading failed. Reverting to LocalStorage.", err);
       // Fail-safe fallback loading
       cache.settings = loadData(DB_KEYS.SETTINGS, DEFAULT_SETTINGS);
-      cache.sliders = loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS);
+      cache.sliders = ensureMobileSliders(loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS));
       cache.courses = loadData(DB_KEYS.COURSES, DEFAULT_COURSES);
       cache.resources = loadData(DB_KEYS.RESOURCES, DEFAULT_RESOURCES);
       cache.testimonials = loadData(DB_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS);

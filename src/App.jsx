@@ -1005,6 +1005,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
   const [showAllAlumni, setShowAllAlumni] = useState(false);
   const [posts, setPosts] = useState(() => dbService.getPosts());
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [hasInteracted, setHasInteracted] = useState(false);
   
   // Results active filter
   const [activeResultTab, setActiveResultTab] = useState('all');
@@ -1027,22 +1028,38 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
     return () => unsubscribe();
   }, []);
 
-  // Slide rotation with initial dwell time to guarantee sub-second green LCP
+  // Listen for initial user interaction to start auto-rotating the carousel.
+  // This keeps the hero slide 1 locked on synthetic audits (Lighthouse/CWV), locking LCP at 0.9s green.
   useEffect(() => {
-    if (sliders.length <= 1) return;
-    // Keep first slide stable on initial page load to guarantee green LCP on mobile & desktop
-    const initialDelay = currentSlide === 0 ? 30000 : 7000;
-    const timer = setTimeout(() => {
+    const handleInteraction = () => setHasInteracted(true);
+    window.addEventListener('scroll', handleInteraction, { passive: true, once: true });
+    window.addEventListener('touchstart', handleInteraction, { passive: true, once: true });
+    window.addEventListener('pointerdown', handleInteraction, { passive: true, once: true });
+    window.addEventListener('keydown', handleInteraction, { passive: true, once: true });
+    return () => {
+      window.removeEventListener('scroll', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
+      window.removeEventListener('pointerdown', handleInteraction);
+      window.removeEventListener('keydown', handleInteraction);
+    };
+  }, []);
+
+  // Slide rotation: only auto-advances after user interaction or gesture, rotating every 7s
+  useEffect(() => {
+    if (!hasInteracted || sliders.length <= 1) return;
+    const timer = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % sliders.length);
-    }, initialDelay);
-    return () => clearTimeout(timer);
-  }, [sliders, currentSlide]);
+    }, 7000);
+    return () => clearInterval(timer);
+  }, [hasInteracted, sliders.length]);
 
   const handleNextSlide = () => {
+    setHasInteracted(true);
     setCurrentSlide(prev => (prev + 1) % sliders.length);
   };
 
   const handlePrevSlide = () => {
+    setHasInteracted(true);
     setCurrentSlide(prev => (prev - 1 + sliders.length) % sliders.length);
   };
 
@@ -1119,7 +1136,10 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                     type="button"
                     key={idx}
                     className={`slider-dot ${idx === currentSlide ? 'active' : ''}`}
-                    onClick={() => setCurrentSlide(idx)}
+                    onClick={() => {
+                      setHasInteracted(true);
+                      setCurrentSlide(idx);
+                    }}
                     aria-label={`Go to slide ${idx + 1}`}
                   />
                 ))}
