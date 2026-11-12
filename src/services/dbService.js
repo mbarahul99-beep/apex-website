@@ -116,12 +116,82 @@ const DEFAULT_TESTIMONIALS = snapshot.testimonials || [];
 const DEFAULT_RESULTS = sortResultsDesc(snapshot.results || []);
 const DEFAULT_ALUMNI = snapshot.alumni || [];
 
+export const DEFAULT_ABOUT_DATA = {
+  heroBadge: "Institute APEX Jind",
+  heroTitle: "Empowering Medical & Engineering Aspirants in Jind",
+  heroSubtitle: "Dedicated to academic rigor, conceptual depth, and personal mentorship since inception. Guiding students to top medical colleges (AIIMS, MAMC, PGIMS) and engineering institutes (IITs, NITs).",
+  stats: [
+    { num: "15+", label: "Years Mentoring" },
+    { num: "Top Ranks", label: "NEET & IIT-JEE" },
+    { num: "100%", label: "NCERT & Board Rigor" },
+    { num: "Focused", label: "Small Batches" }
+  ],
+  directorSectionTag: "Leadership & Vision",
+  directorSectionTitle: "Director's Message",
+  directorPhoto: "/images/director.webp",
+  directorRoleLabel: "Institute Director",
+  directorName: "N. Dhanda",
+  directorDegrees: "M.Sc. (Maths), M.A. (Eng.), B.Ed.",
+  directorGreeting: "Dear Students and Parents,",
+  directorParagraphs: [
+    "This gives us immense pleasure to announce that with wholehearted co-operation of teaching staff, Parents & Students, we have successfully entered the 16<sup>th</sup> year under the banner of Apex Institute. Institute APEX was started in March 2011 to provide platform to those students who want to make their career in the field of Medical Science. Our goal at Apex is to impart knowledge and guidance by creating an environment that guides them for Board exams, IIT-JEE, NEET & other Medical Entrance Exams that is why in a short period of only 16 years we have become one of the leading institute in the area.",
+    "Over the years, the name of APEX has become synonyms with success in PMT/NEET. Students get taught by highly acclaimed and well known faculty. Every member of APEX faculty has impeccable educational qualification and years of experience in coaching students to excel in the toughest Medical Entrance Examinations like AIIMS, AFMC, NEET & others.",
+    "We feel proud on the achievements of our students. Finally I sum up by saying that our main objective is to model this establishment as a center of excellence for the students wishing to choose their career path in IIT-JEE & Medical fields."
+  ],
+  directorSignoffName: "Director: N. Dhanda",
+  directorSignoffSub: "M.Sc. (Maths), M.A. (Eng.), B.Ed.",
+  patternSectionTag: "Teaching Methodology",
+  patternSectionTitle: "The Academic Pattern We Follow",
+  patternSectionDesc: "Structured preparation blueprint designed to deliver dual excellence in school board results and competitive entrance ranks.",
+  patterns: [
+    {
+      title: "The pattern we follow for Class XI",
+      desc: "The syllabus of Class XI is covered keeping in view the school as well as the base for Medical Entrance Exams. Students are let off in 3<sup>rd</sup> week of January, 2026 after full syllabus test for their final examinations.",
+      testSeriesTitle: "Test Series :-",
+      tests: [
+        "Regular tests (Subjective & objective separately) after completion of each chapter and each unit.",
+        "Half syllabus test (Subjective & objective separately) in the 3<sup>rd</sup> week of August, 2025.",
+        "Full syllabus Subjective test for preparation of final exams in the 3<sup>rd</sup> week of January, 2026."
+      ]
+    },
+    {
+      title: "The pattern we follow for Class XII",
+      desc: "The syllabus is taught thoroughly for Board Exams, IIT-JEE, NEET and other Medical Entrance Exams. The entire syllabus is completed in the 2<sup>nd</sup> week of December, 2025.",
+      testSeriesTitle: "Test Series :-",
+      tests: [
+        "Regular tests (Subjective & objective separately) after completion of each chapter and each unit.",
+        "Half syllabus test (Subjective & objective separately) in the 3<sup>rd</sup> week of August, 2025.",
+        "After completion of class XII full syllabus a special revision test series (for IIT-JEE & PMT preparation of objective test) based on class XI-XII syllabus will be conducted from 15<sup>th</sup> December, 2025 to 15<sup>th</sup> January, 2026.",
+        "10 full syllabus Sample Paper Test will be held keeping in view the attemptation of board exams in the month of January & February, 2026."
+      ]
+    }
+  ],
+  weekendTag: "Weekend Advantage",
+  weekendText: "Special 2 hours session on Saturday & Sunday including doubt clearing, objective test & revision of syllabus covered in 5 days regular class.",
+  ctaTitle: "Learn from the Best",
+  ctaDesc: "Admissions are open for upcoming batches. Meet our senior educators, explore our study materials, and take a free diagnostic scholarship test."
+};
+
+export const mergeAboutData = (custom) => {
+  if (!custom || typeof custom !== 'object') {
+    return JSON.parse(JSON.stringify(DEFAULT_ABOUT_DATA));
+  }
+  return {
+    ...DEFAULT_ABOUT_DATA,
+    ...custom,
+    stats: Array.isArray(custom.stats) && custom.stats.length > 0 ? custom.stats : DEFAULT_ABOUT_DATA.stats,
+    directorParagraphs: Array.isArray(custom.directorParagraphs) && custom.directorParagraphs.length > 0 ? custom.directorParagraphs : DEFAULT_ABOUT_DATA.directorParagraphs,
+    patterns: Array.isArray(custom.patterns) && custom.patterns.length > 0 ? custom.patterns : DEFAULT_ABOUT_DATA.patterns
+  };
+};
+
 const DEFAULT_PAGES = [
   {
     id: "p1",
     title: "About Apex Institute Jind",
     slug: "about-apex-jind",
     content: "<h2>Welcome to Institute APEX</h2><p>Apex Institute is Jind's leading educational setup catering to students aiming to excel in NEET, IIT-JEE, NTSE, and Olympiads. Nestled in Urban Estate, Jind, we provide unmatched guidance for Class 9th to 12th across CBSE, HBSE, and ICSE boards.</p><p>Our structured pedagogy, focus on core concepts, and regular assessment cycles ensure every student reaches their highest potential.</p>",
+    aboutData: DEFAULT_ABOUT_DATA,
     metaTitle: "About Apex Institute Jind - NEET, IIT-JEE Coaching",
     metaDescription: "Learn more about Apex Institute Jind, Haryana's premium educational center for IIT-JEE, NEET entrance coaching and secondary board tuitions.",
     keywords: "apex institute jind, jee coaching jind, neet coaching jind, tuitions in jind",

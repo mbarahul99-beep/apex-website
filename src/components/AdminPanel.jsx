@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../css/admin.css';
-import { dbService } from '../services/dbService';
+import { dbService, mergeAboutData } from '../services/dbService';
 import { isDefault } from '../services/firebase';
 import { requestGeminiSpeech } from '../utils/geminiAudio';
 import { 
@@ -2054,6 +2054,9 @@ function AdminPages() {
   const [metaTitle, setMetaTitle] = useState('');
   const [metaDescription, setMetaDescription] = useState('');
   const [keywords, setKeywords] = useState('');
+  const [aboutData, setAboutData] = useState(null);
+
+  const isAboutPage = slug === 'about-apex-jind' || editingPage?.id === 'p1';
 
   const loadPagesList = () => setPages(dbService.getPages());
 
@@ -2070,12 +2073,17 @@ function AdminPages() {
 
   const handleEdit = (page) => {
     setEditingPage(page);
-    setTitle(page.title);
-    setSlug(page.slug);
-    setContent(page.content);
-    setMetaTitle(page.metaTitle);
-    setMetaDescription(page.metaDescription);
-    setKeywords(page.keywords);
+    setTitle(page.title || '');
+    setSlug(page.slug || '');
+    setContent(page.content || '');
+    setMetaTitle(page.metaTitle || '');
+    setMetaDescription(page.metaDescription || '');
+    setKeywords(page.keywords || '');
+    if (page.slug === 'about-apex-jind' || page.id === 'p1' || page.aboutData) {
+      setAboutData(mergeAboutData(page.aboutData));
+    } else {
+      setAboutData(null);
+    }
     setFormOpen(true);
   };
 
@@ -2087,6 +2095,7 @@ function AdminPages() {
     setMetaTitle('');
     setMetaDescription('');
     setKeywords('');
+    setAboutData(null);
     setFormOpen(true);
   };
 
@@ -2105,7 +2114,7 @@ function AdminPages() {
     e.preventDefault();
     setIsSaving(true);
     try {
-      await dbService.savePage({
+      const payload = {
         id: editingPage ? editingPage.id : undefined,
         title,
         slug,
@@ -2113,7 +2122,11 @@ function AdminPages() {
         metaTitle,
         metaDescription,
         keywords
-      });
+      };
+      if (isAboutPage && aboutData) {
+        payload.aboutData = aboutData;
+      }
+      await dbService.savePage(payload);
       setFormOpen(false);
       loadPagesList();
     } catch (err) {
@@ -2121,6 +2134,50 @@ function AdminPages() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const updateStat = (idx, field, val) => {
+    setAboutData(prev => {
+      const stats = [...(prev.stats || [])];
+      stats[idx] = { ...stats[idx], [field]: val };
+      return { ...prev, stats };
+    });
+  };
+
+  const updateDirectorPara = (idx, val) => {
+    setAboutData(prev => {
+      const directorParagraphs = [...(prev.directorParagraphs || [])];
+      directorParagraphs[idx] = val;
+      return { ...prev, directorParagraphs };
+    });
+  };
+
+  const updatePattern = (patIdx, field, val) => {
+    setAboutData(prev => {
+      const patterns = [...(prev.patterns || [])];
+      patterns[patIdx] = { ...patterns[patIdx], [field]: val };
+      return { ...prev, patterns };
+    });
+  };
+
+  const updatePatternTest = (patIdx, tIdx, val) => {
+    setAboutData(prev => {
+      const patterns = [...(prev.patterns || [])];
+      const tests = [...(patterns[patIdx].tests || [])];
+      tests[tIdx] = val;
+      patterns[patIdx] = { ...patterns[patIdx], tests };
+      return { ...prev, patterns };
+    });
+  };
+
+  const handleDirectorPhotoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setAboutData(prev => ({ ...prev, directorPhoto: ev.target.result }));
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -2174,13 +2231,240 @@ function AdminPages() {
             </div>
           </div>
 
-          <div className="admin-input-group">
-            <label>HTML Content Body (supports HTML tags like &lt;p&gt;, &lt;h2&gt;, &lt;ul&gt;)</label>
-            <textarea value={content} onChange={e => setContent(e.target.value)} rows="8" required></textarea>
-          </div>
+          {isAboutPage && aboutData ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '18px' }}>
+              {/* 1. Hero Banner & Stats */}
+              <div className="admin-card" style={{ padding: '16px', backgroundColor: '#fdf2f8', border: '1px solid #fbcfe8', marginBottom: 0 }}>
+                <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#9f1239', display: 'block', marginBottom: '12px' }}>
+                  1. About Us Hero Banner & Highlight Stats
+                </span>
+                <div className="admin-form-row">
+                  <div className="admin-input-group">
+                    <label>Top Badge</label>
+                    <input type="text" value={aboutData.heroBadge || ''} onChange={e => setAboutData({ ...aboutData, heroBadge: e.target.value })} />
+                  </div>
+                  <div className="admin-input-group">
+                    <label>Main Hero Heading (H1)</label>
+                    <input type="text" value={aboutData.heroTitle || ''} onChange={e => setAboutData({ ...aboutData, heroTitle: e.target.value })} />
+                  </div>
+                </div>
+                <div className="admin-input-group">
+                  <label>Hero Subtitle</label>
+                  <textarea rows="2" value={aboutData.heroSubtitle || ''} onChange={e => setAboutData({ ...aboutData, heroSubtitle: e.target.value })} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
+                  {(aboutData.stats || []).map((st, idx) => (
+                    <div key={idx} style={{ background: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                      <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#475569' }}>Stat #{idx + 1}</label>
+                      <input type="text" placeholder="Value (e.g. 15+)" value={st.num || ''} onChange={e => updateStat(idx, 'num', e.target.value)} style={{ marginBottom: '6px' }} />
+                      <input type="text" placeholder="Label" value={st.label || ''} onChange={e => updateStat(idx, 'label', e.target.value)} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 2. Director's Message */}
+              <div className="admin-card" style={{ padding: '16px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', marginBottom: 0 }}>
+                <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--navy-dark)', display: 'block', marginBottom: '12px' }}>
+                  2. Director&apos;s Message Section
+                </span>
+                <div className="admin-form-row">
+                  <div className="admin-input-group">
+                    <label>Section Tag</label>
+                    <input type="text" value={aboutData.directorSectionTag || ''} onChange={e => setAboutData({ ...aboutData, directorSectionTag: e.target.value })} />
+                  </div>
+                  <div className="admin-input-group">
+                    <label>Section Title</label>
+                    <input type="text" value={aboutData.directorSectionTitle || ''} onChange={e => setAboutData({ ...aboutData, directorSectionTitle: e.target.value })} />
+                  </div>
+                </div>
+                <div className="admin-form-row">
+                  <div className="admin-input-group">
+                    <label>Director Role Label</label>
+                    <input type="text" value={aboutData.directorRoleLabel || ''} onChange={e => setAboutData({ ...aboutData, directorRoleLabel: e.target.value })} />
+                  </div>
+                  <div className="admin-input-group">
+                    <label>Director Name</label>
+                    <input type="text" value={aboutData.directorName || ''} onChange={e => setAboutData({ ...aboutData, directorName: e.target.value })} />
+                  </div>
+                  <div className="admin-input-group">
+                    <label>Director Qualifications</label>
+                    <input type="text" value={aboutData.directorDegrees || ''} onChange={e => setAboutData({ ...aboutData, directorDegrees: e.target.value })} />
+                  </div>
+                </div>
+                <div className="admin-input-group">
+                  <label>Director Photo (URL or Upload New Image)</label>
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <input type="text" value={aboutData.directorPhoto || ''} onChange={e => setAboutData({ ...aboutData, directorPhoto: e.target.value })} style={{ flex: 1, minWidth: '200px' }} />
+                    <input type="file" accept="image/*" onChange={handleDirectorPhotoUpload} style={{ maxWidth: '230px' }} />
+                  </div>
+                </div>
+                <div className="admin-input-group">
+                  <label>Greeting</label>
+                  <input type="text" value={aboutData.directorGreeting || ''} onChange={e => setAboutData({ ...aboutData, directorGreeting: e.target.value })} />
+                </div>
+                <div className="admin-input-group">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                    <label style={{ marginBottom: 0 }}>Message Paragraphs</label>
+                    <button
+                      type="button"
+                      className="admin-btn secondary"
+                      style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                      onClick={() => setAboutData({ ...aboutData, directorParagraphs: [...(aboutData.directorParagraphs || []), ''] })}
+                    >
+                      + Add Paragraph
+                    </button>
+                  </div>
+                  {(aboutData.directorParagraphs || []).map((para, pIdx) => (
+                    <div key={pIdx} style={{ display: 'flex', gap: '8px', marginBottom: '8px', alignItems: 'flex-start' }}>
+                      <textarea rows="3" value={para} onChange={e => updateDirectorPara(pIdx, e.target.value)} style={{ flex: 1 }} />
+                      <button
+                        type="button"
+                        className="table-action-btn delete"
+                        title="Remove Paragraph"
+                        onClick={() => setAboutData({ ...aboutData, directorParagraphs: aboutData.directorParagraphs.filter((_, i) => i !== pIdx) })}
+                      >
+                        <IconTrash />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <div className="admin-form-row">
+                  <div className="admin-input-group" style={{ marginBottom: 0 }}>
+                    <label>Signoff Name</label>
+                    <input type="text" value={aboutData.directorSignoffName || ''} onChange={e => setAboutData({ ...aboutData, directorSignoffName: e.target.value })} />
+                  </div>
+                  <div className="admin-input-group" style={{ marginBottom: 0 }}>
+                    <label>Signoff Subtitle</label>
+                    <input type="text" value={aboutData.directorSignoffSub || ''} onChange={e => setAboutData({ ...aboutData, directorSignoffSub: e.target.value })} />
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. Academic Pattern & Test Series */}
+              <div className="admin-card" style={{ padding: '16px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', marginBottom: 0 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--navy-dark)' }}>
+                    3. Academic Pattern & Test Series Cards
+                  </span>
+                  <button
+                    type="button"
+                    className="admin-btn secondary"
+                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                    onClick={() => setAboutData({
+                      ...aboutData,
+                      patterns: [...(aboutData.patterns || []), { title: 'New Class Pattern', desc: '', testSeriesTitle: 'Test Series :-', tests: [''] }]
+                    })}
+                  >
+                    + Add Pattern Card
+                  </button>
+                </div>
+                <div className="admin-form-row">
+                  <div className="admin-input-group">
+                    <label>Section Tag</label>
+                    <input type="text" value={aboutData.patternSectionTag || ''} onChange={e => setAboutData({ ...aboutData, patternSectionTag: e.target.value })} />
+                  </div>
+                  <div className="admin-input-group">
+                    <label>Section Title</label>
+                    <input type="text" value={aboutData.patternSectionTitle || ''} onChange={e => setAboutData({ ...aboutData, patternSectionTitle: e.target.value })} />
+                  </div>
+                </div>
+                <div className="admin-input-group">
+                  <label>Section Description</label>
+                  <input type="text" value={aboutData.patternSectionDesc || ''} onChange={e => setAboutData({ ...aboutData, patternSectionDesc: e.target.value })} />
+                </div>
+
+                {(aboutData.patterns || []).map((pat, patIdx) => (
+                  <div key={patIdx} style={{ background: '#fff', padding: '14px', borderRadius: '10px', border: '1px solid #cbd5e1', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                      <strong style={{ color: '#9f1239', fontSize: '0.85rem' }}>Pattern Card #{patIdx + 1}</strong>
+                      {(aboutData.patterns || []).length > 1 && (
+                        <button
+                          type="button"
+                          className="table-action-btn delete"
+                          onClick={() => setAboutData({ ...aboutData, patterns: aboutData.patterns.filter((_, i) => i !== patIdx) })}
+                        >
+                          <IconTrash />
+                        </button>
+                      )}
+                    </div>
+                    <div className="admin-form-row">
+                      <div className="admin-input-group">
+                        <label>Card Heading</label>
+                        <input type="text" value={pat.title || ''} onChange={e => updatePattern(patIdx, 'title', e.target.value)} />
+                      </div>
+                      <div className="admin-input-group">
+                        <label>Test Series Box Heading</label>
+                        <input type="text" value={pat.testSeriesTitle || ''} onChange={e => updatePattern(patIdx, 'testSeriesTitle', e.target.value)} />
+                      </div>
+                    </div>
+                    <div className="admin-input-group">
+                      <label>Card Description</label>
+                      <textarea rows="2" value={pat.desc || ''} onChange={e => updatePattern(patIdx, 'desc', e.target.value)} />
+                    </div>
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                        <label style={{ fontSize: '0.8rem', fontWeight: 700, marginBottom: 0 }}>Test Series Bullet Points</label>
+                        <button
+                          type="button"
+                          className="admin-btn secondary"
+                          style={{ padding: '3px 8px', fontSize: '0.75rem' }}
+                          onClick={() => updatePattern(patIdx, 'tests', [...(pat.tests || []), ''])}
+                        >
+                          + Add Bullet
+                        </button>
+                      </div>
+                      {(pat.tests || []).map((tItem, tIdx) => (
+                        <div key={tIdx} style={{ display: 'flex', gap: '8px', marginBottom: '6px' }}>
+                          <input type="text" value={tItem} onChange={e => updatePatternTest(patIdx, tIdx, e.target.value)} style={{ flex: 1 }} />
+                          <button
+                            type="button"
+                            className="table-action-btn delete"
+                            onClick={() => updatePattern(patIdx, 'tests', (pat.tests || []).filter((_, i) => i !== tIdx))}
+                          >
+                            <IconTrash />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* 4. Weekend Advantage & CTA */}
+              <div className="admin-card" style={{ padding: '16px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', marginBottom: 0 }}>
+                <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--navy-dark)', display: 'block', marginBottom: '12px' }}>
+                  4. Weekend Advantage & Bottom Call-to-Action
+                </span>
+                <div className="admin-form-row">
+                  <div className="admin-input-group">
+                    <label>Weekend Badge</label>
+                    <input type="text" value={aboutData.weekendTag || ''} onChange={e => setAboutData({ ...aboutData, weekendTag: e.target.value })} />
+                  </div>
+                  <div className="admin-input-group">
+                    <label>CTA Heading</label>
+                    <input type="text" value={aboutData.ctaTitle || ''} onChange={e => setAboutData({ ...aboutData, ctaTitle: e.target.value })} />
+                  </div>
+                </div>
+                <div className="admin-input-group">
+                  <label>Weekend Session Text</label>
+                  <textarea rows="2" value={aboutData.weekendText || ''} onChange={e => setAboutData({ ...aboutData, weekendText: e.target.value })} />
+                </div>
+                <div className="admin-input-group" style={{ marginBottom: 0 }}>
+                  <label>CTA Description</label>
+                  <textarea rows="2" value={aboutData.ctaDesc || ''} onChange={e => setAboutData({ ...aboutData, ctaDesc: e.target.value })} />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="admin-input-group">
+              <label>HTML Content Body (supports HTML tags like &lt;p&gt;, &lt;h2&gt;, &lt;ul&gt;)</label>
+              <textarea value={content} onChange={e => setContent(e.target.value)} rows="8" required></textarea>
+            </div>
+          )}
 
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button type="submit" className="admin-btn" disabled={isSaving}>{isSaving ? 'Saving...' : 'Save Custom Page'}</button>
+            <button type="submit" className="admin-btn" disabled={isSaving}>{isSaving ? 'Saving...' : (isAboutPage ? 'Save About Us Page' : 'Save Custom Page')}</button>
             <button type="button" className="admin-btn secondary" onClick={() => setFormOpen(false)}>Cancel</button>
           </div>
         </form>
@@ -2201,11 +2485,11 @@ function AdminPages() {
               {pages.map(page => (
                 <tr key={page.id}>
                   <td style={{ fontWeight: 600 }}>{page.title}</td>
-                  <td><code>/pages/{page.slug}</code></td>
+                  <td><code>{page.slug === 'about-apex-jind' ? '/about' : `/pages/${page.slug}`}</code></td>
                   <td>{page.keywords || 'None'}</td>
                   <td>{new Date(page.lastUpdated).toLocaleDateString()}</td>
                   <td>
-                    <a href={`/pages/${page.slug}`} target="_blank" rel="noreferrer" style={{ color: 'var(--primary-blue)', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
+                    <a href={page.slug === 'about-apex-jind' ? '/about' : `/pages/${page.slug}`} target="_blank" rel="noreferrer" style={{ color: 'var(--primary-blue)', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
                       Open <IconExternalLink />
                     </a>
                   </td>

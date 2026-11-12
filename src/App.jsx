@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
-import { dbService } from './services/dbService';
+import { dbService, mergeAboutData } from './services/dbService';
 import { isDefault } from './services/firebase';
 import './css/main.css';
 // admin.css is imported inside AdminPanel.jsx to keep it out of the critical path
@@ -1313,7 +1313,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
           </div>
 
           <div className="alumni-grid">
-            {(showAllAlumni ? alumni : alumni.slice(0, 6)).map(alm => {
+            {(showAllAlumni ? alumni : alumni.slice(0, 4)).map(alm => {
               const degreeRole = [alm.course, alm.currentRole]
                 .filter(Boolean)
                 .filter((v, i, a) => a.indexOf(v) === i)
@@ -1348,7 +1348,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
             })}
           </div>
 
-          {alumni.length > 6 && (
+          {alumni.length > 4 && (
             <div className="view-more-container">
               <button 
                 className="view-more-btn"
@@ -1356,12 +1356,12 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
               >
                 {showAllAlumni ? (
                   <>
-                    Show Top 6 Alumni
+                    Show Top 4 Alumni
                     <svg fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ width: 16, height: 16 }}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" /></svg>
                   </>
                 ) : (
                   <>
-                    View More Alumni ({alumni.length - 6} More)
+                    View More Alumni ({alumni.length - 4} More)
                     <svg fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ width: 16, height: 16 }}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
                   </>
                 )}
@@ -1881,58 +1881,52 @@ function ScholarshipView({ navigate, openEnquiry }) {
   );
 }
 
-// ---------------- ABOUT US VIEW (MOBILE RESPONSIVE & ENHANCED) ----------------
+// ---------------- ABOUT US VIEW (MOBILE RESPONSIVE & FULLY EDITABLE) ----------------
 function AboutUsView({ settings, navigate, openEnquiry }) {
-  const [page, setPage] = useState(null);
+  const [page, setPage] = useState(() => dbService.getPageBySlug('about-apex-jind'));
 
   useEffect(() => {
-    const loaded = dbService.getPageBySlug('about-apex-jind');
-    setPage(loaded);
+    setPage(dbService.getPageBySlug('about-apex-jind'));
+    const unsubscribe = dbService.subscribe(() => {
+      setPage(dbService.getPageBySlug('about-apex-jind'));
+    });
+    return () => unsubscribe();
   }, []);
 
   const instituteName = settings?.instituteName || 'Institute APEX';
+  const about = mergeAboutData(page?.aboutData);
 
   return (
     <div className="about-page-wrap fade-in">
       <Helmet>
-        <title>About Us | {instituteName} Jind - NEET & IIT-JEE Coaching</title>
+        <title>{page?.metaTitle || `About Us | ${instituteName} Jind - NEET & IIT-JEE Coaching`}</title>
         <meta 
           name="description" 
-          content={`Learn more about ${instituteName} Jind, Haryana's leading coaching center for NEET Medical, IIT-JEE Engineering, and secondary board tuitions.`} 
+          content={page?.metaDescription || `Learn more about ${instituteName} Jind, Haryana's leading coaching center for NEET Medical, IIT-JEE Engineering, and secondary board tuitions.`} 
         />
-        <meta name="keywords" content="about apex institute jind, coaching institute jind, best neet coaching in jind, best iit jee coaching in jind, best icse coaching in jind, best cbse coaching in jind, haryana coaching institute" />
+        <meta name="keywords" content={page?.keywords || "about apex institute jind, coaching institute jind, best neet coaching in jind, best iit jee coaching in jind, best icse coaching in jind, best cbse coaching in jind, haryana coaching institute"} />
       </Helmet>
 
       {/* Hero Banner with Clean High-Contrast Palette */}
       <section className="about-hero">
         <div className="about-hero-badge">
-          <span>Institute APEX Jind</span>
+          <span>{about.heroBadge}</span>
         </div>
         <h1 className="about-hero-title">
-          Empowering Medical & Engineering Aspirants in Jind
+          {about.heroTitle}
         </h1>
         <p className="about-hero-subtitle">
-          Dedicated to academic rigor, conceptual depth, and personal mentorship since inception. Guiding students to top medical colleges (AIIMS, MAMC, PGIMS) and engineering institutes (IITs, NITs).
+          {about.heroSubtitle}
         </p>
 
         {/* Highlight Stats Bar */}
         <div className="about-stats-grid">
-          <div className="about-stat-item">
-            <div className="about-stat-num">15+</div>
-            <div className="about-stat-label">Years Mentoring</div>
-          </div>
-          <div className="about-stat-item">
-            <div className="about-stat-num">Top Ranks</div>
-            <div className="about-stat-label">NEET & IIT-JEE</div>
-          </div>
-          <div className="about-stat-item">
-            <div className="about-stat-num">100%</div>
-            <div className="about-stat-label">NCERT & Board Rigor</div>
-          </div>
-          <div className="about-stat-item">
-            <div className="about-stat-num">Focused</div>
-            <div className="about-stat-label">Small Batches</div>
-          </div>
+          {(about.stats || []).map((st, idx) => (
+            <div className="about-stat-item" key={idx}>
+              <div className="about-stat-num">{st.num}</div>
+              <div className="about-stat-label">{st.label}</div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -1941,19 +1935,18 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
         {/* 1. Director's Message Section */}
         <section className="about-director-section">
           <div className="about-section-header" style={{ marginBottom: '22px' }}>
-            <span className="about-section-tag">Leadership & Vision</span>
-            <h2 className="about-section-title">Director's Message</h2>
+            <span className="about-section-tag">{about.directorSectionTag}</span>
+            <h2 className="about-section-title">{about.directorSectionTitle}</h2>
           </div>
 
           <div className="about-director-card">
             {/* Director's Photo with Square Pink Outline Frame */}
             <div className="about-director-photo-col">
               <div className="about-director-photo-frame">
-                <picture>
-                  <source srcSet="/images/director.webp" type="image/webp" />
+                {about.directorPhoto && about.directorPhoto !== '/images/director.webp' ? (
                   <img 
-                    src="/images/director.jpg" 
-                    alt="Director N. Dhanda" 
+                    src={about.directorPhoto} 
+                    alt={`Director ${about.directorName}`} 
                     className="about-director-img" 
                     width="220"
                     height="220"
@@ -1961,36 +1954,42 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
                     fetchPriority="high"
                     decoding="async"
                   />
-                </picture>
+                ) : (
+                  <picture>
+                    <source srcSet="/images/director.webp" type="image/webp" />
+                    <img 
+                      src="/images/director.jpg" 
+                      alt={`Director ${about.directorName}`} 
+                      className="about-director-img" 
+                      width="220"
+                      height="220"
+                      loading="eager"
+                      fetchPriority="high"
+                      decoding="async"
+                    />
+                  </picture>
+                )}
               </div>
               <div className="about-director-meta">
-                <span className="about-director-meta-title">Institute Director</span>
-                <h3 className="about-director-name">N. Dhanda</h3>
-                <span className="about-director-deg">M.Sc. (Maths), M.A. (Eng.), B.Ed.</span>
+                <span className="about-director-meta-title">{about.directorRoleLabel}</span>
+                <h3 className="about-director-name">{about.directorName}</h3>
+                <span className="about-director-deg">{about.directorDegrees}</span>
               </div>
             </div>
 
             {/* Director's Written Message */}
             <div className="about-director-content-col">
               <h3 className="about-director-greeting">
-                Dear Students and Parents,
+                {about.directorGreeting}
               </h3>
               
-              <p className="about-director-p">
-                This gives us immense pleasure to announce that with wholehearted co-operation of teaching staff, Parents & Students, we have successfully entered the 16<sup>th</sup> year under the banner of Apex Institute. Institute APEX was started in March 2011 to provide platform to those students who want to make their career in the field of Medical Science. Our goal at Apex is to impart knowledge and guidance by creating an environment that guides them for Board exams, IIT-JEE, NEET & other Medical Entrance Exams that is why in a short period of only 16 years we have become one of the leading institute in the area.
-              </p>
-
-              <p className="about-director-p">
-                Over the years, the name of APEX has become synonyms with success in PMT/NEET. Students get taught by highly acclaimed and well known faculty. Every member of APEX faculty has impeccable educational qualification and years of experience in coaching students to excel in the toughest Medical Entrance Examinations like AIIMS, AFMC, NEET & others.
-              </p>
-
-              <p className="about-director-p">
-                We feel proud on the achievements of our students. Finally I sum up by saying that our main objective is to model this establishment as a center of excellence for the students wishing to choose their career path in IIT-JEE & Medical fields.
-              </p>
+              {(about.directorParagraphs || []).map((para, pIdx) => (
+                <p className="about-director-p" key={pIdx} dangerouslySetInnerHTML={{ __html: para }} />
+              ))}
 
               <div className="about-director-signoff">
-                <div className="about-director-signoff-name">Director: N. Dhanda</div>
-                <div className="about-director-signoff-sub">M.Sc. (Maths), M.A. (Eng.), B.Ed.</div>
+                <div className="about-director-signoff-name">{about.directorSignoffName}</div>
+                <div className="about-director-signoff-sub">{about.directorSignoffSub}</div>
               </div>
             </div>
           </div>
@@ -1999,87 +1998,41 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
         {/* 2. Academic Patterns (Class XI & Class XII) */}
         <section className="about-patterns-section">
           <div className="about-section-header">
-            <span className="about-section-tag">Teaching Methodology</span>
-            <h2 className="about-section-title">The Academic Pattern We Follow</h2>
+            <span className="about-section-tag">{about.patternSectionTag}</span>
+            <h2 className="about-section-title">{about.patternSectionTitle}</h2>
             <p className="about-section-desc">
-              Structured preparation blueprint designed to deliver dual excellence in school board results and competitive entrance ranks.
+              {about.patternSectionDesc}
             </p>
           </div>
 
           <div className="about-patterns-grid">
-            {/* Pattern for Class XI */}
-            <div className="about-pattern-card">
-              <div className="about-pattern-header">
-                <h3 className="about-pattern-title">The pattern we follow for Class XI</h3>
-              </div>
-              <div className="about-pattern-body">
-                <p className="about-pattern-desc">
-                  The syllabus of Class XI is covered keeping in view the school as well as the base for Medical Entrance Exams. Students are let off in 3<sup>rd</sup> week of January, 2026 after full syllabus test for their final examinations.
-                </p>
+            {(about.patterns || []).map((pat, patIdx) => (
+              <div className="about-pattern-card" key={patIdx}>
+                <div className="about-pattern-header">
+                  <h3 className="about-pattern-title">{pat.title}</h3>
+                </div>
+                <div className="about-pattern-body">
+                  <p className="about-pattern-desc" dangerouslySetInnerHTML={{ __html: pat.desc }} />
 
-                <div className="about-test-series-box">
-                  <div className="about-test-series-header">
-                    <svg fill="currentColor" viewBox="0 0 20 20" style={{ width: 18, height: 18, color: '#be185d' }}>
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                    </svg>
-                    <span>Test Series :-</span>
+                  <div className="about-test-series-box">
+                    <div className="about-test-series-header">
+                      <svg fill="currentColor" viewBox="0 0 20 20" style={{ width: 18, height: 18, color: '#be185d' }}>
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                      </svg>
+                      <span>{pat.testSeriesTitle}</span>
+                    </div>
+                    <ul className="about-test-list">
+                      {(pat.tests || []).map((tItem, tIdx) => (
+                        <li className="about-test-item" key={tIdx}>
+                          <span className="about-test-bullet"></span>
+                          <span dangerouslySetInnerHTML={{ __html: tItem }} />
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <ul className="about-test-list">
-                    <li className="about-test-item">
-                      <span className="about-test-bullet"></span>
-                      <span>Regular tests (Subjective & objective separately) after completion of each chapter and each unit.</span>
-                    </li>
-                    <li className="about-test-item">
-                      <span className="about-test-bullet"></span>
-                      <span>Half syllabus test (Subjective & objective separately) in the 3<sup>rd</sup> week of August, 2025.</span>
-                    </li>
-                    <li className="about-test-item">
-                      <span className="about-test-bullet"></span>
-                      <span>Full syllabus Subjective test for preparation of final exams in the 3<sup>rd</sup> week of January, 2026.</span>
-                    </li>
-                  </ul>
                 </div>
               </div>
-            </div>
-
-            {/* Pattern for Class XII */}
-            <div className="about-pattern-card">
-              <div className="about-pattern-header">
-                <h3 className="about-pattern-title">The pattern we follow for Class XII</h3>
-              </div>
-              <div className="about-pattern-body">
-                <p className="about-pattern-desc">
-                  The syllabus is taught thoroughly for Board Exams, IIT-JEE, NEET and other Medical Entrance Exams. The entire syllabus is completed in the 2<sup>nd</sup> week of December, 2025.
-                </p>
-
-                <div className="about-test-series-box">
-                  <div className="about-test-series-header">
-                    <svg fill="currentColor" viewBox="0 0 20 20" style={{ width: 18, height: 18, color: '#be185d' }}>
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                    </svg>
-                    <span>Test Series :-</span>
-                  </div>
-                  <ul className="about-test-list">
-                    <li className="about-test-item">
-                      <span className="about-test-bullet"></span>
-                      <span>Regular tests (Subjective & objective separately) after completion of each chapter and each unit.</span>
-                    </li>
-                    <li className="about-test-item">
-                      <span className="about-test-bullet"></span>
-                      <span>Half syllabus test (Subjective & objective separately) in the 3<sup>rd</sup> week of August, 2025.</span>
-                    </li>
-                    <li className="about-test-item">
-                      <span className="about-test-bullet"></span>
-                      <span>After completion of class XII full syllabus a special revision test series (for IIT-JEE & PMT preparation of objective test) based on class XI-XII syllabus will be conducted from 15<sup>th</sup> December, 2025 to 15<sup>th</sup> January, 2026.</span>
-                    </li>
-                    <li className="about-test-item">
-                      <span className="about-test-bullet"></span>
-                      <span>10 full syllabus Sample Paper Test will be held keeping in view the attemptation of board exams in the month of January & February, 2026.</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
 
@@ -2091,18 +2044,18 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
             </svg>
           </div>
           <div className="about-weekend-text-wrap">
-            <span className="about-weekend-tag">Weekend Advantage</span>
+            <span className="about-weekend-tag">{about.weekendTag}</span>
             <p className="about-weekend-text">
-              Special 2 hours session on Saturday & Sunday including doubt clearing, objective test & revision of syllabus covered in 5 days regular class.
+              {about.weekendText}
             </p>
           </div>
         </div>
 
         {/* 4. Learn from the Best CTA Banner */}
         <div className="about-cta-banner">
-          <h2 className="about-cta-title">Learn from the Best</h2>
+          <h2 className="about-cta-title">{about.ctaTitle}</h2>
           <p className="about-cta-desc">
-            Admissions are open for upcoming batches. Meet our senior educators, explore our study materials, and take a free diagnostic scholarship test.
+            {about.ctaDesc}
           </p>
           <div className="about-cta-actions">
             <button className="about-cta-btn-primary" onClick={() => navigate('/contact')}>
