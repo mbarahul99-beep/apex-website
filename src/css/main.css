@@ -2379,7 +2379,8 @@
   border: 1px solid #fbcfe8;
   border-radius: 12px;
   padding: 18px 16px;
-  margin-top: auto;
+  margin-top: 0;
+  flex: 1;
 }
 
 .about-test-series-header {
