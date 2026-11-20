@@ -1170,7 +1170,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
               <p className="info-card-text">Access standard practice test banks, offline subjective OMR grading, and personalized analytics for a complete competitive edge.</p>
             </div>
             <div className="info-card-image-wrap">
-              <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=600" className="info-card-image" alt="Institute APEX Jind Classroom and Study Partner Portal" loading="lazy" decoding="async" />
+              <img src="/images/slides/s_1792327822326.webp" className="info-card-image" alt="Institute APEX Jind Classroom and Study Partner Portal" loading="lazy" decoding="async" />
             </div>
           </div>
         </section>
@@ -1323,13 +1323,13 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                 <div className="alumni-card" key={alm.id}>
                   <div className="alumni-photo-wrap">
                     <img 
-                      src={alm.photo || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400"} 
+                      src={alm.photo || "/logo.png"} 
                       className={`alumni-photo ${alm.photoFit ? `fit-${alm.photoFit}` : 'fit-contain'}`} 
                       alt={`${alm.name || 'Apex Alumni'} - ${alm.college || alm.currentRole || 'Premier College'} | Apex Jind`} 
                       loading="lazy"
                       onError={(e) => {
                         e.currentTarget.onerror = null;
-                        e.currentTarget.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400";
+                        e.currentTarget.src = "/logo.png";
                       }}
                     />
                   </div>

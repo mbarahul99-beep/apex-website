@@ -1141,7 +1141,7 @@ function AdminSliders() {
     }
     const newSlide = {
       id: 's_' + Date.now(),
-      imageUrl: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=800',
+      imageUrl: '',
       mobileImageUrl: '',
       orderIndex: sliders.length,
       active: true
@@ -1354,7 +1354,7 @@ function AdminCourses() {
     setDuration('');
     setSchedule('');
     setFee('');
-    setImage('https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=600');
+    setImage('');
     setDetails('');
     
     setShowTarget(true);
@@ -1641,7 +1641,7 @@ function AdminResults() {
     setCustomExamType('');
     setAchievement('');
     setLocation('State Haryana');
-    setPhoto('https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=200');
+    setPhoto('');
     setPhotoFit('contain');
     setYear('2025');
     setFormOpen(true);
@@ -1870,7 +1870,7 @@ function AdminAlumni() {
     setCollege('');
     setCurrentRole('');
     setBatch('');
-    setPhoto('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400');
+    setPhoto('');
     setPhotoFit('contain');
     setFormOpen(true);
   };
@@ -2566,7 +2566,7 @@ function AdminPosts() {
     setTitle('');
     setSlug('');
     setContent('');
-    setCoverImage('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=600');
+    setCoverImage('');
     setMetaTitle('');
     setMetaDescription('');
     setKeywords('');
@@ -3457,7 +3457,7 @@ function AdminTestimonials() {
     setStudentName('');
     setExamType('JEE');
     setRankBadge('');
-    setPhoto('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150');
+    setPhoto('');
     setVideoUrl('');
     setTextReview('');
     setFormOpen(true);

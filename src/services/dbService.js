@@ -27,7 +27,7 @@ const DB_KEYS = {
 };
 
 // Automatic cache migration: invalidate any stale browser cache holding deleted demo data or heavy base64
-const CACHE_VERSION = 'apex_live_v11';
+const CACHE_VERSION = 'apex_live_v12';
 if (typeof window !== 'undefined' && window.localStorage) {
   try {
     if (localStorage.getItem('apex_data_version') !== CACHE_VERSION) {
@@ -205,7 +205,7 @@ const DEFAULT_POSTS = [
     title: "How to Balance Board Exam Preparations with JEE Main Coaching",
     slug: "balance-boards-with-jee",
     content: "<p>Balancing board exams (CBSE/HBSE) alongside rigorous JEE preparation is a common concern for Class 12 aspirants. Here are crucial strategies:</p><ul><li><b>Align Topics:</b> Physics and Chemistry syllabus overlaps heavily. Study them concurrently.</li><li><b>Solve Board Previous Years:</b> Allocate weekend slots to practice writing descriptive answers for board prep.</li><li><b>Mock Exams:</b> Take regular mock OMR tests at APEX to refine speed while writing subjective tests at school.</li></ul>",
-    coverImage: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=600",
+    coverImage: "/images/courses/c2.webp",
     metaTitle: "Tips to Balance CBSE/HBSE Board Exams with JEE Prep",
     metaDescription: "Struggling to balance JEE Main coaching with CBSE or HBSE Board Exam preparations? Read the expert guidelines from Apex Institute teachers.",
     keywords: "boards and jee, school and coaching, cbse preparation, hbse exam tips",
