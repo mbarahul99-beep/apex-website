@@ -2363,6 +2363,7 @@ function ContactUsView({ settings, navigate }) {
                     <span>Target Course / Program</span>
                   </label>
                   <select 
+                    aria-label="Target Course or Program"
                     name="courseId"
                     value={formData.courseId}
                     onChange={handleChange}
@@ -2619,6 +2620,7 @@ function EnquiryModal({ selectedCourse, onClose }) {
               <div className="form-group">
                 <label>Target Coaching Program *</label>
                 <select 
+                  aria-label="Target Coaching Program"
                   value={courseId} 
                   onChange={e => setCourseId(e.target.value)}
                   required
@@ -2681,6 +2683,7 @@ function EnquiryInlineForm() {
           <input 
             type="text" 
             placeholder="Student Name *" 
+            aria-label="Student Full Name"
             value={name} 
             onChange={e => setName(e.target.value)}
             style={{ width: '100%', padding: '11px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-gray)', fontSize: '0.85rem' }}
@@ -2689,12 +2692,14 @@ function EnquiryInlineForm() {
           <input 
             type="tel" 
             placeholder="Phone Number *" 
+            aria-label="Mobile Phone Number"
             value={phone} 
             onChange={e => setPhone(e.target.value)}
             style={{ width: '100%', padding: '11px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-gray)', fontSize: '0.85rem' }}
             required
           />
           <select 
+            aria-label="Select Target Course"
             value={courseId} 
             onChange={e => setCourseId(e.target.value)}
             style={{ width: '100%', padding: '11px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-gray)', fontSize: '0.85rem', background: '#fff' }}
