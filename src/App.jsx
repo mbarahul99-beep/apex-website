@@ -804,14 +804,14 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
             <div className="footer-col">
               <span className="footer-col-title">Quick Links</span>
               <ul className="footer-links-list">
-                <li className="footer-link-item"><a onClick={() => navigate('/')}>Home</a></li>
-                <li className="footer-link-item"><a onClick={() => navigate('/courses')}>All Courses</a></li>
-                <li className="footer-link-item"><a onClick={() => navigate('/about')}>About Us</a></li>
-                <li className="footer-link-item"><a onClick={() => navigate('/contact')}>Contact Us</a></li>
-                <li className="footer-link-item"><a onClick={() => navigate('/scholarships')}>Scholarships</a></li>
+                <li className="footer-link-item"><a href="/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>Home</a></li>
+                <li className="footer-link-item"><a href="/courses" onClick={(e) => { e.preventDefault(); navigate('/courses'); }}>All Courses</a></li>
+                <li className="footer-link-item"><a href="/about" onClick={(e) => { e.preventDefault(); navigate('/about'); }}>About Us</a></li>
+                <li className="footer-link-item"><a href="/contact" onClick={(e) => { e.preventDefault(); navigate('/contact'); }}>Contact Us</a></li>
+                <li className="footer-link-item"><a href="/scholarships" onClick={(e) => { e.preventDefault(); navigate('/scholarships'); }}>Scholarships</a></li>
                 {customPages.filter(p => !['about-apex-jind', 'about', 'about-us', 'contact', 'contact-us'].includes(p.slug)).map(page => (
                   <li className="footer-link-item" key={page.id}>
-                    <a onClick={() => navigate(`/pages/${page.slug}`)}>{page.title}</a>
+                    <a href={`/pages/${page.slug}`} onClick={(e) => { e.preventDefault(); navigate(`/pages/${page.slug}`); }}>{page.title}</a>
                   </li>
                 ))}
               </ul>
@@ -820,10 +820,10 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
             <div className="footer-col">
               <span className="footer-col-title">Coaching Programs</span>
               <ul className="footer-links-list">
-                <li className="footer-link-item"><a onClick={() => navigate('/courses')}>NEET medical prep</a></li>
-                <li className="footer-link-item"><a onClick={() => navigate('/courses')}>IIT-JEE prep tuition</a></li>
-                <li className="footer-link-item"><a onClick={() => navigate('/courses')}>Olympiads foundations</a></li>
-                <li className="footer-link-item"><a onClick={() => navigate('/courses')}>Class 9th & 10th tuitions</a></li>
+                <li className="footer-link-item"><a href="/courses" onClick={(e) => { e.preventDefault(); navigate('/courses'); }}>NEET medical prep</a></li>
+                <li className="footer-link-item"><a href="/courses" onClick={(e) => { e.preventDefault(); navigate('/courses'); }}>IIT-JEE prep tuition</a></li>
+                <li className="footer-link-item"><a href="/courses" onClick={(e) => { e.preventDefault(); navigate('/courses'); }}>Olympiads foundations</a></li>
+                <li className="footer-link-item"><a href="/courses" onClick={(e) => { e.preventDefault(); navigate('/courses'); }}>Class 9th & 10th tuitions</a></li>
               </ul>
             </div>
 
@@ -1254,13 +1254,14 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
               </div>
             ))}
           </div>
-          <button 
+          <a 
+            href="/courses"
             className="admin-btn secondary" 
-            style={{ width: '100%', padding: '14px', borderRadius: 'var(--radius-lg)', fontWeight: 700 }}
-            onClick={() => navigate('/courses')}
+            style={{ width: '100%', padding: '14px', borderRadius: 'var(--radius-lg)', fontWeight: 700, display: 'block', textAlign: 'center', textDecoration: 'none' }}
+            onClick={(e) => { e.preventDefault(); navigate('/courses'); }}
           >
             View All Courses Catalog
-          </button>
+          </a>
         </section>
       )}
 
@@ -1306,13 +1307,14 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
 
           {filteredResults.length > 8 && (
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
-              <button 
+              <a 
+                href="/results"
                 className="courses-action-btn" 
-                onClick={() => navigate('/results')}
-                style={{ padding: '12px 30px', fontWeight: 700 }}
+                onClick={(e) => { e.preventDefault(); navigate('/results'); }}
+                style={{ padding: '12px 30px', fontWeight: 700, display: 'inline-block', textDecoration: 'none' }}
               >
                 View More Results
-              </button>
+              </a>
             </div>
           )}
         </section>
@@ -1486,7 +1488,8 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                       {cleanExcerpt}
                     </p>
                     
-                    <button 
+                    <a 
+                      href={`/posts/${post.slug}`}
                       className="enrol-btn" 
                       style={{ 
                         padding: '8px 16px', 
@@ -1495,12 +1498,14 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                         backgroundColor: 'transparent',
                         color: 'var(--navy-blue)',
                         border: '1px solid var(--navy-blue)',
-                        fontWeight: 700
+                        fontWeight: 700,
+                        display: 'inline-block',
+                        textDecoration: 'none'
                       }}
-                      onClick={() => navigate(`/posts/${post.slug}`)}
+                      onClick={(e) => { e.preventDefault(); navigate(`/posts/${post.slug}`); }}
                     >
                       Read Full Guide &rarr;
-                    </button>
+                    </a>
                   </div>
                 </div>
               );
@@ -1509,13 +1514,14 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
 
           {posts.length > 5 && (
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
-              <button 
+              <a 
+                href="/blogs"
                 className="courses-action-btn" 
-                onClick={() => navigate('/blogs')}
-                style={{ padding: '12px 30px', fontWeight: 700 }}
+                onClick={(e) => { e.preventDefault(); navigate('/blogs'); }}
+                style={{ padding: '12px 30px', fontWeight: 700, display: 'inline-block', textDecoration: 'none' }}
               >
                 View All Blogs
-              </button>
+              </a>
             </div>
           )}
         </section>
@@ -2903,18 +2909,21 @@ function AllBlogsView({ navigate }) {
                     {cleanExcerpt}
                   </p>
                   
-                  <button 
+                  <a 
+                    href={`/posts/${post.slug}`}
                     className="courses-action-btn" 
                     style={{ 
                       padding: '10px 20px', 
                       fontSize: '0.85rem', 
                       alignSelf: 'flex-start',
-                      width: 'auto'
+                      width: 'auto',
+                      display: 'inline-block',
+                      textDecoration: 'none'
                     }}
-                    onClick={() => navigate(`/posts/${post.slug}`)}
+                    onClick={(e) => { e.preventDefault(); navigate(`/posts/${post.slug}`); }}
                   >
                     Read Full Post
-                  </button>
+                  </a>
                 </div>
               </div>
             );
