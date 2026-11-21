@@ -31,6 +31,8 @@
           if (logo && (logo.startsWith('http') || logo.startsWith('data:') || logo.startsWith('/'))) {
             window.__APEX_SAVED_LOGO__ = logo;
           }
+          if (s.logoHeight) window.__APEX_SAVED_LOGO_H__ = s.logoHeight;
+          if (s.logoWidth) window.__APEX_SAVED_LOGO_W__ = s.logoWidth;
           var sliders = JSON.parse(localStorage.getItem('apex_sliders') || '[]');
           if (sliders && sliders.length > 0) {
             // Guarantee old green slide s_1792327505092 is never used from cached storage
@@ -292,7 +294,7 @@
   </head>
   <body>
     <div id="root">
-      <!-- Instant App Shell to eliminate white screen on first paint -->
+      <!-- Instant App Shell to eliminate white screen & layout shift on first paint -->
       <style>
         .initial-shell {
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -300,23 +302,80 @@
           min-height: 100vh;
           margin: 0;
           color: #0f172a;
-        }
-        .shell-topbar {
-          background: #0f2b48;
-          color: #ffffff;
-          padding: 8px 16px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 13px;
+          padding-top: 64px;
+          box-sizing: border-box;
         }
         .shell-header {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          width: 100%;
+          height: 64px;
           background: #ffffff;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-          padding: 12px 24px;
+          border-bottom: 1px solid #e2e8f0;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+          padding: 0 24px;
+          z-index: 1000;
+          box-sizing: border-box;
+          display: flex;
+          align-items: center;
+        }
+        .shell-header-inner {
+          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
           display: flex;
           justify-content: space-between;
           align-items: center;
+        }
+        .shell-logo-wrap {
+          display: flex;
+          align-items: center;
+          text-decoration: none;
+        }
+        .shell-logo-img {
+          height: 48px;
+          width: auto;
+          max-width: 260px;
+          object-fit: contain;
+          display: block;
+        }
+        .shell-header-right {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+        }
+        .shell-desktop-nav {
+          display: none;
+          gap: 20px;
+          align-items: center;
+        }
+        .shell-nav-link {
+          font-size: 0.92rem;
+          font-weight: 600;
+          color: #0f2b48;
+          text-decoration: none;
+        }
+        .shell-header-btn {
+          width: 40px;
+          height: 40px;
+          border-radius: 9999px;
+          border: 1.5px solid #bee3f8;
+          color: #0f2b48;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: transparent;
+          box-sizing: border-box;
+          text-decoration: none;
+        }
+        .shell-header-btn svg {
+          width: 20px;
+          height: 20px;
+        }
+        .shell-mobile-menu-btn {
+          display: none;
         }
         .shell-hero {
           width: 100%;
@@ -337,42 +396,83 @@
           display: block;
         }
         @media (min-width: 768px) {
+          .shell-desktop-nav {
+            display: flex;
+          }
           .shell-banner {
             aspect-ratio: 1920 / 540;
             max-height: 540px;
           }
-          .shell-banner img {
-            object-fit: cover;
-          }
         }
         @media (max-width: 767px) {
-          .shell-topbar-text { display: none; }
+          .initial-shell {
+            padding-top: 58px;
+          }
+          .shell-header {
+            height: 58px;
+            padding: 0 12px;
+          }
+          .shell-header-right {
+            gap: 6px;
+          }
+          .shell-header-btn {
+            width: 36px;
+            height: 36px;
+          }
+          .shell-header-btn svg {
+            width: 18px;
+            height: 18px;
+          }
+          .shell-mobile-menu-btn {
+            display: flex;
+          }
+          .shell-logo-img {
+            height: 40px;
+            max-width: calc(100vw - 130px);
+          }
         }
       </style>
       <div class="initial-shell">
-        <div class="shell-topbar">
-          <span class="shell-topbar-text">Admissions Open for NEET &amp; IIT-JEE 2026-27 | Call: 94677-52374</span>
-          <div style="display:flex;gap:14px;margin-left:auto;">
-            <a href="tel:9467752374" style="color:#ffffff;text-decoration:none;font-weight:600;">Call: 94677-52374</a>
-            <a href="https://wa.me/919467752374" style="color:#25d366;text-decoration:none;font-weight:700;">WhatsApp</a>
+        <header class="shell-header">
+          <div class="shell-header-inner">
+            <a href="/" class="shell-logo-wrap" aria-label="Institute APEX Home">
+              <img id="shell-logo" src="/logo_full.webp" alt="Apex Institute" class="shell-logo-img" width="260" height="48" fetchpriority="high" />
+            </a>
+            <div class="shell-header-right">
+              <nav class="shell-desktop-nav" aria-label="Navigation">
+                <a href="/" class="shell-nav-link" style="color:#0284c7;">Home</a>
+                <a href="/courses" class="shell-nav-link">Courses</a>
+                <a href="/scholarships" class="shell-nav-link">Scholarships</a>
+                <a href="/online-prep" class="shell-nav-link">Online Prep</a>
+                <a href="/blogs" class="shell-nav-link">Blogs</a>
+                <a href="/about" class="shell-nav-link">About Us</a>
+                <a href="/contact" class="shell-nav-link">Contact Us</a>
+              </nav>
+              <!-- Calling Button -->
+              <a href="tel:9467752374" class="shell-header-btn" title="Call Institute APEX" aria-label="Call Institute APEX">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.387a12.035 12.035 0 01-7.108-7.108c-.155-.44.01-1.09.387-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.11-1.008H4.5a2.25 2.25 0 00-2.25 2.25v1.372z" /></svg>
+              </a>
+              <!-- Student Exam Portal Button -->
+              <a href="https://app.instituteapex.in?app=student" target="_blank" rel="noopener noreferrer" class="shell-header-btn" title="Student Exam Portal" aria-label="Student Exam Portal">
+                <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              </a>
+              <!-- Mobile Hamburger Menu Button -->
+              <div class="shell-header-btn shell-mobile-menu-btn" aria-label="Toggle navigation menu">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="shell-header" style="height:62px;">
-          <div style="height:38px;max-width:260px;display:flex;align-items:center;">
-            <img id="shell-logo" src="/logo_full.webp" alt="Apex Institute" width="260" height="38" style="height:38px;width:auto;max-height:38px;max-width:260px;object-fit:contain;display:block;" />
-          </div>
-          <script>
-            if (window.__APEX_SAVED_LOGO__) {
-              var _sl = document.getElementById('shell-logo');
-              if (_sl) _sl.src = window.__APEX_SAVED_LOGO__;
+        </header>
+        <script>
+          if (window.__APEX_SAVED_LOGO__) {
+            var _sl = document.getElementById('shell-logo');
+            if (_sl) {
+              _sl.src = window.__APEX_SAVED_LOGO__;
+              if (window.__APEX_SAVED_LOGO_H__) _sl.style.height = window.__APEX_SAVED_LOGO_H__;
+              if (window.__APEX_SAVED_LOGO_W__) _sl.style.maxWidth = window.__APEX_SAVED_LOGO_W__;
             }
-          </script>
-          <div style="display:flex;gap:16px;align-items:center;">
-            <div style="width:60px;height:12px;background:#e2e8f0;border-radius:4px;"></div>
-            <div style="width:60px;height:12px;background:#e2e8f0;border-radius:4px;"></div>
-            <div style="width:60px;height:12px;background:#e2e8f0;border-radius:4px;"></div>
-          </div>
-        </div>
+          }
+        </script>
         <div class="shell-hero">
           <div class="shell-banner">
             <picture style="width:100%;height:100%;display:block;">
