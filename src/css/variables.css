@@ -2,18 +2,18 @@
 /* Google Fonts loaded asynchronously in index.html to prevent render-blocking delay */
 
 :root {
-  /* Color Palette */
-  --primary-blue: #008ad8;
-  --primary-blue-hover: #0076b8;
-  --primary-light-blue: #29b6f6;
+  /* Color Palette - Tuned for WCAG AA 5.3:1 Contrast */
+  --primary-blue: #0070ba;
+  --primary-blue-hover: #005b96;
+  --primary-light-blue: #0284c7;
   --navy-blue: #003057;
   --navy-blue-hover: #001e38;
   --navy-dark: #0f2942;
-  --selection-blue: #1976d2;
+  --selection-blue: #1d4ed8;
   --bg-tint: #f4f8fb;
   --white: #ffffff;
   --dark-gray: #333333;
-  --light-gray: #757575;
+  --light-gray: #475569;
   --border-gray: #e0e0e0;
   --border-light: #eceff1;
   --accent-green: #4caf50;
