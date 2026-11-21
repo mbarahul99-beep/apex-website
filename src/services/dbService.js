@@ -368,9 +368,17 @@ export const dbService = {
       cache.posts = await loadCollection("posts", DEFAULT_POSTS);
       cache.scholarships = (await loadCollection("scholarships", DEFAULT_SCHOLARSHIPS)).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
-      // 4. Enquiries (No seed required)
-      const enquiriesSnap = await getDocs(collection(db, "enquiries"));
-      cache.enquiries = enquiriesSnap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+      // 4. Enquiries (Restricted to logged-in admin for student privacy)
+      if (this.isLoggedIn()) {
+        try {
+          const enquiriesSnap = await getDocs(collection(db, "enquiries"));
+          cache.enquiries = enquiriesSnap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+        } catch (e) {
+          console.warn("⚠️ Enquiries fetch restricted to authenticated admins:", e);
+        }
+      } else {
+        cache.enquiries = [];
+      }
 
       // Keep LocalStorage in sync as offline cache for all collections
       saveData(DB_KEYS.SETTINGS, cache.settings);
@@ -726,6 +734,18 @@ export const dbService = {
   },
 
   // Enquiries
+  async fetchEnquiries() {
+    if (!isDefault && this.isLoggedIn()) {
+      try {
+        const enquiriesSnap = await getDocs(collection(db, "enquiries"));
+        cache.enquiries = enquiriesSnap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+        saveData(DB_KEYS.ENQUIRIES, cache.enquiries);
+      } catch (err) {
+        console.warn("⚠️ Could not fetch live enquiries:", err);
+      }
+    }
+    return cache.enquiries;
+  },
   getEnquiries() {
     return cache.enquiries;
   },

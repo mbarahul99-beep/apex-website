@@ -245,13 +245,19 @@ function AdminOverview({ setActiveTab, onUpdateSettings }) {
   const [stats, setStats] = useState({ courses: 0, enquiries: 0, pages: 0, posts: 0, alumni: 0 });
 
   useEffect(() => {
-    setStats({
-      courses: dbService.getCourses().length,
-      enquiries: dbService.getEnquiries().length,
-      pages: dbService.getPages().length,
-      posts: dbService.getPosts().length,
-      alumni: dbService.getAlumni().length
-    });
+    const updateStats = async () => {
+      if (dbService.fetchEnquiries) {
+        await dbService.fetchEnquiries();
+      }
+      setStats({
+        courses: dbService.getCourses().length,
+        enquiries: dbService.getEnquiries().length,
+        pages: dbService.getPages().length,
+        posts: dbService.getPosts().length,
+        alumni: dbService.getAlumni().length
+      });
+    };
+    updateStats();
   }, []);
 
   return (
@@ -2886,8 +2892,13 @@ function AdminEnquiries() {
   const [enquiries, setEnquiries] = useState([]);
   const [courses, setCourses] = useState([]);
 
-  const loadEnquiriesList = () => {
-    setEnquiries(dbService.getEnquiries());
+  const loadEnquiriesList = async () => {
+    if (dbService.fetchEnquiries) {
+      const list = await dbService.fetchEnquiries();
+      setEnquiries(list || []);
+    } else {
+      setEnquiries(dbService.getEnquiries());
+    }
   };
 
   useEffect(() => {
