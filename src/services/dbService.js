@@ -27,7 +27,7 @@ const DB_KEYS = {
 };
 
 // Automatic cache migration: invalidate any stale browser cache holding deleted demo data or heavy base64
-const CACHE_VERSION = 'apex_live_v12';
+const CACHE_VERSION = 'apex_live_v13';
 if (typeof window !== 'undefined' && window.localStorage) {
   try {
     if (localStorage.getItem('apex_data_version') !== CACHE_VERSION) {
@@ -55,7 +55,7 @@ const DEFAULT_SETTINGS = {
   logoNameUrl: "/logo_full.webp",
   logoIconHeight: "44px",
   logoWidth: "260px",
-  logoHeight: "34px",
+  logoHeight: "48px",
   examPortalUrl: "https://app.instituteapex.in?app=student",
   showBlogImagesOnHome: false,
   showSliders: true,

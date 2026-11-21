@@ -501,7 +501,7 @@ function SettingsForm({ onUpdateSettings }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
               <label style={{ margin: 0 }}>Logo Display Height</label>
               <span className="status-badge new" style={{ fontFamily: 'monospace', fontWeight: 700 }}>
-                {parseInt(settings.logoHeight || '34', 10) || 34}px
+                {parseInt(settings.logoHeight || '48', 10) || 48}px
               </span>
             </div>
             <input 
@@ -509,7 +509,7 @@ function SettingsForm({ onUpdateSettings }) {
               min="15" 
               max="120" 
               step="1"
-              value={parseInt(settings.logoHeight || '34', 10) || 34} 
+              value={parseInt(settings.logoHeight || '48', 10) || 48} 
               onChange={(e) => {
                 const val = e.target.value + 'px';
                 setSettings(prev => {
@@ -552,7 +552,7 @@ function SettingsForm({ onUpdateSettings }) {
               style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--navy-blue)' }}
             />
             <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '4px' }}>
-              Scroll / drag slider to adjust logo max-width (100px to 600px)
+              Scroll / drag slider to adjust logo max-width (80px to 600px)
             </span>
           </div>
         </div>
@@ -567,12 +567,12 @@ function SettingsForm({ onUpdateSettings }) {
             {/* Desktop Preview */}
             <div style={{ flex: 2, minWidth: '260px' }}>
               <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '4px' }}>
-                Desktop Header Preview ({getUnitValue(settings.logoHeight, '56px')})
+                Desktop Header Preview ({getUnitValue(settings.logoHeight, '48px')})
               </span>
               <div style={{ 
                 display: 'flex', 
                 alignItems: 'center', 
-                backgroundColor: '#06101e', 
+                backgroundColor: '#ffffff', 
                 padding: '12px 20px', 
                 border: '1px solid #cbd5e1', 
                 borderRadius: 'var(--radius-md)',
@@ -583,8 +583,8 @@ function SettingsForm({ onUpdateSettings }) {
                   src={getLogoSrc(settings.logoUrl || settings.logoNameUrl || '/logo_full.png')} 
                   alt="Desktop Logo Preview" 
                   style={{ 
-                    height: getUnitValue(settings.logoHeight, '56px'), 
-                    maxWidth: getUnitValue(settings.logoWidth, '360px'), 
+                    height: getUnitValue(settings.logoHeight, '48px'), 
+                    maxWidth: getUnitValue(settings.logoWidth, '260px'), 
                     width: 'auto', 
                     objectFit: 'contain',
                     imageRendering: '-webkit-optimize-contrast',
@@ -597,12 +597,12 @@ function SettingsForm({ onUpdateSettings }) {
             {/* Mobile Preview */}
             <div style={{ flex: 1, minWidth: '220px' }}>
               <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '4px' }}>
-                Mobile Screen Preview (~{Math.round((parseInt(settings.logoHeight || '56', 10) || 56) * 0.82)}px)
+                Mobile Screen Preview (~{Math.round((parseInt(settings.logoHeight || '48', 10) || 48) * 0.85)}px)
               </span>
               <div style={{ 
                 display: 'flex', 
                 alignItems: 'center', 
-                backgroundColor: '#06101e', 
+                backgroundColor: '#ffffff', 
                 padding: '8px 12px', 
                 border: '1px solid #cbd5e1', 
                 borderRadius: 'var(--radius-md)',
@@ -613,8 +613,8 @@ function SettingsForm({ onUpdateSettings }) {
                   src={getLogoSrc(settings.logoUrl || settings.logoNameUrl || '/logo_full.png')} 
                   alt="Mobile Logo Preview" 
                   style={{ 
-                    height: `calc(${getUnitValue(settings.logoHeight, '56px')} * 0.82)`, 
-                    maxWidth: getUnitValue(settings.logoWidth, '360px'), 
+                    height: `calc(${getUnitValue(settings.logoHeight, '48px')} * 0.85)`, 
+                    maxWidth: `min(calc(100vw - 125px), ${getUnitValue(settings.logoWidth, '260px')})`, 
                     width: 'auto', 
                     objectFit: 'contain',
                     imageRendering: '-webkit-optimize-contrast',

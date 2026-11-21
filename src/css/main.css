@@ -1912,10 +1912,10 @@
   }
 
   .header-logo-text {
-    height: calc(var(--logo-height, 52px) * 0.85) !important;
-    max-height: 52px !important;
+    height: calc(var(--logo-height, 48px) * 0.85) !important;
+    max-height: none !important;
     width: auto !important;
-    max-width: var(--logo-width, 360px) !important;
+    max-width: min(calc(100vw - 125px), var(--logo-width, 360px)) !important;
     object-fit: contain !important;
     padding: 2px 0 !important;
     image-rendering: auto !important;

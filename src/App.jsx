@@ -577,8 +577,18 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
     ]
   };
 
+  const logoH = getUnitValue(settings.logoHeight, '48px');
+  const logoW = getUnitValue(settings.logoWidth, '260px');
+
   return (
-    <div className="app-container">
+    <div 
+      className="app-container"
+      style={{
+        '--logo-height': logoH,
+        '--logo-width': logoW,
+        paddingTop: `max(64px, calc(${logoH} + 16px))`
+      }}
+    >
       <Helmet>
         <title>{siteTitle}</title>
         <meta name="description" content={siteDesc} />
@@ -625,7 +635,14 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
       </Helmet>
 
       {/* Navigation Header */}
-      <header className="header">
+      <header 
+        className="header"
+        style={{
+          '--logo-height': logoH,
+          '--logo-width': logoW,
+          height: `max(64px, calc(${logoH} + 16px))`
+        }}
+      >
         <div className="header-inner">
           <a 
             href="/" 
@@ -640,15 +657,12 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
               alt={settings.instituteName || "APEX INSTITUTE"} 
               fetchPriority="high"
               loading="eager"
-              width="260"
-              height="38"
               style={{ 
-                '--logo-width': getUnitValue(settings.logoWidth, '260px'),
-                '--logo-height': getUnitValue(settings.logoHeight, '38px'),
+                '--logo-width': logoW,
+                '--logo-height': logoH,
                 width: 'auto',
-                height: 'var(--logo-height, 38px)',
-                maxHeight: '38px',
-                maxWidth: 'var(--logo-width, 260px)',
+                height: logoH,
+                maxWidth: logoW,
                 objectFit: 'contain',
                 padding: '2px 0',
                 display: 'block'
