@@ -288,10 +288,14 @@ const cache = {
   scholarships: loadData(DB_KEYS.SCHOLARSHIPS, DEFAULT_SCHOLARSHIPS).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0))
 };
 
+let initPromise = null;
+
 export const dbService = {
   // Initialize and preload databases into cache
   async init() {
-    if (isDefault) {
+    if (initPromise) return initPromise;
+    initPromise = (async () => {
+      if (isDefault) {
       // LocalStorage mode
       cache.settings = { ...DEFAULT_SETTINGS, ...loadData(DB_KEYS.SETTINGS, DEFAULT_SETTINGS) };
       cache.sliders = ensureMobileSliders(loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS)).sort((a,b) => a.orderIndex - b.orderIndex);
@@ -358,15 +362,38 @@ export const dbService = {
         return [];
       };
 
-      cache.sliders = ensureMobileSliders(await loadCollection("sliders", DEFAULT_SLIDERS)).sort((a,b) => a.orderIndex - b.orderIndex);
-      cache.courses = await loadCollection("courses", DEFAULT_COURSES);
-      cache.resources = await loadCollection("resources", DEFAULT_RESOURCES);
-      cache.testimonials = await loadCollection("testimonials", DEFAULT_TESTIMONIALS);
-      cache.results = sortResultsDesc(await loadCollection("results", DEFAULT_RESULTS));
-      cache.alumni = await loadCollection("alumni", DEFAULT_ALUMNI);
-      cache.pages = await loadCollection("pages", DEFAULT_PAGES);
-      cache.posts = await loadCollection("posts", DEFAULT_POSTS);
-      cache.scholarships = (await loadCollection("scholarships", DEFAULT_SCHOLARSHIPS)).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+      // Load all 9 collections concurrently in parallel
+      const [
+        slidersData,
+        coursesData,
+        resourcesData,
+        testimonialsData,
+        resultsData,
+        alumniData,
+        pagesData,
+        postsData,
+        scholarshipsData
+      ] = await Promise.all([
+        loadCollection("sliders", DEFAULT_SLIDERS),
+        loadCollection("courses", DEFAULT_COURSES),
+        loadCollection("resources", DEFAULT_RESOURCES),
+        loadCollection("testimonials", DEFAULT_TESTIMONIALS),
+        loadCollection("results", DEFAULT_RESULTS),
+        loadCollection("alumni", DEFAULT_ALUMNI),
+        loadCollection("pages", DEFAULT_PAGES),
+        loadCollection("posts", DEFAULT_POSTS),
+        loadCollection("scholarships", DEFAULT_SCHOLARSHIPS)
+      ]);
+
+      cache.sliders = ensureMobileSliders(slidersData).sort((a,b) => a.orderIndex - b.orderIndex);
+      cache.courses = coursesData;
+      cache.resources = resourcesData;
+      cache.testimonials = testimonialsData;
+      cache.results = sortResultsDesc(resultsData);
+      cache.alumni = alumniData;
+      cache.pages = pagesData;
+      cache.posts = postsData;
+      cache.scholarships = (scholarshipsData || []).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
       // 4. Enquiries (Restricted to logged-in admin for student privacy)
       if (this.isLoggedIn()) {
@@ -412,6 +439,8 @@ export const dbService = {
       cache.scholarships = loadData(DB_KEYS.SCHOLARSHIPS, DEFAULT_SCHOLARSHIPS);
       notifyDbUpdates();
     }
+  })();
+  return initPromise;
   },
 
   subscribe(callback) {
