@@ -803,8 +803,6 @@ function SettingsForm({ onUpdateSettings }) {
           <div className="admin-input-group" style={{ flex: 1 }}>
             <label style={{ fontWeight: 700 }}>AI Counselor Voice (Hindi & English Studio)</label>
             <select 
-              id="admin-ai-voice-name"
-              aria-label="AI Counselor Voice (Hindi & English Studio)"
               name="aiVoiceName" 
               value={settings.aiVoiceName || 'Aoede'} 
               onChange={handleChange}
@@ -1250,7 +1248,6 @@ function AdminSliders() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <span style={{ fontSize: '0.72rem', color: 'var(--navy-dark)', fontWeight: 600 }}>Slot:</span>
                       <select 
-                        aria-label={`Slide ${idx + 1} Slot Position`}
                         value={idx} 
                         onChange={e => handleMoveSlide(idx, parseInt(e.target.value))}
                         style={{ padding: '2px 4px', fontSize: '0.72rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontWeight: 700, backgroundColor: '#fff', cursor: 'pointer' }}
@@ -1441,8 +1438,8 @@ function AdminCourses() {
               <input type="text" value={title} onChange={e => setTitle(e.target.value)} required />
             </div>
             <div className="admin-input-group">
-              <label htmlFor="admin-course-category">Academic Tab Category *</label>
-              <select id="admin-course-category" aria-label="Academic Tab Category" value={category} onChange={e => setCategory(e.target.value)}>
+              <label>Academic Tab Category *</label>
+              <select value={category} onChange={e => setCategory(e.target.value)}>
                 <option value="class-9-10">Class 9th & 10th (Foundations)</option>
                 <option value="class-11-12">Class 11th & 12th (NEET/JEE)</option>
               </select>
@@ -1714,8 +1711,8 @@ function AdminResults() {
               <input type="text" value={studentName} onChange={e => setStudentName(e.target.value)} required />
             </div>
             <div className="admin-input-group">
-              <label htmlFor="admin-result-exam-category">Exam Category *</label>
-              <select id="admin-result-exam-category" aria-label="Exam Category" value={examTypeSelect} onChange={e => setExamTypeSelect(e.target.value)}>
+              <label>Exam Category *</label>
+              <select value={examTypeSelect} onChange={e => setExamTypeSelect(e.target.value)}>
                 {allCategories.map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
@@ -1754,8 +1751,8 @@ function AdminResults() {
               />
             </div>
             <div className="admin-input-group">
-              <label htmlFor="admin-result-photo-fit">Photo Display Mode</label>
-              <select id="admin-result-photo-fit" aria-label="Photo Display Mode" value={photoFit} onChange={e => setPhotoFit(e.target.value)}>
+              <label>Photo Display Mode</label>
+              <select value={photoFit} onChange={e => setPhotoFit(e.target.value)}>
                 <option value="contain">Full Image (Fit / No Upper Cropping) - Recommended</option>
                 <option value="cover-top">Top Focus (Show Full Head / Hair)</option>
                 <option value="cover">Fill Circle (Crop to fill)</option>
@@ -1966,8 +1963,8 @@ function AdminAlumni() {
               />
             </div>
             <div className="admin-input-group" style={{ minWidth: '220px' }}>
-              <label htmlFor="admin-result-photo-fit">Photo Display Mode</label>
-              <select id="admin-result-photo-fit" aria-label="Photo Display Mode" value={photoFit} onChange={e => setPhotoFit(e.target.value)}>
+              <label>Photo Display Mode</label>
+              <select value={photoFit} onChange={e => setPhotoFit(e.target.value)}>
                 <option value="contain">Full Image (Fit / No Upper Cropping) - Recommended</option>
                 <option value="cover-top">Top Focus (Show Full Head / Hair)</option>
                 <option value="cover">Fill Circle (Crop to fill)</option>
@@ -2656,8 +2653,8 @@ function AdminPosts() {
           </div>
           <div className="admin-form-row">
             <div className="admin-input-group">
-              <label htmlFor="admin-blog-category">Category Label *</label>
-              <select id="admin-blog-category" aria-label="Category Label" value={categorySelect} onChange={e => setCategorySelect(e.target.value)}>
+              <label>Category Label *</label>
+              <select value={categorySelect} onChange={e => setCategorySelect(e.target.value)}>
                 {allBlogCategories.map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
@@ -2836,8 +2833,8 @@ function AdminResources() {
               <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. JEE Main 2026 Paper Key" required />
             </div>
             <div className="admin-input-group">
-              <label htmlFor="admin-resource-link-type">Link Type</label>
-              <select id="admin-resource-link-type" aria-label="Link Type" value={type} onChange={e => setType(e.target.value)}>
+              <label>Link Type</label>
+              <select value={type} onChange={e => setType(e.target.value)}>
                 <option value="answer-key">Answer Key & Solution</option>
                 <option value="admit-card">Admit Card Alerts</option>
                 <option value="news">News & Events</option>

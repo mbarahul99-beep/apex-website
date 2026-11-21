@@ -246,10 +246,10 @@ export default function App() {
 
         {videoModalUrl && (
           <div className="modal-backdrop" onClick={() => setVideoModalUrl(null)}>
-            <div className="modal-content" role="dialog" aria-modal="true" aria-label="Student success testimonial video" style={{ maxWidth: '600px', width: '95%' }} onClick={e => e.stopPropagation()}>
+            <div className="modal-content" style={{ maxWidth: '600px', width: '95%' }} onClick={e => e.stopPropagation()}>
               <div className="modal-header">
                 <span className="modal-title">Student success testimonial video</span>
-                <button className="modal-close" onClick={() => setVideoModalUrl(null)} aria-label="Close Testimonial Video Modal"><IconClose /></button>
+                <button className="modal-close" onClick={() => setVideoModalUrl(null)}><IconClose /></button>
               </div>
               <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
                 <iframe
@@ -274,10 +274,10 @@ export default function App() {
 
         {selectedCourseDetails && (
           <div className="modal-backdrop" onClick={() => setSelectedCourseDetails(null)}>
-            <div className="modal-content" role="dialog" aria-modal="true" aria-label={`${selectedCourseDetails.title} Curriculum Details`} style={{ maxWidth: '550px', width: '95%' }} onClick={e => e.stopPropagation()}>
+            <div className="modal-content" style={{ maxWidth: '550px', width: '95%' }} onClick={e => e.stopPropagation()}>
               <div className="modal-header">
                 <span className="modal-title">{selectedCourseDetails.title} Curriculum Details</span>
-                <button className="modal-close" onClick={() => setSelectedCourseDetails(null)} aria-label="Close Course Details Modal"><IconClose /></button>
+                <button className="modal-close" onClick={() => setSelectedCourseDetails(null)}><IconClose /></button>
               </div>
               <div className="modal-body" style={{ padding: '20px', maxHeight: '75vh', overflowY: 'auto' }}>
                 {selectedCourseDetails.showImage !== false && selectedCourseDetails.image && (
@@ -589,27 +589,6 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
         paddingTop: `max(64px, calc(${logoH} + 16px))`
       }}
     >
-      <a 
-        href="#main-content" 
-        className="skip-link"
-        style={{
-          position: 'absolute',
-          top: '-999px',
-          left: '16px',
-          background: 'var(--primary-blue)',
-          color: '#ffffff',
-          padding: '8px 16px',
-          borderRadius: '4px',
-          fontWeight: 700,
-          zIndex: 9999,
-          textDecoration: 'none',
-          transition: 'top 0.2s'
-        }}
-        onFocus={(e) => { e.target.style.top = '12px'; }}
-        onBlur={(e) => { e.target.style.top = '-999px'; }}
-      >
-        Skip to main content
-      </a>
       <Helmet>
         <title>{siteTitle}</title>
         <meta name="description" content={siteDesc} />
@@ -805,7 +784,7 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
       )}
 
       {/* View Content */}
-      <main className="main-content" id="main-content" tabIndex="-1">
+      <main className="main-content">
         {children}
       </main>
 
@@ -2334,13 +2313,11 @@ function ContactUsView({ settings, navigate }) {
                 )}
 
                 <div className="contact-field-group">
-                  <label htmlFor="contact-form-name" className="contact-field-label">
+                  <label className="contact-field-label">
                     <span>Student / Parent Name</span>
                     <span className="req">*</span>
                   </label>
                   <input 
-                    id="contact-form-name"
-                    aria-label="Student or Parent Full Name"
                     type="text"
                     name="name"
                     value={formData.name}
@@ -2352,13 +2329,11 @@ function ContactUsView({ settings, navigate }) {
                 </div>
 
                 <div className="contact-field-group">
-                  <label htmlFor="contact-form-phone" className="contact-field-label">
+                  <label className="contact-field-label">
                     <span>Mobile Phone Number</span>
                     <span className="req">*</span>
                   </label>
                   <input 
-                    id="contact-form-phone"
-                    aria-label="Mobile Phone Number"
                     type="tel"
                     name="phone"
                     value={formData.phone}
@@ -2370,12 +2345,10 @@ function ContactUsView({ settings, navigate }) {
                 </div>
 
                 <div className="contact-field-group">
-                  <label htmlFor="contact-form-email" className="contact-field-label">
+                  <label className="contact-field-label">
                     <span>Email Address (Optional)</span>
                   </label>
                   <input 
-                    id="contact-form-email"
-                    aria-label="Email Address (Optional)"
                     type="email"
                     name="email"
                     value={formData.email}
@@ -2386,12 +2359,10 @@ function ContactUsView({ settings, navigate }) {
                 </div>
 
                 <div className="contact-field-group">
-                  <label htmlFor="contact-form-course" className="contact-field-label">
+                  <label className="contact-field-label">
                     <span>Target Course / Program</span>
                   </label>
                   <select 
-                    id="contact-form-course"
-                    aria-label="Target Course or Coaching Program"
                     name="courseId"
                     value={formData.courseId}
                     onChange={handleChange}
@@ -2411,12 +2382,10 @@ function ContactUsView({ settings, navigate }) {
                 </div>
 
                 <div className="contact-field-group">
-                  <label htmlFor="contact-form-message" className="contact-field-label">
+                  <label className="contact-field-label">
                     <span>Your Message / Query (Optional)</span>
                   </label>
                   <textarea 
-                    id="contact-form-message"
-                    aria-label="Your Message or Query (Optional)"
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
@@ -2429,7 +2398,6 @@ function ContactUsView({ settings, navigate }) {
                   type="submit" 
                   className="contact-form-submit"
                   disabled={submitting}
-                  aria-label="Submit Admission Enquiry"
                 >
                   {submitting ? 'Submitting...' : 'Submit Admission Enquiry'}
                 </button>
@@ -2602,12 +2570,12 @@ function EnquiryModal({ selectedCourse, onClose }) {
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-content" role="dialog" aria-modal="true" aria-label={selectedCourse ? `Enrol: ${selectedCourse.title}` : 'Enquire and Register'} onClick={e => e.stopPropagation()}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <span className="modal-title">
             {selectedCourse ? `Enrol: ${selectedCourse.title}` : 'Enquire and Register'}
           </span>
-          <button className="modal-close" onClick={onClose} aria-label="Close Registration Form Modal"><IconClose /></button>
+          <button className="modal-close" onClick={onClose}><IconClose /></button>
         </div>
         <div className="modal-body">
           {submitted ? (
@@ -2615,16 +2583,13 @@ function EnquiryModal({ selectedCourse, onClose }) {
               <div className="form-success-icon"><IconCheck /></div>
               <h3 style={{ fontFamily: 'var(--font-family)', color: 'var(--navy-blue)' }}>Enquiry Sent Successfully!</h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--light-gray)' }}>Our admissions team will call you shortly on the provided mobile number.</p>
-              <button className="form-submit-btn" onClick={onClose} aria-label="Close Confirmation Dialog">Close Form</button>
+              <button className="form-submit-btn" onClick={onClose}>Close Form</button>
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label htmlFor="modal-student-name">Student's Full Name *</label>
+                <label>Student's Full Name *</label>
                 <input 
-                  id="modal-student-name"
-                  name="modalStudentName"
-                  aria-label="Student's Full Name"
                   type="text" 
                   value={name} 
                   onChange={e => setName(e.target.value)} 
@@ -2633,11 +2598,8 @@ function EnquiryModal({ selectedCourse, onClose }) {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="modal-student-phone">Contact Mobile Number *</label>
+                <label>Contact Mobile Number *</label>
                 <input 
-                  id="modal-student-phone"
-                  name="modalStudentPhone"
-                  aria-label="Contact Mobile Number"
                   type="tel" 
                   value={phone} 
                   onChange={e => setPhone(e.target.value)} 
@@ -2646,11 +2608,8 @@ function EnquiryModal({ selectedCourse, onClose }) {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="modal-parent-phone">Parent's Phone Number</label>
+                <label>Parent's Phone Number</label>
                 <input 
-                  id="modal-parent-phone"
-                  name="modalParentPhone"
-                  aria-label="Parent's Phone Number"
                   type="tel" 
                   value={parentPhone} 
                   onChange={e => setParentPhone(e.target.value)} 
@@ -2658,11 +2617,8 @@ function EnquiryModal({ selectedCourse, onClose }) {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="modal-course-select">Target Coaching Program *</label>
+                <label>Target Coaching Program *</label>
                 <select 
-                  id="modal-course-select"
-                  name="modalCourseSelect"
-                  aria-label="Target Coaching Program"
                   value={courseId} 
                   onChange={e => setCourseId(e.target.value)}
                   required
@@ -2673,7 +2629,7 @@ function EnquiryModal({ selectedCourse, onClose }) {
                   ))}
                 </select>
               </div>
-              <button type="submit" className="form-submit-btn" aria-label="Submit Registration">Submit Registration</button>
+              <button type="submit" className="form-submit-btn">Submit Registration</button>
             </form>
           )}
         </div>
@@ -2722,13 +2678,7 @@ function EnquiryInlineForm() {
         </div>
       ) : (
         <form onSubmit={handleInlineSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
-          <label htmlFor="inline-student-name" className="sr-only" style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', border: 0 }}>
-            Student Full Name
-          </label>
           <input 
-            id="inline-student-name"
-            name="studentName"
-            aria-label="Student Full Name"
             type="text" 
             placeholder="Student Name *" 
             value={name} 
@@ -2736,13 +2686,7 @@ function EnquiryInlineForm() {
             style={{ width: '100%', padding: '11px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-gray)', fontSize: '0.85rem' }}
             required
           />
-          <label htmlFor="inline-student-phone" className="sr-only" style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', border: 0 }}>
-            Mobile Contact Number
-          </label>
           <input 
-            id="inline-student-phone"
-            name="studentPhone"
-            aria-label="Mobile Contact Number"
             type="tel" 
             placeholder="Phone Number *" 
             value={phone} 
@@ -2750,13 +2694,7 @@ function EnquiryInlineForm() {
             style={{ width: '100%', padding: '11px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-gray)', fontSize: '0.85rem' }}
             required
           />
-          <label htmlFor="inline-course-select" className="sr-only" style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', border: 0 }}>
-            Select Target Course
-          </label>
           <select 
-            id="inline-course-select"
-            name="targetCourse"
-            aria-label="Select Target Course"
             value={courseId} 
             onChange={e => setCourseId(e.target.value)}
             style={{ width: '100%', padding: '11px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-gray)', fontSize: '0.85rem', background: '#fff' }}
@@ -2767,7 +2705,7 @@ function EnquiryInlineForm() {
               <option key={c.id} value={c.id}>{c.title}</option>
             ))}
           </select>
-          <button type="submit" className="form-submit-btn" style={{ padding: '11px', marginTop: '5px' }} aria-label="Submit Admission Request">Submit Request</button>
+          <button type="submit" className="form-submit-btn" style={{ padding: '11px', marginTop: '5px' }}>Submit Request</button>
         </form>
       )}
     </div>
