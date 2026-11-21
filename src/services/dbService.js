@@ -259,7 +259,7 @@ const ensureMobileSliders = (sliders) => {
   const activeOnly = (sliders || []).filter(s => s.id !== 's_1792327505092');
   const sorted = activeOnly.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
   const fallbackMobileMap = {
-    's_1792327822326': '/images/slides/mobile_slide_1.webp',
+    's_1792327822326': '/images/slides/hero_slide_1_mob_v2.webp',
     's_1792327825822': '/images/slides/mobile_slide_2.webp',
     's_1792327827472': '/images/slides/mobile_slide_3.webp',
     's_1792575816493': '/images/slides/mobile_slide_4.webp',
