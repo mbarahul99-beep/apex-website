@@ -20,9 +20,6 @@
     </noscript>
     <!-- Agentic Resource Discovery Manifest -->
     <link rel="ard" href="/.well-known/ard.json" />
-    <!-- Responsive Preload for LCP Hero Banner: Mobile gets mobile slide 1, desktop gets wide banner 1 -->
-    <link rel="preload" href="/images/slides/hero_slide_1_mob_v2.webp" as="image" type="image/webp" media="(max-width: 767px)" fetchpriority="high" />
-    <link rel="preload" href="/images/slides/hero_slide_1_v2.webp" as="image" type="image/webp" media="(min-width: 768px)" fetchpriority="high" />
     <!-- Dynamic Synchronous Preload & State Engine: Reads custom logo & slider from LocalStorage on Frame 0 -->
     <script>
       (function() {
@@ -38,13 +35,22 @@
           var sliders = JSON.parse(localStorage.getItem('apex_sliders') || '[]');
           if (sliders && sliders.length > 0) {
             // Guarantee old green slide s_1792327505092 is never used from cached storage
-            var validSliders = sliders.filter(function(sl) { return sl.id !== 's_1792327505092'; });
+            var validSliders = sliders.filter(function(sl) { return sl.id !== 's_1792327505092' && sl.active !== false; });
             if (validSliders.length > 0) {
               var sorted = validSliders.slice().sort(function(a, b) { return (a.orderIndex || 0) - (b.orderIndex || 0); });
               var first = sorted[0];
-              var heroSrc = isMobile ? (first.mobileImageUrl || first.imageUrl) : (first.imageUrl || first.image);
+              var heroSrc = isMobile ? (first.mobileImageUrl || first.imageUrl) : (first.imageUrl || first.mobileImageUrl);
               if (heroSrc && (heroSrc.startsWith('http') || heroSrc.startsWith('data:') || heroSrc.startsWith('/'))) {
                 window.__APEX_SAVED_HERO__ = heroSrc;
+                // Dynamically preload ONLY the user's active custom hero image
+                try {
+                  var pl = document.createElement('link');
+                  pl.rel = 'preload';
+                  pl.as = 'image';
+                  pl.href = heroSrc;
+                  pl.fetchPriority = 'high';
+                  document.head.appendChild(pl);
+                } catch(pe) {}
               }
             }
           }
@@ -476,21 +482,21 @@
           }
         </script>
         <div class="shell-hero">
-          <div class="shell-banner">
-            <picture style="width:100%;height:100%;display:block;">
-              <source id="shell-hero-source" media="(max-width: 767px)" srcset="/images/slides/hero_slide_1_mob_v2.webp" />
-              <img id="shell-hero-img" src="/images/slides/hero_slide_1_v2.webp" alt="Institute APEX Jind" width="1024" height="900" style="width:100%;height:100%;display:block;" fetchpriority="high" decoding="sync" />
-            </picture>
+          <div class="shell-banner" id="shell-banner-box" style="background: linear-gradient(135deg, #0f2942 0%, #1e3a5f 100%);">
             <script>
-              if (window.__APEX_SAVED_HERO__) {
-                var _shi = document.getElementById('shell-hero-img');
-                var _shs = document.getElementById('shell-hero-source');
-                if (window.innerWidth < 768 && _shs) {
-                  _shs.srcset = window.__APEX_SAVED_HERO__;
-                } else if (_shi) {
-                  _shi.src = window.__APEX_SAVED_HERO__;
+              (function() {
+                var hero = window.__APEX_SAVED_HERO__;
+                if (hero) {
+                  var img = document.createElement('img');
+                  img.src = hero;
+                  img.alt = 'Institute APEX Jind';
+                  img.style.cssText = 'width:100%;height:100%;display:block;object-fit:cover;';
+                  img.decoding = 'sync';
+                  img.fetchPriority = 'high';
+                  var box = document.getElementById('shell-banner-box');
+                  if (box) box.appendChild(img);
                 }
-              }
+              })();
             </script>
           </div>
         </div>

@@ -1263,8 +1263,8 @@ function AdminSliders() {
     const newId = 's_' + Date.now();
     const newSlide = {
       id: newId,
-      imageUrl: '/images/slides/hero_slide_1_v2.webp',
-      mobileImageUrl: '/images/slides/hero_slide_1_mob_v2.webp',
+      imageUrl: '',
+      mobileImageUrl: '',
       orderIndex: sliders.length,
       active: true
     };
