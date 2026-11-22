@@ -380,6 +380,74 @@ const getUnitValue = (val, fallback) => {
   return clean;
 };
 
+// ---------------- FAQ ACCORDION COMPONENT (JUST ABOVE FOOTER) ----------------
+function FaqSection() {
+  const [openIndex, setOpenIndex] = useState(0); // First question open by default for immediate engagement
+
+  const faqItems = [
+    {
+      q: "Which is the best coaching institute for NEET in Jind?",
+      a: "Institute APEX, located at #1257, Urban Estate, Near HUDA Ground, Jind, is widely recognized as the premier coaching institute for NEET in Jind. APEX provides comprehensive classroom coaching for Physics, Chemistry, and Biology with 16+ years of proven ranks, small batch sizes of 25-30 students, daily doubt removal sessions, and regular OMR-based test series producing top selections in government medical colleges."
+    },
+    {
+      q: "Does Institute APEX in Jind provide coaching for IIT-JEE and Class 12th Science boards?",
+      a: "Yes, Institute APEX offers an integrated IIT-JEE Entrance & Board Preparation program for 11th & 12th Science students (PCM/PCB). The program prepares students simultaneously for JEE Main, JEE Advanced, and CBSE, ICSE & State Board examinations with rigorous numerical practice, CBT test series, and conceptual mastery."
+    },
+    {
+      q: "Is there a foundation coaching program for Class 9th and 10th CBSE and ICSE students in Jind?",
+      a: "Yes, Institute APEX offers the Junior Science & Maths Foundation course for Class 9th and 10th students across CBSE, ICSE, and HBSE boards. The curriculum strengthens fundamental concepts in Science and Mathematics, laying the groundwork for board exam distinctions, NTSE, and Olympiads."
+    },
+    {
+      q: "Which is the best coaching institute for ICSE Board in Jind?",
+      a: "Institute APEX is Jind's top coaching center for ICSE board students in Science (Physics, Chemistry, Biology) and Mathematics. Our experienced faculty provides concept-focused instruction and numerical practice tailored specifically to the CISCE curriculum for Classes 9, 10, 11, and 12."
+    },
+    {
+      q: "Where is Institute APEX located in Jind and how can I contact for admissions?",
+      a: "Institute APEX is located at #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana). You can contact the institute administration at 94677-52374 or 01681-247700, or enquire online directly on our website. Free 2-3 day trial demo classes are available for new admissions."
+    }
+  ];
+
+  return (
+    <section className="faq-section" id="faq" aria-label="Frequently Asked Questions">
+      <div className="faq-container student-content-wrap">
+        <div className="faq-header">
+          <span className="faq-badge">Got Questions?</span>
+          <h2 className="faq-title">Frequently Asked Questions (FAQs)</h2>
+          <p className="faq-subtitle">Clear answers to help students and parents make the best decision for competitive coaching in Jind</p>
+        </div>
+
+        <div className="faq-list">
+          {faqItems.map((item, index) => {
+            const isOpen = openIndex === index;
+            return (
+              <div key={index} className={`faq-item ${isOpen ? 'active' : ''}`}>
+                <button 
+                  className="faq-question-btn"
+                  onClick={() => setOpenIndex(isOpen ? -1 : index)}
+                  aria-expanded={isOpen}
+                  type="button"
+                >
+                  <span>{item.q}</span>
+                  <span className="faq-icon" aria-hidden="true">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </span>
+                </button>
+                {isOpen && (
+                  <div className="faq-answer">
+                    <p style={{ margin: 0 }}>{item.a}</p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ---------------- STUDENT LAYOUT WRAPPER ----------------
 function StudentLayout({ children, settings, navigate, currentPath, openEnquiry }) {
   const [scrollTopVisible, setScrollTopVisible] = useState(false);
@@ -422,6 +490,7 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
   const baseCanonical = settings.canonicalDomain ? settings.canonicalDomain.replace(/\/+$/, '') : window.location.origin;
   const cleanPath = (currentPath || '/').replace(/\/+$/, '') || '/';
   const canonicalUrl = cleanPath === '/' ? `${baseCanonical}/` : `${baseCanonical}${cleanPath}`;
+  const showFaq = ['/', '/home', '/courses', '/about', '/about-us', '/scholarships', '/pages/about-apex-jind'].includes(cleanPath);
   
   let siteTitle = settings.seoTitle || `${settings.instituteName || 'Institute APEX'} - Best NEET & IIT-JEE Coaching in Jind`;
   let siteDesc = settings.seoDescription || `${settings.tagline || 'Premier Coaching for NEET, IIT-JEE & Board Exams'} located at ${settings.address}. Call: ${settings.phone}`;
@@ -878,6 +947,9 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
       <main className="main-content">
         {children}
       </main>
+
+      {/* Frequently Asked Questions (FAQ) Section - Just Above Footer */}
+      {showFaq && <FaqSection />}
 
       {/* Professional Footer */}
       <footer className="footer-premium">
