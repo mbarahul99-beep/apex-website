@@ -325,14 +325,33 @@ routes.forEach(route => {
 
   let html = baseHtml;
 
-  // 1. Replace Title
-  html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${route.title}</title>`);
+  // 1. Replace Title (with data-rh attribute for react-helmet hydration)
+  html = html.replace(/<title[\s\S]*?<\/title>/i, `<title data-rh="true">${route.title}</title>`);
 
   // 2. Replace Meta Description
-  html = html.replace(/<meta name="description" content="[\s\S]*?" \/>/i, `<meta name="description" content="${route.description}" />`);
+  html = html.replace(/<meta\s+[^>]*name="description"[^>]*\/?>/i, `<meta data-rh="true" name="description" content="${route.description}" />`);
 
   // 3. Replace Canonical Link
-  html = html.replace(/<link rel="canonical" href="[\s\S]*?" \/>/i, `<link rel="canonical" href="${route.canonical}" />`);
+  html = html.replace(/<link\s+[^>]*rel="canonical"[^>]*\/?>/i, `<link data-rh="true" rel="canonical" href="${route.canonical}" />`);
+
+  // 4. Sanitize: ensure no accidental duplicate title or canonical tags exist
+  let titleFound = false;
+  html = html.replace(/<title[\s\S]*?<\/title>/gi, (match) => {
+    if (!titleFound) {
+      titleFound = true;
+      return match;
+    }
+    return '';
+  });
+
+  let canonicalFound = false;
+  html = html.replace(/<link\s+[^>]*rel="canonical"[^>]*\/?>/gi, (match) => {
+    if (!canonicalFound) {
+      canonicalFound = true;
+      return match;
+    }
+    return '';
+  });
 
   // 4. Inject dedicated JSON-LD Schema
   if (route.schema) {

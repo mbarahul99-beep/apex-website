@@ -148,11 +148,12 @@ export default function App() {
     setEnquiryModalOpen(true);
   };
 
-  // Route router logic
+  // Route router logic (normalized path without trailing slash)
   let viewComponent;
   let isStudentView = true;
+  const cleanCurrentPath = (currentPath || '/').replace(/\/+$/, '') || '/';
 
-  if (currentPath === '/' || currentPath === '/home') {
+  if (cleanCurrentPath === '/' || cleanCurrentPath === '/home') {
     viewComponent = (
       <HomeView 
         settings={settings} 
@@ -162,7 +163,7 @@ export default function App() {
         setSelectedCourseDetails={setSelectedCourseDetails}
       />
     );
-  } else if (currentPath === '/courses') {
+  } else if (cleanCurrentPath === '/courses') {
     viewComponent = (
       <CoursesListView 
         navigate={navigate} 
@@ -170,33 +171,33 @@ export default function App() {
         setSelectedCourseDetails={setSelectedCourseDetails}
       />
     );
-  } else if (currentPath === '/online-prep' || currentPath === '/student-portal') {
+  } else if (cleanCurrentPath === '/online-prep' || cleanCurrentPath === '/student-portal') {
     viewComponent = (
       <OnlinePrepView 
         navigate={navigate} 
         openEnquiry={openEnquiry}
       />
     );
-  } else if (currentPath === '/scholarships') {
+  } else if (cleanCurrentPath === '/scholarships') {
     viewComponent = (
       <ScholarshipView 
         navigate={navigate} 
         openEnquiry={openEnquiry}
       />
     );
-  } else if (currentPath === '/results') {
+  } else if (cleanCurrentPath === '/results') {
     viewComponent = (
       <AllResultsView 
         navigate={navigate} 
       />
     );
-  } else if (currentPath === '/blogs') {
+  } else if (cleanCurrentPath === '/blogs') {
     viewComponent = (
       <AllBlogsView 
         navigate={navigate} 
       />
     );
-  } else if (currentPath === '/about' || currentPath === '/about-us' || currentPath === '/pages/about-apex-jind') {
+  } else if (cleanCurrentPath === '/about' || cleanCurrentPath === '/about-us' || cleanCurrentPath === '/pages/about-apex-jind') {
     viewComponent = (
       <AboutUsView 
         settings={settings}
@@ -204,20 +205,20 @@ export default function App() {
         openEnquiry={openEnquiry}
       />
     );
-  } else if (currentPath === '/contact' || currentPath === '/contact-us') {
+  } else if (cleanCurrentPath === '/contact' || cleanCurrentPath === '/contact-us') {
     viewComponent = (
       <ContactUsView 
         settings={settings}
         navigate={navigate} 
       />
     );
-  } else if (currentPath.startsWith('/pages/')) {
-    const slug = currentPath.substring(7);
+  } else if (cleanCurrentPath.startsWith('/pages/')) {
+    const slug = cleanCurrentPath.substring(7);
     viewComponent = <DynamicPageView slug={slug} navigate={navigate} />;
-  } else if (currentPath.startsWith('/posts/')) {
-    const slug = currentPath.substring(7);
+  } else if (cleanCurrentPath.startsWith('/posts/')) {
+    const slug = cleanCurrentPath.substring(7);
     viewComponent = <DynamicPostView slug={slug} navigate={navigate} />;
-  } else if (currentPath.startsWith('/admin')) {
+  } else if (cleanCurrentPath.startsWith('/admin')) {
     isStudentView = false;
     viewComponent = (
       <AdminErrorBoundary navigate={navigate}>
@@ -417,12 +418,83 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Phase 1 Dynamic SEO Metadata Calculations
-  const baseCanonical = settings.canonicalDomain ? settings.canonicalDomain.replace(/\/$/, '') : window.location.origin;
-  const canonicalUrl = `${baseCanonical}${currentPath === '/' ? '' : currentPath}`;
-  const siteTitle = settings.seoTitle || `${settings.instituteName || 'APEX INSTITUTE'} - Best NEET & IIT-JEE Coaching in Jind`;
-  const siteDesc = settings.seoDescription || `${settings.tagline || 'Premier Coaching for NEET, IIT-JEE & Board Exams'} located at ${settings.address}. Call: ${settings.phone}`;
-  const siteKeywords = settings.seoKeywords || "Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best Coaching for 12th Science in Jind, apex institute jind, coaching classes in jind haryana";
+  // Phase 1 Dynamic SEO Metadata Calculations (Normalized path & exact matching per route)
+  const baseCanonical = settings.canonicalDomain ? settings.canonicalDomain.replace(/\/+$/, '') : window.location.origin;
+  const cleanPath = (currentPath || '/').replace(/\/+$/, '') || '/';
+  const canonicalUrl = cleanPath === '/' ? `${baseCanonical}/` : `${baseCanonical}${cleanPath}`;
+  
+  let siteTitle = settings.seoTitle || `${settings.instituteName || 'Institute APEX'} - Best NEET & IIT-JEE Coaching in Jind`;
+  let siteDesc = settings.seoDescription || `${settings.tagline || 'Premier Coaching for NEET, IIT-JEE & Board Exams'} located at ${settings.address}. Call: ${settings.phone}`;
+  let siteKeywords = settings.seoKeywords || "Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best Coaching for 12th Science in Jind, apex institute jind, coaching classes in jind haryana";
+
+  if (cleanPath === '/courses') {
+    siteTitle = 'NEET & IIT-JEE Coaching Courses in Jind | Institute APEX (CBSE & ICSE)';
+    siteDesc = 'Explore classroom coaching programs for NEET (Medical), IIT-JEE (Main & Advanced), and Foundation (Classes 9th & 10th) at Institute APEX, Urban Estate, Jind. Small batches & 16+ years of top ranks.';
+    siteKeywords = 'Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best ICSE Coaching in Jind, Best Coaching for 12th Science in Jind, cbse tuition jind, icse tuition jind';
+  } else if (cleanPath === '/about' || cleanPath === '/about-us' || cleanPath === '/pages/about-apex-jind') {
+    siteTitle = 'About Institute APEX Jind | 16+ Years Medical & Engineering Coaching';
+    siteDesc = 'Learn about Institute APEX, Jind’s premier coaching institute for NEET and IIT-JEE located at Urban Estate, Jind. Established in 2009 by senior educators producing top medical and engineering ranks.';
+    siteKeywords = 'about apex institute jind, n dhanda jind, coaching institute profile jind';
+  } else if (cleanPath === '/scholarships') {
+    siteTitle = 'ASAT Scholarship Test & Admission Concessions | Institute APEX Jind';
+    siteDesc = 'Apply for the APEX Scholarship Admission Test (ASAT). Up to 90% tuition fee waiver for meritorious students in Class 9, 10, 11, 12, and NEET/JEE repeaters in Jind, Haryana.';
+    siteKeywords = 'scholarship test jind, asat apex, neet scholarship jind, iit jee admission test jind';
+  } else if (cleanPath === '/results') {
+    siteTitle = 'NEET & IIT-JEE Results & Toppers | Institute APEX Jind';
+    siteDesc = 'View the authentic selection list and board exam toppers from Institute APEX Jind across NEET (UG), IIT-JEE (Main & Advanced), CBSE & ICSE Boards.';
+    siteKeywords = 'NEET results Jind, IIT JEE toppers Jind, best coaching results jind, medical selections jind, apex results';
+  } else if (cleanPath === '/blogs') {
+    siteTitle = 'NEET & JEE Preparation Blog & Academic News | Institute APEX Jind';
+    siteDesc = 'Read expert preparation strategies, exam dates, syllabus changes, and study tips for NEET, IIT-JEE, and Class 10 & 12 Board examinations from APEX Jind faculty.';
+    siteKeywords = 'neet exam alerts jind, jee prep blogs haryana, cbse preparation tips, board exam guides jind';
+  } else if (cleanPath === '/contact' || cleanPath === '/contact-us') {
+    siteTitle = 'Contact Institute APEX Jind | #1257 Urban Estate Near HUDA Ground';
+    siteDesc = 'Visit Institute APEX at #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana). Call 94677-52374 or 01681-247700 for admission inquiries, demo classes, and counseling.';
+    siteKeywords = 'contact apex institute jind, apex coaching phone number jind, apex address urban estate jind';
+  } else if (cleanPath === '/online-prep' || cleanPath === '/student-portal') {
+    siteTitle = 'Online CBT Test Prep & Student Exam Portal | Institute APEX Jind';
+    siteDesc = 'Access the APEX online computer-based test (CBT) portal for NEET and JEE Main mock exams, question papers, performance analytics, and OMR test series.';
+    siteKeywords = 'apex student portal, neet online test series jind, jee dpp practice online';
+  } else if (cleanPath.startsWith('/posts/')) {
+    const slug = cleanPath.substring(7);
+    const post = (dbService.getBlogPosts() || []).find(p => p.slug === slug);
+    if (post) {
+      siteTitle = post.metaTitle || post.title;
+      siteDesc = post.metaDescription || siteDesc;
+      if (post.keywords) siteKeywords = post.keywords;
+    }
+  } else if (cleanPath.startsWith('/pages/')) {
+    const slug = cleanPath.substring(7);
+    const page = (dbService.getCustomPages() || []).find(p => p.slug === slug);
+    if (page) {
+      siteTitle = page.metaTitle || page.title;
+      siteDesc = page.metaDescription || siteDesc;
+      if (page.keywords) siteKeywords = page.keywords;
+    }
+  }
+
+  // Synchronize document.title and clean up any accidental duplicate tags in head
+  useEffect(() => {
+    document.title = siteTitle;
+    const allTitles = document.querySelectorAll('head > title');
+    if (allTitles.length > 1) {
+      for (let i = 1; i < allTitles.length; i++) {
+        allTitles[i].remove();
+      }
+    }
+    const allCanonicals = document.querySelectorAll('head > link[rel="canonical"]');
+    if (allCanonicals.length > 1) {
+      for (let i = 1; i < allCanonicals.length; i++) {
+        allCanonicals[i].remove();
+      }
+    }
+    const allDescriptions = document.querySelectorAll('head > meta[name="description"]');
+    if (allDescriptions.length > 1) {
+      for (let i = 1; i < allDescriptions.length; i++) {
+        allDescriptions[i].remove();
+      }
+    }
+  }, [siteTitle, canonicalUrl]);
   const ogImg = settings.ogImage 
     ? (settings.ogImage.startsWith('http') ? settings.ogImage : `${baseCanonical}${settings.ogImage.startsWith('/') ? '' : '/'}${settings.ogImage}`)
     : `${baseCanonical}/logo_full.webp`;
@@ -1667,12 +1739,6 @@ function CoursesListView({ navigate, openEnquiry, setSelectedCourseDetails }) {
 
   return (
     <div className="fade-in student-content-wrap" style={{ marginTop: '20px' }}>
-      <Helmet>
-        <title>Best Coaching Courses for NEET, IIT-JEE, CBSE & ICSE in Jind - APEX</title>
-        <meta name="description" content="Explore classroom courses for NEET Medical entrance, IIT-JEE Engineering, Class 10th CBSE & ICSE Foundations, and 12th Science board tuitions at Institute APEX Jind." />
-        <meta name="keywords" content="Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best ICSE Coaching in Jind, Best Coaching for 12th Science in Jind, cbse tuition jind, icse tuition jind" />
-      </Helmet>
-
       <div className="section-header">
         <h1 className="section-title" style={{ fontSize: '1.75rem', margin: '0 0 8px 0' }}>Best Coaching Courses for NEET, IIT-JEE, CBSE & ICSE in Jind</h1>
         <p className="section-subtitle">Proven classroom programs for Classes 9th to 12th with expert faculty and weekly test series</p>
@@ -1770,12 +1836,6 @@ function CoursesListView({ navigate, openEnquiry, setSelectedCourseDetails }) {
 function OnlinePrepView({ navigate, openEnquiry }) {
   return (
     <div className="fade-in student-content-wrap" style={{ marginTop: '20px' }}>
-      <Helmet>
-        <title>Online Prep & CBT Test Series in Jind - APEX Institute</title>
-        <meta name="description" content="Access online mock test series, CBT exam simulation mode, and detailed performance analysis reports for IIT-JEE and NEET prep from Institute APEX Jind." />
-        <meta name="keywords" content="online prep jind, neet cbt test series jind, jee test practice apex, online exam portal jind" />
-      </Helmet>
-
       <div className="section-header">
         <h1 className="section-title" style={{ fontSize: '1.75rem', margin: '0 0 8px 0' }}>APEX Online Prep & CBT Test Series in Jind</h1>
         <p className="section-subtitle">Excellence driven by comprehensive performance diagnostics and test series</p>
@@ -1843,12 +1903,6 @@ function ScholarshipView({ navigate, openEnquiry }) {
 
   return (
     <div className="fade-in student-content-wrap" style={{ marginTop: '20px' }}>
-      <Helmet>
-        <title>Merit Scholarships for NEET & IIT-JEE Coaching in Jind - APEX</title>
-        <meta name="description" content="Apply for merit-based coaching scholarships and fee concessions for NEET, IIT-JEE, and CBSE/ICSE board students at Institute APEX Jind." />
-        <meta name="keywords" content="scholarship test jind, neet coaching scholarship jind, iit jee scholarship haryana, coaching fee concession jind" />
-      </Helmet>
-
       <div className="section-header">
         <h1 className="section-title" style={{ fontSize: '1.75rem', margin: '0 0 8px 0' }}>Merit Scholarships for NEET & IIT-JEE in Jind</h1>
         <p className="section-subtitle">Supporting outstanding academic achievers in their path to medical and engineering excellence</p>
@@ -1937,15 +1991,6 @@ function AboutUsView({ settings, navigate, openEnquiry }) {
 
   return (
     <div className="about-page-wrap fade-in">
-      <Helmet>
-        <title>{page?.metaTitle || `About Us | ${instituteName} Jind - NEET & IIT-JEE Coaching`}</title>
-        <meta 
-          name="description" 
-          content={page?.metaDescription || `Learn more about ${instituteName} Jind, Haryana's leading coaching center for NEET Medical, IIT-JEE Engineering, and secondary board tuitions.`} 
-        />
-        <meta name="keywords" content={page?.keywords || "about apex institute jind, coaching institute jind, best neet coaching in jind, best iit jee coaching in jind, best icse coaching in jind, best cbse coaching in jind, haryana coaching institute"} />
-      </Helmet>
-
       {/* Hero Banner with Clean High-Contrast Palette */}
       <section className="about-hero">
         <div className="about-hero-badge">
@@ -2194,15 +2239,6 @@ function ContactUsView({ settings, navigate }) {
 
   return (
     <div className="contact-page-wrap fade-in">
-      <Helmet>
-        <title>Contact Us | {instituteName} Jind - Institute Details & Admission Form</title>
-        <meta 
-          name="description" 
-          content={`Contact ${instituteName} in Jind for NEET & IIT-JEE coaching admissions. Located at #1257, Urban Estate, Near HUDA Ground, Jind. Phone: ${phone}.`} 
-        />
-        <meta name="keywords" content="contact apex institute jind, apex institute phone number, apex jind address, admission enquiry apex jind, neet coaching admission jind, jee admission jind" />
-      </Helmet>
-
       {/* Hero Header with Clean High-Contrast Palette */}
       <section className="contact-hero">
         <h1 className="contact-hero-title">
@@ -2479,12 +2515,6 @@ function DynamicPageView({ slug, navigate }) {
 
   return (
     <div className="dynamic-page-wrap student-content-wrap fade-in">
-      <Helmet>
-        <title>{page.metaTitle || page.title}</title>
-        <meta name="description" content={page.metaDescription} />
-        {page.keywords && <meta name="keywords" content={page.keywords} />}
-      </Helmet>
-
       <h1 className="dynamic-page-title">{page.title}</h1>
       <div className="dynamic-page-meta">
         <span>Last updated: {new Date(page.lastUpdated).toLocaleDateString()}</span>
@@ -2526,12 +2556,6 @@ function DynamicPostView({ slug, navigate }) {
 
   return (
     <div className="dynamic-page-wrap student-content-wrap fade-in">
-      <Helmet>
-        <title>{post.metaTitle || post.title}</title>
-        <meta name="description" content={post.metaDescription} />
-        {post.keywords && <meta name="keywords" content={post.keywords} />}
-      </Helmet>
-
       <span className="testimonial-rank" style={{ marginBottom: '12px' }}>{post.category}</span>
       <h1 className="dynamic-page-title">{post.title}</h1>
       <div className="dynamic-page-meta">
@@ -2765,12 +2789,6 @@ function AllResultsView({ navigate }) {
 
   return (
     <div className="fade-in student-content-wrap" style={{ marginTop: '20px', paddingBottom: '50px' }}>
-      <Helmet>
-        <title>NEET & IIT-JEE Results & Toppers in Jind - APEX Institute</title>
-        <meta name="description" content="Discover outstanding NEET selections, IIT-JEE ranks, and Board toppers from Institute APEX Jind. Consistent government medical and engineering college selections." />
-        <meta name="keywords" content="NEET results Jind, IIT JEE toppers Jind, best coaching results jind, medical selections jind, apex results" />
-      </Helmet>
-
       <div className="section-header" style={{ marginBottom: '40px' }}>
         <h1 className="section-title" style={{ fontSize: '1.75rem', margin: '0 0 8px 0' }}>NEET & IIT-JEE Results — Toppers from Jind</h1>
         <p className="section-subtitle">Year-by-year honors list of our toppers who excelled in national exams from Apex Institute Jind</p>
@@ -2853,12 +2871,6 @@ function AllBlogsView({ navigate }) {
 
   return (
     <div className="fade-in student-content-wrap" style={{ marginTop: '20px', paddingBottom: '50px' }}>
-      <Helmet>
-        <title>NEET & IIT-JEE Exam Preparation Blogs & Alerts - APEX Jind</title>
-        <meta name="description" content="Stay updated with the latest exam alerts, prep strategies, and academic guides for IIT-JEE, NEET, and CBSE/ICSE Board exams from APEX experts in Jind." />
-        <meta name="keywords" content="neet exam alerts jind, jee prep blogs haryana, cbse preparation tips, board exam guides jind" />
-      </Helmet>
-
       <div className="section-header" style={{ marginBottom: '40px' }}>
         <h1 className="section-title" style={{ fontSize: '1.75rem', margin: '0 0 8px 0' }}>Latest Academic News & Exam Prep Guides</h1>
         <p className="section-subtitle">Academic tips, exam alerts, and guides written by our senior educators in Jind</p>
