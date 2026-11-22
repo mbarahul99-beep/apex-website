@@ -81,7 +81,7 @@ const DEFAULT_SETTINGS = {
   seoKeywords: "Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best ICSE Coaching in Jind, Best Coaching for 12th Science in Jind, ICSE tuition Jind, apex institute jind, coaching institute in jind haryana, cbse tuition jind",
   canonicalDomain: "https://instituteapex.in",
   googleSiteVerification: "",
-  googleAnalyticsId: "",
+  googleAnalyticsId: "G-FQ3CBQW6DP",
   ogImage: "/logo_full.webp",
   ...(snapshot.settings || {})
 };

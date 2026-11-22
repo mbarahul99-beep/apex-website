@@ -99,11 +99,19 @@ export default function App() {
   // Sync with browser navigation
   useEffect(() => {
     const handleLocationChange = () => {
-      setCurrentPath(window.location.pathname);
-      if (window.location.pathname.startsWith('/admin')) {
+      const path = window.location.pathname;
+      setCurrentPath(path);
+      if (path.startsWith('/admin')) {
         document.body.classList.add('admin-mode');
       } else {
         document.body.classList.remove('admin-mode');
+      }
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        window.gtag('event', 'page_view', {
+          page_path: path,
+          page_location: window.location.href,
+          page_title: document.title
+        });
       }
     };
     
@@ -124,6 +132,15 @@ export default function App() {
       document.body.classList.remove('admin-mode');
     }
     window.scrollTo(0, 0);
+
+    // Track SPA navigation in Google Analytics
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      window.gtag('event', 'page_view', {
+        page_path: path,
+        page_location: window.location.href,
+        page_title: document.title
+      });
+    }
   };
 
   const openEnquiry = (course = null) => {
