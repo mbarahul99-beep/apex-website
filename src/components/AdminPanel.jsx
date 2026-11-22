@@ -16,10 +16,38 @@ import {
 } from './icons';
 function AdminPanel({ navigate, onUpdateSettings }) {
   const [isLogged, setIsLogged] = useState(dbService.isLoggedIn());
+  const [currentUser, setCurrentUser] = useState(null);
+  const [authChecking, setAuthChecking] = useState(!isDefault);
   const [activeTab, setActiveTab] = useState('overview');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+
+  useEffect(() => {
+    let unsubscribe = () => {};
+    if (!isDefault) {
+      import('../services/firebase').then(({ getAuthInstance }) => {
+        getAuthInstance().then(auth => {
+          if (!auth) {
+            setAuthChecking(false);
+            return;
+          }
+          import('firebase/auth').then(({ onAuthStateChanged }) => {
+            unsubscribe = onAuthStateChanged(auth, (user) => {
+              setCurrentUser(user);
+              if (user) {
+                setIsLogged(true);
+              }
+              setAuthChecking(false);
+            });
+          });
+        });
+      }).catch(() => setAuthChecking(false));
+    } else {
+      setAuthChecking(false);
+    }
+    return () => unsubscribe();
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -201,12 +229,44 @@ function AdminPanel({ navigate, onUpdateSettings }) {
           <span className="admin-header-title">
             {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Dashboard
           </span>
-          <div className="admin-header-user">
-            Logged as Administrator
+          <div className="admin-header-user" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {currentUser ? (
+              <span style={{ fontSize: '0.78rem', color: '#166534', backgroundColor: '#dcfce7', padding: '4px 10px', borderRadius: '4px', fontWeight: 600 }}>
+                ✓ {currentUser.email}
+              </span>
+            ) : !isDefault ? (
+              <button 
+                onClick={handleGoogleLogin} 
+                className="admin-btn"
+                style={{ fontSize: '0.75rem', padding: '4px 10px', backgroundColor: '#4285F4', color: '#fff', border: 'none', cursor: 'pointer' }}
+                title="Sign in with Google to authorize database writes"
+              >
+                🔑 Sign in with Google
+              </button>
+            ) : (
+              <span>Logged as Administrator</span>
+            )}
           </div>
         </header>
 
         <div className="admin-content">
+          {!isDefault && !currentUser && (
+            <div style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a', padding: '12px 18px', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+                <div style={{ fontSize: '0.85rem', color: '#92400e', lineHeight: '1.4' }}>
+                  <strong>Firebase Session Inactive:</strong> Your database security rules require an authenticated Google administrator session. Please click the button to authorize your browser and enable saving changes.
+                </div>
+              </div>
+              <button 
+                onClick={handleGoogleLogin} 
+                className="admin-btn" 
+                style={{ padding: '6px 14px', fontSize: '0.8rem', whiteSpace: 'nowrap', backgroundColor: '#4285F4', color: '#fff', border: 'none', cursor: 'pointer' }}
+              >
+                Sign In With Google
+              </button>
+            </div>
+          )}
           {isDefault ? (
             <div style={{ backgroundColor: '#fffbeb', border: '1px solid #fef3c7', padding: '12px 18px', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
               <span style={{ fontSize: '1.25rem' }}>⚠️</span>
