@@ -168,7 +168,16 @@ export default function App() {
       <CoursesListView 
         navigate={navigate} 
         openEnquiry={openEnquiry}
-        setSelectedCourseDetails={setSelectedCourseDetails}
+      />
+    );
+  } else if (cleanCurrentPath.startsWith('/courses/')) {
+    const courseId = cleanCurrentPath.substring(9);
+    viewComponent = (
+      <CourseDetailView 
+        courseId={courseId} 
+        navigate={navigate} 
+        openEnquiry={openEnquiry}
+        settings={settings}
       />
     );
   } else if (cleanCurrentPath === '/online-prep' || cleanCurrentPath === '/student-portal') {
@@ -490,7 +499,7 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
   const baseCanonical = settings.canonicalDomain ? settings.canonicalDomain.replace(/\/+$/, '') : window.location.origin;
   const cleanPath = (currentPath || '/').replace(/\/+$/, '') || '/';
   const canonicalUrl = cleanPath === '/' ? `${baseCanonical}/` : `${baseCanonical}${cleanPath}`;
-  const showFaq = ['/', '/home', '/courses', '/about', '/about-us', '/scholarships', '/pages/about-apex-jind'].includes(cleanPath);
+  const showFaq = ['/', '/home', '/courses', '/about', '/about-us', '/scholarships', '/pages/about-apex-jind'].includes(cleanPath) || cleanPath.startsWith('/courses/');
   
   let siteTitle = settings.seoTitle || `${settings.instituteName || 'Institute APEX'} - Best NEET & IIT-JEE Coaching in Jind`;
   let siteDesc = settings.seoDescription || `${settings.tagline || 'Premier Coaching for NEET, IIT-JEE & Board Exams'} located at ${settings.address}. Call: ${settings.phone}`;
@@ -500,6 +509,17 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
     siteTitle = 'NEET & IIT-JEE Coaching Courses in Jind | Institute APEX (CBSE & ICSE)';
     siteDesc = 'Explore classroom coaching programs for NEET (Medical), IIT-JEE (Main & Advanced), and Foundation (Classes 9th & 10th) at Institute APEX, Urban Estate, Jind. Small batches & 16+ years of top ranks.';
     siteKeywords = 'Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best ICSE Coaching in Jind, Best Coaching for 12th Science in Jind, cbse tuition jind, icse tuition jind';
+  } else if (cleanPath.startsWith('/courses/')) {
+    const courseId = cleanPath.substring(9);
+    const course = dbService.getCourse(courseId) || (dbService.getCourses() || []).find(c => 
+      String(c.id).toLowerCase() === String(courseId).toLowerCase() ||
+      (c.title && c.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') === String(courseId).toLowerCase())
+    );
+    if (course) {
+      siteTitle = `${course.title} in Jind | Institute APEX (Medical & Engineering Coaching)`;
+      siteDesc = course.details ? course.details.replace(/\n+/g, ' ').slice(0, 160) : `Join ${course.title} at Institute APEX Jind. Small batches, NCERT mastery & 16+ years of top ranks.`;
+      siteKeywords = `${course.title}, coaching in jind, neet coaching jind, iit jee coaching jind, apex institute jind`;
+    }
   } else if (cleanPath === '/about' || cleanPath === '/about-us' || cleanPath === '/pages/about-apex-jind') {
     siteTitle = 'About Institute APEX Jind | 16+ Years Medical & Engineering Coaching';
     siteDesc = 'Learn about Institute APEX, Jind’s premier coaching institute for NEET and IIT-JEE located at Urban Estate, Jind. Established in 2009 by senior educators producing top medical and engineering ranks.';
@@ -1368,7 +1388,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                   <div className="course-banner">
                     <img src={course.image} alt={`${course.title} - Best Coaching in Jind | Institute APEX`} loading="lazy" decoding="async" />
                     <div className="course-banner-overlay">
-                      <button className="course-detail-btn" onClick={() => setSelectedCourseDetails(course)}>View details</button>
+                      <button className="course-detail-btn" onClick={() => navigate(`/courses/${course.id}`)}>View details</button>
                     </div>
                   </div>
                 )}
@@ -1384,7 +1404,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                     )}
                   </div>
                   
-                  <h3 className="course-title" style={{ cursor: 'pointer' }} onClick={() => setSelectedCourseDetails(course)}>{course.title}</h3>
+                  <h3 className="course-title" style={{ cursor: 'pointer' }} onClick={() => navigate(`/courses/${course.id}`)}>{course.title}</h3>
                   
                   <div className="course-meta-list">
                     {course.showSchedule !== false && course.schedule && (
@@ -1410,7 +1430,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                   <hr className="course-divider" />
 
                   <div className="course-footer" style={{ display: 'flex', gap: '8px', width: '100%', marginTop: '10px' }}>
-                    <button className="enrol-btn secondary" style={{ flex: 1, padding: '10px', fontSize: '0.8rem', backgroundColor: '#e2e8f0', color: 'var(--navy-dark)', border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer', fontWeight: 600, textAlign: 'center' }} onClick={() => setSelectedCourseDetails(course)}>View Details</button>
+                    <button className="enrol-btn secondary" style={{ flex: 1, padding: '10px', fontSize: '0.8rem', backgroundColor: '#e2e8f0', color: 'var(--navy-dark)', border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer', fontWeight: 600, textAlign: 'center' }} onClick={() => navigate(`/courses/${course.id}`)}>View Details</button>
                     <button className="enrol-btn" style={{ flex: 1, padding: '10px', fontSize: '0.8rem', textAlign: 'center' }} onClick={() => openEnquiry(course)}>Enrol now</button>
                   </div>
                 </div>
@@ -1845,7 +1865,7 @@ function CoursesListView({ navigate, openEnquiry, setSelectedCourseDetails }) {
               <div className="course-banner">
                 <img src={course.image} alt={`${course.title} - Best Coaching in Jind | Institute APEX`} />
                 <div className="course-banner-overlay">
-                  <button className="course-detail-btn" onClick={() => setSelectedCourseDetails(course)}>View Curriculum</button>
+                  <button className="course-detail-btn" onClick={() => navigate(`/courses/${course.id}`)}>View Curriculum</button>
                 </div>
               </div>
             )}
@@ -1861,7 +1881,7 @@ function CoursesListView({ navigate, openEnquiry, setSelectedCourseDetails }) {
                 )}
               </div>
               
-              <h3 className="course-title" style={{ cursor: 'pointer' }} onClick={() => setSelectedCourseDetails(course)}>{course.title}</h3>
+              <h3 className="course-title" style={{ cursor: 'pointer' }} onClick={() => navigate(`/courses/${course.id}`)}>{course.title}</h3>
               
               {course.showDetails !== false && course.details && (
                 <p style={{ fontSize: '0.85rem', color: 'var(--light-gray)', marginBottom: '16px', lineHeight: 1.45 }}>
@@ -1893,13 +1913,280 @@ function CoursesListView({ navigate, openEnquiry, setSelectedCourseDetails }) {
               <hr className="course-divider" />
 
               <div className="course-footer" style={{ display: 'flex', gap: '8px', width: '100%', marginTop: '10px' }}>
-                <button className="enrol-btn secondary" style={{ flex: 1, padding: '10px', fontSize: '0.8rem', backgroundColor: '#e2e8f0', color: 'var(--navy-dark)', border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer', fontWeight: 600, textAlign: 'center' }} onClick={() => setSelectedCourseDetails(course)}>View Details</button>
+                <button className="enrol-btn secondary" style={{ flex: 1, padding: '10px', fontSize: '0.8rem', backgroundColor: '#e2e8f0', color: 'var(--navy-dark)', border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer', fontWeight: 600, textAlign: 'center' }} onClick={() => navigate(`/courses/${course.id}`)}>View Details</button>
                 <button className="enrol-btn" style={{ flex: 1, padding: '10px', fontSize: '0.8rem', textAlign: 'center' }} onClick={() => openEnquiry(course)}>Enrol now</button>
               </div>
             </div>
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+// ---------------- COURSE DETAIL FULL PAGE VIEW ----------------
+function CourseDetailView({ courseId, navigate, openEnquiry, settings }) {
+  const [course, setCourse] = useState(null);
+  const [allCourses, setAllCourses] = useState([]);
+
+  useEffect(() => {
+    const courses = dbService.getCourses() || [];
+    setAllCourses(courses);
+    const found = dbService.getCourse(courseId) || courses.find(c => 
+      String(c.id).toLowerCase() === String(courseId).toLowerCase() ||
+      (c.title && c.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') === String(courseId).toLowerCase())
+    );
+    setCourse(found);
+    window.scrollTo(0, 0);
+  }, [courseId]);
+
+  if (!course) {
+    return (
+      <div className="dynamic-page-wrap student-content-wrap fade-in" style={{ textAlign: 'center', padding: '100px var(--spacing-md)' }}>
+        <h2 className="dynamic-page-title">Course Not Found</h2>
+        <p style={{ color: 'var(--light-gray)', marginBottom: '25px' }}>The requested coaching program could not be located.</p>
+        <button className="enrol-btn" onClick={() => navigate('/courses')}>View All Courses</button>
+      </div>
+    );
+  }
+
+  const otherCourses = allCourses.filter(c => c.id !== course.id);
+  const rawWhatsApp = (settings?.whatsappNumber || settings?.phone || '9467752374').replace(/[^0-9]/g, '');
+  const courseWhatsAppUrl = `https://wa.me/91${rawWhatsApp}?text=${encodeURIComponent(`Hello Institute APEX, I am interested in admission for ${course.title}. Please share curriculum and batch details.`)}`;
+
+  return (
+    <div className="course-detail-page student-content-wrap fade-in" style={{ marginTop: '20px', paddingBottom: '40px' }}>
+      {/* Breadcrumb Navigation */}
+      <nav aria-label="Breadcrumb" style={{ marginBottom: '20px', fontSize: '0.86rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+        <a href="/" onClick={(e) => { e.preventDefault(); navigate('/'); }} style={{ color: '#0369a1', textDecoration: 'none', fontWeight: 600 }}>Home</a>
+        <span>/</span>
+        <a href="/courses" onClick={(e) => { e.preventDefault(); navigate('/courses'); }} style={{ color: '#0369a1', textDecoration: 'none', fontWeight: 600 }}>Courses</a>
+        <span>/</span>
+        <span style={{ color: '#1e293b', fontWeight: 700 }}>{course.title}</span>
+      </nav>
+
+      {/* Main Course Header Box */}
+      <div className="course-detail-header-card" style={{
+        background: '#ffffff',
+        borderRadius: '16px',
+        border: '1px solid #e2e8f0',
+        padding: '30px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04)',
+        marginBottom: '30px'
+      }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '14px' }}>
+          {course.category && (
+            <span className="status-badge new" style={{ padding: '4px 10px', fontSize: '0.78rem' }}>
+              {course.category === 'class-11-12' ? 'Class 11th & 12th' : course.category === 'class-9-10' ? 'Class 9th & 10th' : course.category}
+            </span>
+          )}
+          {course.target && course.showTarget !== false && (
+            <span className="status-badge" style={{ backgroundColor: '#e0f2fe', color: '#0369a1', padding: '4px 10px', fontSize: '0.78rem' }}>
+              {course.target}
+            </span>
+          )}
+        </div>
+
+        <h1 style={{ fontSize: '2.1rem', fontWeight: 800, color: 'var(--navy-blue)', margin: '0 0 12px 0', lineHeight: 1.25 }}>
+          {course.title}
+        </h1>
+        <p style={{ fontSize: '1.05rem', color: '#475569', lineHeight: 1.6, marginBottom: '25px', maxWidth: '850px' }}>
+          Premier classroom coaching program in Jind tailored for competitive entrance excellence and board exam distinctions with 16+ years of proven top ranks.
+        </p>
+
+        {/* Action Buttons Top Bar */}
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+          <button 
+            className="courses-action-btn"
+            style={{ padding: '12px 24px', fontSize: '0.95rem', fontWeight: 700 }}
+            onClick={() => openEnquiry(course)}
+          >
+            Enrol / Apply for Admission
+          </button>
+          <a 
+            href={courseWhatsAppUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="courses-action-btn secondary"
+            style={{ 
+              padding: '12px 20px', 
+              fontSize: '0.95rem', 
+              fontWeight: 700, 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '8px', 
+              backgroundColor: '#25D366', 
+              color: '#ffffff',
+              border: 'none',
+              textDecoration: 'none'
+            }}
+          >
+            <svg fill="currentColor" viewBox="0 0 24 24" style={{ width: 18, height: 18 }}><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.517 2.266 2.27 3.51 5.284 3.508 8.489-.005 6.66-5.343 11.999-11.957 11.999-2.005-.001-3.973-.504-5.714-1.463L0 24zm6.59-4.846c1.6.95 3.197 1.451 4.82 1.452 5.518 0 10.006-4.486 10.01-10.002.002-2.673-1.037-5.186-2.927-7.079-1.889-1.89-4.4-2.932-7.08-2.933-5.524 0-10.014 4.487-10.018 10.004-.002 1.699.444 3.361 1.293 4.81l-.963 3.518 3.606-.945zm11.367-7.795c-.3-.15-1.772-.875-2.046-.975-.276-.1-.476-.15-.676.15-.2.3-.776.975-.95 1.175-.175.2-.35.225-.65.075-.3-.15-1.267-.467-2.414-1.492-.893-.797-1.497-1.782-1.672-2.082-.175-.3-.018-.462.13-.61.135-.133.3-.35.45-.525.15-.175.2-.3.3-.5.1-.2.05-.375-.025-.525-.075-.15-.676-1.63-1.026-2.47-.3-.72-.6-1.125-.676-1.125-.175 0-.35-.025-.525-.025-.175 0-.476.075-.726.35-.25.275-.95.925-.95 2.25s.965 2.6 1.1 2.775c.135.175 1.9 2.9 4.6 4.075.642.28 1.144.446 1.534.57.645.205 1.233.176 1.7.106.52-.078 1.772-.725 2.022-1.425.25-.7.25-1.3.175-1.425-.075-.125-.275-.2-.575-.35z"/></svg>
+            <span>Enquire on WhatsApp</span>
+          </a>
+          <button 
+            className="courses-action-btn secondary"
+            style={{ padding: '12px 20px', fontSize: '0.95rem', fontWeight: 600, backgroundColor: '#f1f5f9', color: '#334155', border: '1px solid #cbd5e1' }}
+            onClick={() => navigate('/courses')}
+          >
+            &larr; Back to All Courses
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content Two-Column Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: '30px', alignItems: 'start' }} className="course-detail-layout-grid">
+        
+        {/* Left Column: Media & In-depth Details */}
+        <div>
+          {course.showImage !== false && course.image && (
+            <div style={{ borderRadius: '16px', overflow: 'hidden', marginBottom: '28px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.06)' }}>
+              <img 
+                src={course.image} 
+                alt={`${course.title} - Institute APEX Jind`} 
+                style={{ width: '100%', maxHeight: '420px', objectFit: 'cover', display: 'block' }}
+              />
+            </div>
+          )}
+
+          {/* Curriculum & Detailed Overview */}
+          <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '28px', marginBottom: '30px' }}>
+            <h2 style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--navy-blue)', margin: '0 0 16px 0', borderBottom: '2px solid #f1f5f9', paddingBottom: '10px' }}>
+              Curriculum & Course Overview
+            </h2>
+            {course.details ? (
+              <div style={{ fontSize: '1rem', color: '#334155', lineHeight: 1.75, whiteSpace: 'pre-line' }}>
+                {course.details}
+              </div>
+            ) : (
+              <p style={{ color: '#64748b' }}>Curriculum and topic coverage details are available at the institute admission desk.</p>
+            )}
+
+            {/* Structured Academic Highlights */}
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#0369a1', marginTop: '28px', marginBottom: '14px' }}>
+              Key Academic Features of this Course
+            </h3>
+            <ul style={{ paddingLeft: '20px', color: '#334155', lineHeight: 1.8, fontSize: '0.96rem' }}>
+              <li><strong>Focused Batch Sizes:</strong> Strictly limited batch capacity (25â€“30 students) ensuring individual mentor attention.</li>
+              <li><strong>Rigorous NCERT Foundation:</strong> Line-by-line concept mastery combined with advanced objective problem-solving.</li>
+              <li><strong>Weekly Evaluation & Test Series:</strong> Regular OMR/CBT mock exams mapped to current NTA NEET and JEE Main patterns.</li>
+              <li><strong>Daily Doubt Clearing:</strong> Dedicated 1-on-1 faculty support immediately following classroom lectures.</li>
+              <li><strong>Comprehensive Study Modules:</strong> Curated theory booklets, question banks, and Daily Practice Problem (DPP) sheets.</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Right Column: Course Specifications Sidebar */}
+        <div>
+          <div style={{
+            background: '#ffffff',
+            borderRadius: '16px',
+            border: '1px solid #e2e8f0',
+            padding: '24px',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
+            marginBottom: '25px',
+            position: 'sticky',
+            top: '90px'
+          }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-blue)', margin: '0 0 16px 0' }}>
+              Program Specifications
+            </h3>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {course.showTarget !== false && course.target && (
+                <div style={{ borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
+                  <div style={{ fontSize: '0.78rem', textTransform: 'uppercase', color: '#64748b', fontWeight: 700, letterSpacing: '0.04em' }}>Target Eligibility</div>
+                  <div style={{ fontSize: '0.95rem', color: '#0f2b48', fontWeight: 600, marginTop: '2px' }}>{course.target}</div>
+                </div>
+              )}
+
+              {course.showBoards !== false && course.boards && (
+                <div style={{ borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
+                  <div style={{ fontSize: '0.78rem', textTransform: 'uppercase', color: '#64748b', fontWeight: 700, letterSpacing: '0.04em' }}>Target Boards</div>
+                  <div style={{ fontSize: '0.95rem', color: '#0f2b48', fontWeight: 600, marginTop: '2px' }}>{course.boards}</div>
+                </div>
+              )}
+
+              {course.showDuration !== false && course.duration && (
+                <div style={{ borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
+                  <div style={{ fontSize: '0.78rem', textTransform: 'uppercase', color: '#64748b', fontWeight: 700, letterSpacing: '0.04em' }}>Program Duration</div>
+                  <div style={{ fontSize: '0.95rem', color: '#0f2b48', fontWeight: 600, marginTop: '2px' }}>{course.duration}</div>
+                </div>
+              )}
+
+              {course.showSchedule !== false && course.schedule && (
+                <div style={{ borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
+                  <div style={{ fontSize: '0.78rem', textTransform: 'uppercase', color: '#64748b', fontWeight: 700, letterSpacing: '0.04em' }}>Weekly Schedule</div>
+                  <div style={{ fontSize: '0.95rem', color: '#0f2b48', fontWeight: 600, marginTop: '2px' }}>{course.schedule}</div>
+                </div>
+              )}
+
+              <div style={{ borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
+                <div style={{ fontSize: '0.78rem', textTransform: 'uppercase', color: '#64748b', fontWeight: 700, letterSpacing: '0.04em' }}>Study Mode</div>
+                <div style={{ fontSize: '0.95rem', color: '#0f2b48', fontWeight: 600, marginTop: '2px' }}>Classroom (Offline) @ Jind Campus</div>
+              </div>
+
+              <div style={{ borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
+                <div style={{ fontSize: '0.78rem', textTransform: 'uppercase', color: '#64748b', fontWeight: 700, letterSpacing: '0.04em' }}>Free Trial Classes</div>
+                <div style={{ fontSize: '0.95rem', color: '#16a34a', fontWeight: 700, marginTop: '2px' }}>Available (2â€“3 Days Trial)</div>
+              </div>
+            </div>
+
+            <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <button 
+                className="courses-action-btn"
+                style={{ width: '100%', padding: '12px', fontSize: '0.92rem', fontWeight: 700 }}
+                onClick={() => openEnquiry(course)}
+              >
+                Apply for Admission
+              </button>
+              <button 
+                className="courses-action-btn secondary"
+                style={{ width: '100%', padding: '10px', fontSize: '0.88rem', fontWeight: 600, backgroundColor: '#ffffff', color: 'var(--navy-blue)', border: '1px solid var(--border-light)' }}
+                onClick={() => window.open(`tel:${settings.phone || '9467752374'}`, '_self')}
+              >
+                Call: {settings.phone || '94677-52374'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Related Programs Section */}
+      {otherCourses.length > 0 && (
+        <div style={{ marginTop: '50px', borderTop: '2px solid #f1f5f9', paddingTop: '36px' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--navy-blue)', marginBottom: '20px' }}>
+            Explore Other Coaching Programs
+          </h2>
+          <div className="courses-container" style={{ border: 'none' }}>
+            {otherCourses.map(other => (
+              <div key={other.id} className="course-card">
+                {other.image && (
+                  <div className="course-banner" style={{ cursor: 'pointer' }} onClick={() => navigate(`/courses/${other.id}`)}>
+                    <img src={other.image} alt={other.title} />
+                  </div>
+                )}
+                <div className="course-info">
+                  <h3 className="course-title" style={{ cursor: 'pointer' }} onClick={() => navigate(`/courses/${other.id}`)}>
+                    {other.title}
+                  </h3>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--light-gray)', marginBottom: '14px', lineHeight: 1.45, display: '-webkit-box', WebKitLineClamp: 3, WebKitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    {other.details}
+                  </p>
+                  <button 
+                    className="enrol-btn secondary"
+                    style={{ width: '100%', padding: '8px', fontSize: '0.82rem', fontWeight: 600 }}
+                    onClick={() => navigate(`/courses/${other.id}`)}
+                  >
+                    View Course Details &rarr;
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -518,8 +518,13 @@ export const dbService = {
   getCourses() {
     return cache.courses;
   },
-  getCourse(id) {
-    return cache.courses.find(c => c.id === id);
+  getCourse(idOrSlug) {
+    if (!idOrSlug) return null;
+    const cleanId = String(idOrSlug).toLowerCase().trim();
+    return (cache.courses || []).find(c => 
+      String(c.id).toLowerCase() === cleanId ||
+      (c.title && c.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') === cleanId)
+    );
   },
   async saveCourse(course) {
     const list = [...cache.courses];

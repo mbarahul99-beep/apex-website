@@ -3154,3 +3154,21 @@
     font-size: 0.88rem;
   }
 }
+
+/* ---------------- COURSE DETAIL FULL PAGE STYLES ---------------- */
+.course-detail-page {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@media (max-width: 860px) {
+  .course-detail-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  .course-detail-header-card {
+    padding: 20px !important;
+  }
+  .course-detail-header-card h1 {
+    font-size: 1.65rem !important;
+  }
+}

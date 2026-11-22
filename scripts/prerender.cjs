@@ -92,6 +92,99 @@ const routes = [
     }
   },
   {
+    path: 'courses/c1',
+    title: 'NEET Integrated Classroom Program in Jind | Institute APEX',
+    description: 'Integrated classroom coaching in Jind for Class 11th & 12th medical students preparing for NEET entrance and CBSE/ICSE board examinations at Institute APEX.',
+    canonical: 'https://instituteapex.in/courses/c1',
+    heading: 'NEET Integrated Classroom Program at Institute APEX Jind',
+    contentHtml: `
+      <article style="max-width:1000px;margin:30px auto;padding:0 20px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:#0f2b48;">
+        <h1 style="font-size:2.2rem;font-weight:800;color:#0f2b48;margin-bottom:14px;">NEET Integrated Classroom Program in Jind</h1>
+        <p style="font-size:1.1rem;line-height:1.6;color:#334155;margin-bottom:24px;">
+          Comprehensive 1-Year and 2-Year classroom coaching programs for Class 11th & 12th medical aspirants in Jind. Covering Physics, Chemistry, and Biology for NEET alongside complete school board syllabus (CBSE, ICSE, and State Boards).
+        </p>
+        <div style="background:#f8fafc;padding:24px;border-radius:12px;margin-bottom:28px;border:1px solid #e2e8f0;">
+          <h2 style="font-size:1.3rem;font-weight:700;color:#0369a1;margin-bottom:12px;">Course Highlights</h2>
+          <ul style="padding-left:20px;line-height:1.8;color:#334155;">
+            <li>Daily concept classes with NCERT line-by-line coverage</li>
+            <li>Weekly OMR-based NEET mock test series</li>
+            <li>Small batch sizes of 25-30 students for personal care</li>
+            <li>Daily 1-on-1 doubt clearing sessions with senior faculty</li>
+          </ul>
+        </div>
+      </article>
+    `,
+    schema: {
+      "@context": "https://schema.org",
+      "@type": "Course",
+      "name": "NEET Integrated Classroom Program",
+      "description": "Integrated classroom coaching for Class 11th and 12th medical aspirants preparing for NEET entrance examination.",
+      "provider": { "@type": "EducationalOrganization", "name": "Institute APEX", "url": "https://instituteapex.in" }
+    }
+  },
+  {
+    path: 'courses/c2',
+    title: 'IIT-JEE Entrance & Board Preparation in Jind | Institute APEX',
+    description: 'Targeted classroom coaching in Jind for Class 11th & 12th engineering aspirants preparing for JEE Main & JEE Advanced alongside CBSE/ICSE boards.',
+    canonical: 'https://instituteapex.in/courses/c2',
+    heading: 'IIT-JEE Entrance & Board Preparation at Institute APEX Jind',
+    contentHtml: `
+      <article style="max-width:1000px;margin:30px auto;padding:0 20px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:#0f2b48;">
+        <h1 style="font-size:2.2rem;font-weight:800;color:#0f2b48;margin-bottom:14px;">IIT-JEE Entrance & Board Preparation in Jind</h1>
+        <p style="font-size:1.1rem;line-height:1.6;color:#334155;margin-bottom:24px;">
+          Targeted classroom coaching for Class 11th and 12th engineering aspirants. The curriculum covers Physics, Chemistry, and Mathematics for JEE Main and JEE Advanced alongside board syllabus requirements.
+        </p>
+        <div style="background:#f8fafc;padding:24px;border-radius:12px;margin-bottom:28px;border:1px solid #e2e8f0;">
+          <h2 style="font-size:1.3rem;font-weight:700;color:#0369a1;margin-bottom:12px;">Course Highlights</h2>
+          <ul style="padding-left:20px;line-height:1.8;color:#334155;">
+            <li>Conceptual problem solving from fundamentals to JEE Advanced level</li>
+            <li>Computer-Based Test (CBT) portal simulation practice</li>
+            <li>Daily Practice Problem (DPP) sets with dedicated solution hours</li>
+            <li>Synchronized board examination subjective answer writing</li>
+          </ul>
+        </div>
+      </article>
+    `,
+    schema: {
+      "@context": "https://schema.org",
+      "@type": "Course",
+      "name": "IIT-JEE Entrance & Board Preparation",
+      "description": "Classroom coaching in Jind for Class 11th and 12th engineering aspirants preparing for JEE Main & JEE Advanced.",
+      "provider": { "@type": "EducationalOrganization", "name": "Institute APEX", "url": "https://instituteapex.in" }
+    }
+  },
+  {
+    path: 'courses/c3',
+    title: 'Junior Science & Maths Foundation Course in Jind | Institute APEX',
+    description: 'Foundation coaching in Jind for Class 9th and 10th students in Science and Mathematics for CBSE, ICSE, NTSE and Olympiad preparations.',
+    canonical: 'https://instituteapex.in/courses/c3',
+    heading: 'Junior Science & Maths Foundation at Institute APEX Jind',
+    contentHtml: `
+      <article style="max-width:1000px;margin:30px auto;padding:0 20px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:#0f2b48;">
+        <h1 style="font-size:2.2rem;font-weight:800;color:#0f2b48;margin-bottom:14px;">Junior Science & Maths Foundation in Jind</h1>
+        <p style="font-size:1.1rem;line-height:1.6;color:#334155;margin-bottom:24px;">
+          Foundation coaching for Class 9th and 10th students in Science and Mathematics. Designed to build strong fundamentals for school board examinations (CBSE, ICSE, and HBSE) while laying the groundwork for NTSE, Olympiads, and future competitive exams.
+        </p>
+        <div style="background:#f8fafc;padding:24px;border-radius:12px;margin-bottom:28px;border:1px solid #e2e8f0;">
+          <h2 style="font-size:1.3rem;font-weight:700;color:#0369a1;margin-bottom:12px;">Course Highlights</h2>
+          <ul style="padding-left:20px;line-height:1.8;color:#334155;">
+            <li>Early conceptual mastery in Physics, Chemistry, Biology & Mathematics</li>
+            <li>Complete distinction preparation for CBSE, ICSE & HBSE boards</li>
+            <li>Analytical aptitude training for NTSE and Olympiads</li>
+            <li>Small batch sizes for personalized care</li>
+          </ul>
+        </div>
+      </article>
+    `,
+    schema: {
+      "@context": "https://schema.org",
+      "@type": "Course",
+      "name": "Junior Science & Maths Foundation",
+      "description": "Foundation coaching for Class 9th and 10th students in Science and Mathematics in Jind.",
+      "provider": { "@type": "EducationalOrganization", "name": "Institute APEX", "url": "https://instituteapex.in" }
+    }
+  },
+  {
     path: 'about',
     title: 'About Institute APEX Jind | 16+ Years Medical & Engineering Coaching',
     description: 'Learn about Institute APEX, Jind’s premier coaching institute for NEET and IIT-JEE located at Urban Estate, Jind. Established in 2009 by senior educators producing top medical and engineering ranks.',
