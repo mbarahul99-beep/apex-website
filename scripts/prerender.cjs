@@ -32,7 +32,7 @@ const routes = [
             <ul style="padding-left:20px;font-size:0.9rem;color:#334155;line-height:1.6;">
               <li>Comprehensive NCERT line-by-line coverage</li>
               <li>Weekly OMR-based NEET pattern mock tests</li>
-              <li>Small batches of 25-30 students for personal care</li>
+              <li>Small batch sizes for focused personal attention</li>
             </ul>
           </div>
 
@@ -60,7 +60,7 @@ const routes = [
         <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:16px;">Frequently Asked Questions (FAQs)</h2>
         <div style="background:#f8fafc;padding:20px;border-radius:12px;margin-bottom:30px;">
           <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:6px;">How can I enroll in Institute APEX courses?</h3>
-          <p style="font-size:0.95rem;color:#475569;line-height:1.5;margin-bottom:16px;">Visit our campus at #1257, Urban Estate, Near HUDA Ground, Jind, or call 94677-52374 / 01681-247700. Free 2-3 day trial demo classes are available for new admissions.</p>
+          <p style="font-size:0.95rem;color:#475569;line-height:1.5;margin-bottom:16px;">Visit our campus at #1257, Urban Estate, Near HUDA Ground, Jind, or call 94677-52374 / 01681-247700 to speak with an academic counselor about current courses and admissions.</p>
           <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:6px;">Are scholarships available for bright students?</h3>
           <p style="font-size:0.95rem;color:#475569;line-height:1.5;">Yes, we conduct the ASAT (APEX Scholarship Admission Test) offering up to 90% tuition fee concessions based on merit.</p>
         </div>
@@ -108,7 +108,7 @@ const routes = [
           <ul style="padding-left:20px;line-height:1.8;color:#334155;">
             <li>Daily concept classes with NCERT line-by-line coverage</li>
             <li>Weekly OMR-based NEET mock test series</li>
-            <li>Small batch sizes of 25-30 students for personal care</li>
+            <li>Small batch sizes for focused personal care</li>
             <li>Daily 1-on-1 doubt clearing sessions with senior faculty</li>
           </ul>
         </div>
@@ -187,7 +187,7 @@ const routes = [
   {
     path: 'about',
     title: 'About Institute APEX Jind | 16+ Years Medical & Engineering Coaching',
-    description: 'Learn about Institute APEX, Jind’s premier coaching institute for NEET and IIT-JEE located at Urban Estate, Jind. Established in 2009 by senior educators producing top medical and engineering ranks.',
+    description: "Learn about Institute APEX, Jind's premier coaching institute for NEET and IIT-JEE located at Urban Estate, Jind. Established in 2009 by senior educators producing top medical and engineering ranks.",
     canonical: 'https://instituteapex.in/about',
     heading: 'About Institute APEX - 16+ Years of Proven Ranks in Jind',
     contentHtml: `
@@ -199,7 +199,7 @@ const routes = [
         <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:24px;">
           <h2 style="font-size:1.35rem;font-weight:700;color:#0369a1;margin-bottom:10px;">Our Core Philosophy</h2>
           <p style="font-size:0.95rem;color:#475569;line-height:1.6;">
-            We believe that every student has latent potential that blossoms with individual mentorship, structured study material, and timely feedback. Unlike massive commercial factories with hundreds of students per batch, APEX maintains intimate batch sizes (25-30 students) where every student's doubts are answered daily.
+            We believe that every student has latent potential that blossoms with individual mentorship, structured study material, and timely feedback. Unlike large crowded coaching classes, APEX maintains small batch sizes where every student's doubts are answered directly by teachers.
           </p>
         </div>
         <div style="background:#f8fafc;border-radius:12px;padding:24px;">
@@ -286,7 +286,7 @@ const routes = [
   {
     path: 'contact',
     title: 'Contact Institute APEX Jind | #1257 Urban Estate Near HUDA Ground',
-    description: 'Visit Institute APEX at #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana). Call 94677-52374 or 01681-247700 for admission inquiries, demo classes, and counseling.',
+    description: 'Visit Institute APEX at #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana). Call 94677-52374 or 01681-247700 for course details, admission counseling, and batch schedules.',
     canonical: 'https://instituteapex.in/contact',
     heading: 'Contact Us - Institute APEX Jind Admissions Office',
     contentHtml: `
@@ -301,7 +301,7 @@ const routes = [
           <p><strong>Landline:</strong> <a href="tel:01681247700" style="color:#0284c7;text-decoration:none;">01681-247700</a></p>
           <p><strong>WhatsApp Support:</strong> <a href="https://wa.me/919467752374" style="color:#16a34a;text-decoration:none;">Chat on WhatsApp</a></p>
           <p><strong>Email:</strong> instituteapexjind@gmail.com</p>
-          <p><strong>Counseling Hours:</strong> Monday – Sunday: 8:00 AM – 7:00 PM</p>
+          <p><strong>Counseling Hours:</strong> Monday - Sunday: 8:00 AM - 7:00 PM</p>
         </div>
       </section>
     `,
@@ -389,7 +389,7 @@ const routes = [
   {
     path: 'pages/about-apex-jind',
     title: 'About Apex Institute Jind - Premier NEET & IIT-JEE Coaching',
-    description: 'Learn more about Apex Institute Jind, Haryana’s premium educational center for IIT-JEE, NEET entrance coaching and secondary board tuitions.',
+    description: "Learn more about Apex Institute Jind, Haryana's premium educational center for IIT-JEE, NEET entrance coaching and secondary board tuitions.",
     canonical: 'https://instituteapex.in/pages/about-apex-jind',
     heading: 'About Institute APEX Jind',
     contentHtml: `

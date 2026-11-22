@@ -396,7 +396,7 @@ function FaqSection() {
   const faqItems = [
     {
       q: "Which is the best coaching institute for NEET in Jind?",
-      a: "Institute APEX, located at #1257, Urban Estate, Near HUDA Ground, Jind, is widely recognized as the premier coaching institute for NEET in Jind. APEX provides comprehensive classroom coaching for Physics, Chemistry, and Biology with 16+ years of proven ranks, small batch sizes of 25-30 students, daily doubt removal sessions, and regular OMR-based test series producing top selections in government medical colleges."
+      a: "Institute APEX, located at #1257, Urban Estate, Near HUDA Ground, Jind, is widely recognized as the premier coaching institute for NEET in Jind. APEX provides comprehensive classroom coaching for Physics, Chemistry, and Biology with 16+ years of proven ranks, small batch sizes for personal attention, daily doubt removal sessions, and regular test series helping students secure admissions in government medical colleges."
     },
     {
       q: "Does Institute APEX in Jind provide coaching for IIT-JEE and Class 12th Science boards?",
@@ -412,7 +412,7 @@ function FaqSection() {
     },
     {
       q: "Where is Institute APEX located in Jind and how can I contact for admissions?",
-      a: "Institute APEX is located at #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana). You can contact the institute administration at 94677-52374 or 01681-247700, or enquire online directly on our website. Free 2-3 day trial demo classes are available for new admissions."
+      a: "Institute APEX is located at #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana). You can contact the institute administration at 94677-52374 or 01681-247700, or enquire online directly on our website to learn about current batches and admissions."
     }
   ];
 
@@ -522,7 +522,7 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
     }
   } else if (cleanPath === '/about' || cleanPath === '/about-us' || cleanPath === '/pages/about-apex-jind') {
     siteTitle = 'About Institute APEX Jind | 16+ Years Medical & Engineering Coaching';
-    siteDesc = 'Learn about Institute APEX, Jind’s premier coaching institute for NEET and IIT-JEE located at Urban Estate, Jind. Established in 2009 by senior educators producing top medical and engineering ranks.';
+    siteDesc = "Learn about Institute APEX, Jind's premier coaching institute for NEET and IIT-JEE located at Urban Estate, Jind. Established in 2009 by senior educators producing top medical and engineering ranks.";
     siteKeywords = 'about apex institute jind, n dhanda jind, coaching institute profile jind';
   } else if (cleanPath === '/scholarships') {
     siteTitle = 'ASAT Scholarship Test & Admission Concessions | Institute APEX Jind';
@@ -538,7 +538,7 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
     siteKeywords = 'neet exam alerts jind, jee prep blogs haryana, cbse preparation tips, board exam guides jind';
   } else if (cleanPath === '/contact' || cleanPath === '/contact-us') {
     siteTitle = 'Contact Institute APEX Jind | #1257 Urban Estate Near HUDA Ground';
-    siteDesc = 'Visit Institute APEX at #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana). Call 94677-52374 or 01681-247700 for admission inquiries, demo classes, and counseling.';
+    siteDesc = 'Visit Institute APEX at #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana). Call 94677-52374 or 01681-247700 for course details, admission counseling, and batch schedules.';
     siteKeywords = 'contact apex institute jind, apex coaching phone number jind, apex address urban estate jind';
   } else if (cleanPath === '/online-prep' || cleanPath === '/student-portal') {
     siteTitle = 'Online CBT Test Prep & Student Exam Portal | Institute APEX Jind';
@@ -1507,7 +1507,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
       {settings.showAlumni !== false && alumni.length > 0 && (
         <section className="alumni-section">
           <div className="section-header">
-            <h2 className="section-title">Proven Track Record — Apex Alumni from Jind</h2>
+            <h2 className="section-title">Proven Track Record  -  Apex Alumni from Jind</h2>
             <p className="section-subtitle">Inspiring doctors and engineers graduated from Dr. RML Hospital, Govt Medical Colleges, and top IITs</p>
           </div>
 
@@ -1734,7 +1734,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
       <section className="campus-map-section" style={{ padding: '30px 0 20px 0', borderBottom: '8px solid var(--border-light)' }}>
         <div className="section-header" style={{ marginBottom: '20px' }}>
           <h2 className="section-title">Visit Our Campus in Jind</h2>
-          <p className="section-subtitle">Conveniently located at Urban Estate, Near HUDA Ground — easily accessible from all parts of Jind</p>
+          <p className="section-subtitle">Conveniently located at Urban Estate, Near HUDA Ground  -  easily accessible from all parts of Jind</p>
         </div>
 
         <div style={{
@@ -1759,7 +1759,7 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
             <div>
               <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--navy-blue)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span style={{ width: '16px', height: '16px', display: 'inline-flex', alignItems: 'center', color: 'var(--navy-blue)' }}><IconMapPin /></span>
-                <span>Institute APEX — Urban Estate Campus</span>
+                <span>Institute APEX  -  Urban Estate Campus</span>
               </div>
               <div style={{ fontSize: '0.84rem', color: '#64748b', marginTop: '3px' }}>
                 {settings.address || '#1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana)'}
@@ -1991,7 +1991,7 @@ function CourseDetailView({ courseId, navigate, openEnquiry, settings }) {
           {course.title}
         </h1>
         <p style={{ fontSize: '1.05rem', color: '#475569', lineHeight: 1.6, marginBottom: '25px', maxWidth: '850px' }}>
-          Premier classroom coaching program in Jind tailored for competitive entrance excellence and board exam distinctions with 16+ years of proven top ranks.
+          Classroom coaching program in Jind designed to help students master syllabus concepts, build problem-solving speed, and prepare thoroughly for competitive and school board exams.
         </p>
 
         {/* Action Buttons Top Bar */}
@@ -2044,7 +2044,7 @@ function CourseDetailView({ courseId, navigate, openEnquiry, settings }) {
               <img 
                 src={course.image} 
                 alt={`${course.title} - Institute APEX Jind`} 
-                style={{ width: '100%', maxHeight: '420px', objectFit: 'cover', display: 'block' }}
+                style={{ width: '100%', height: 'auto', display: 'block' }}
               />
             </div>
           )}
@@ -2064,14 +2064,14 @@ function CourseDetailView({ courseId, navigate, openEnquiry, settings }) {
 
             {/* Structured Academic Highlights */}
             <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#0369a1', marginTop: '28px', marginBottom: '14px' }}>
-              Key Academic Features of this Course
+              What Students Get in This Course
             </h3>
             <ul style={{ paddingLeft: '20px', color: '#334155', lineHeight: 1.8, fontSize: '0.96rem' }}>
-              <li><strong>Focused Batch Sizes:</strong> Strictly limited batch capacity (25â€“30 students) ensuring individual mentor attention.</li>
-              <li><strong>Rigorous NCERT Foundation:</strong> Line-by-line concept mastery combined with advanced objective problem-solving.</li>
-              <li><strong>Weekly Evaluation & Test Series:</strong> Regular OMR/CBT mock exams mapped to current NTA NEET and JEE Main patterns.</li>
-              <li><strong>Daily Doubt Clearing:</strong> Dedicated 1-on-1 faculty support immediately following classroom lectures.</li>
-              <li><strong>Comprehensive Study Modules:</strong> Curated theory booklets, question banks, and Daily Practice Problem (DPP) sheets.</li>
+              <li><strong>Small Batch Sizes:</strong> Small batches so teachers can give personal attention and resolve doubts directly for every student.</li>
+              <li><strong>Thorough Concept Coverage:</strong> Step-by-step NCERT coverage combined with focused practice on competitive exam problem patterns.</li>
+              <li><strong>Weekly Tests & Feedback:</strong> Regular practice tests modeled on actual exam patterns to track progress and identify areas for improvement.</li>
+              <li><strong>Daily Doubt Clearing:</strong> Direct access to subject teachers after class to ask questions and clear doubts immediately.</li>
+              <li><strong>Printed Study Material & DPPs:</strong> Structured topic booklets, previous year question banks, and daily practice problem sheets.</li>
             </ul>
           </div>
         </div>
@@ -2121,14 +2121,9 @@ function CourseDetailView({ courseId, navigate, openEnquiry, settings }) {
                 </div>
               )}
 
-              <div style={{ borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
+              <div>
                 <div style={{ fontSize: '0.78rem', textTransform: 'uppercase', color: '#64748b', fontWeight: 700, letterSpacing: '0.04em' }}>Study Mode</div>
                 <div style={{ fontSize: '0.95rem', color: '#0f2b48', fontWeight: 600, marginTop: '2px' }}>Classroom (Offline) @ Jind Campus</div>
-              </div>
-
-              <div style={{ borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
-                <div style={{ fontSize: '0.78rem', textTransform: 'uppercase', color: '#64748b', fontWeight: 700, letterSpacing: '0.04em' }}>Free Trial Classes</div>
-                <div style={{ fontSize: '0.95rem', color: '#16a34a', fontWeight: 700, marginTop: '2px' }}>Available (2â€“3 Days Trial)</div>
               </div>
             </div>
 
@@ -3149,7 +3144,7 @@ function AllResultsView({ navigate }) {
   return (
     <div className="fade-in student-content-wrap" style={{ marginTop: '20px', paddingBottom: '50px' }}>
       <div className="section-header" style={{ marginBottom: '40px' }}>
-        <h1 className="section-title" style={{ fontSize: '1.75rem', margin: '0 0 8px 0' }}>NEET & IIT-JEE Results — Toppers from Jind</h1>
+        <h1 className="section-title" style={{ fontSize: '1.75rem', margin: '0 0 8px 0' }}>NEET & IIT-JEE Results  -  Toppers from Jind</h1>
         <p className="section-subtitle">Year-by-year honors list of our toppers who excelled in national exams from Apex Institute Jind</p>
       </div>
 
