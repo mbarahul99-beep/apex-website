@@ -1146,24 +1146,27 @@ function AdminSliders() {
       return;
     }
 
+    const finalDesktop = desktopImg || mobileImg;
+    const finalMobile = mobileImg || desktopImg;
+
+    const updated = sliders.map(s => {
+      if (s.id === id) {
+        return { ...s, imageUrl: finalDesktop, mobileImageUrl: finalMobile, active: editActive };
+      }
+      return s;
+    });
+
+    // Optimistic UI update: instantly update view and close edit box
+    setSliders(updated);
+    setEditingId(null);
+
     try {
       setIsSaving(true);
-      const finalDesktop = desktopImg || mobileImg;
-      const finalMobile = mobileImg || desktopImg;
-
-      const updated = sliders.map(s => {
-        if (s.id === id) {
-          return { ...s, imageUrl: finalDesktop, mobileImageUrl: finalMobile, active: editActive };
-        }
-        return s;
-      });
       await dbService.saveSliders(updated);
-      setSliders(updated);
-      setEditingId(null);
-      alert("Banner slide updated and saved successfully!");
+      alert("✓ Banner slide updated and saved successfully!");
     } catch (err) {
       console.error("Failed to save banner slide:", err);
-      alert("Failed to save banner slide: " + (err.message || err));
+      alert("⚠️ Note: Banner saved locally, but database sync returned: " + (err.message || err) + "\nIf permissions failed, please sign in with your Google Admin account.");
     } finally {
       setIsSaving(false);
     }
@@ -1171,21 +1174,24 @@ function AdminSliders() {
 
   const handleMoveSlide = async (currentIndex, targetIndex) => {
     if (targetIndex < 0 || targetIndex >= sliders.length || currentIndex === targetIndex) return;
+    const updated = [...sliders];
+    const [movedSlide] = updated.splice(currentIndex, 1);
+    updated.splice(targetIndex, 0, movedSlide);
+    
+    // Re-index orderIndex
+    const reindexed = updated.map((slide, idx) => ({
+      ...slide,
+      orderIndex: idx
+    }));
+    
+    // Optimistic UI update: instantly move the slide card on screen
+    setSliders(reindexed);
+
     try {
-      const updated = [...sliders];
-      const [movedSlide] = updated.splice(currentIndex, 1);
-      updated.splice(targetIndex, 0, movedSlide);
-      
-      // Re-index orderIndex
-      const reindexed = updated.map((slide, idx) => ({
-        ...slide,
-        orderIndex: idx
-      }));
-      
       await dbService.saveSliders(reindexed);
-      setSliders(reindexed);
     } catch (err) {
-      alert("Failed to reorder slides: " + (err.message || err));
+      console.error("Failed to save slide order:", err);
+      alert("⚠️ Note: Order updated locally, but database sync returned: " + (err.message || err));
     }
   };
 
