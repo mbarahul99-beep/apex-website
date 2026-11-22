@@ -385,8 +385,10 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
   }, []);
 
   const handleWhatsApp = () => {
-    const formattedPhone = settings.phone.replace(/[^0-9]/g, '');
-    const url = `https://wa.me/91${formattedPhone}?text=${encodeURIComponent(settings.whatsappText)}`;
+    const rawNumber = settings.whatsappNumber || settings.phone || '9467752374';
+    const formattedPhone = rawNumber.replace(/[^0-9]/g, '');
+    const defaultMsg = settings.whatsappText || 'Hello Apex Institute, I would like to enquire about coaching courses.';
+    const url = `https://wa.me/91${formattedPhone}?text=${encodeURIComponent(defaultMsg)}`;
     window.open(url, '_blank');
   };
 
@@ -2117,7 +2119,7 @@ function ContactUsView({ settings, navigate }) {
   const phone = settings?.phone || '94677-52374';
   const telephone = settings?.telephone || '01681-247700';
   const email = settings?.email || 'instituteapexjind@gmail.com';
-  const rawWhatsApp = (settings?.whatsappNumber || '9467752374').replace(/[^0-9]/g, '');
+  const rawWhatsApp = (settings?.whatsappNumber || settings?.phone || '9467752374').replace(/[^0-9]/g, '');
   const whatsappUrl = `https://wa.me/91${rawWhatsApp}?text=${encodeURIComponent(settings?.whatsappText || 'Hello Apex Institute, I would like to enquire about coaching courses.')}`;
   const cleanPhoneLink = `tel:${phone.replace(/[^0-9+]/g, '')}`;
   const cleanTelLink = `tel:${telephone.replace(/[^0-9+]/g, '')}`;

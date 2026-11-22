@@ -48,6 +48,7 @@ const DEFAULT_SETTINGS = {
   tagline: "Institute of Medical Entrance Exams (NEET) & IIT-JEE Coaching & Tuition",
   address: "#1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana)",
   phone: "94677-52374",
+  whatsappNumber: "94677-52374",
   telephone: "01681-247700",
   email: "instituteapexjind@gmail.com",
   whatsappText: "Hello Apex Institute, I would like to enquire about your coaching courses.",
@@ -267,8 +268,8 @@ const ensureMobileSliders = (sliders) => {
   };
   return sorted.map((s, idx) => {
     let mob = s.mobileImageUrl;
-    if (!mob || mob === '' || mob === s.imageUrl) {
-      mob = fallbackMobileMap[s.id] || `/images/slides/mobile_slide_${(idx % 5) + 1}.webp`;
+    if (!mob || mob === '') {
+      mob = s.imageUrl || fallbackMobileMap[s.id] || `/images/slides/mobile_slide_${(idx % 5) + 1}.webp`;
     }
     return { ...s, mobileImageUrl: mob };
   });
@@ -475,7 +476,10 @@ export const dbService = {
     saveData(DB_KEYS.SLIDERS, sorted);
     if (!isDefault) {
       for (const s of sorted) {
-        await setDoc(doc(db, "sliders", s.id), s);
+        const cleanDoc = Object.fromEntries(
+          Object.entries(s).filter(([_, v]) => v !== undefined)
+        );
+        await setDoc(doc(db, "sliders", s.id), cleanDoc);
       }
     }
     return sorted;

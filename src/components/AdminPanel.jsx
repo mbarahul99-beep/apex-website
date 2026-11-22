@@ -639,23 +639,48 @@ function SettingsForm({ onUpdateSettings }) {
       </div>
       <div className="admin-form-row">
         <div className="admin-input-group">
-          <label>Mobile Number (for Calls & WhatsApp)</label>
-          <input type="text" name="phone" value={settings.phone} onChange={handleChange} required />
+          <label>Mobile Number (for Direct Calls)</label>
+          <input type="text" name="phone" value={settings.phone} onChange={handleChange} placeholder="e.g. 94677-52374" required />
+          <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px' }}>
+            Primary calling number shown in header, contact page & call buttons.
+          </span>
         </div>
         <div className="admin-input-group">
-          <label>Landline Phone</label>
-          <input type="text" name="telephone" value={settings.telephone} onChange={handleChange} />
+          <label>Dedicated WhatsApp Number (Optional)</label>
+          <input 
+            type="text" 
+            name="whatsappNumber" 
+            value={settings.whatsappNumber || ''} 
+            onChange={handleChange} 
+            placeholder="e.g. 9467752374 (Leave empty to use Mobile Number)" 
+          />
+          <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px' }}>
+            Controls the WhatsApp floating button & quick chat links.
+          </span>
         </div>
       </div>
       <div className="admin-form-row">
         <div className="admin-input-group">
+          <label>Landline Phone</label>
+          <input type="text" name="telephone" value={settings.telephone || ''} onChange={handleChange} placeholder="e.g. 01681-247700" />
+        </div>
+        <div className="admin-input-group">
           <label>Official Email</label>
           <input type="email" name="email" value={settings.email} onChange={handleChange} required />
         </div>
-        <div className="admin-input-group">
-          <label>WhatsApp Default Text Message</label>
-          <input type="text" name="whatsappText" value={settings.whatsappText} onChange={handleChange} />
-        </div>
+      </div>
+      <div className="admin-input-group" style={{ marginBottom: '14px' }}>
+        <label>WhatsApp Default Chat Message</label>
+        <input 
+          type="text" 
+          name="whatsappText" 
+          value={settings.whatsappText || ''} 
+          onChange={handleChange} 
+          placeholder="e.g. Hello Apex Institute, I would like to enquire about your coaching courses."
+        />
+        <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px' }}>
+          Pre-filled introductory message when students click the WhatsApp button.
+        </span>
       </div>
       <div className="admin-input-group">
         <label>Student Exam Portal Live Link</label>
@@ -1099,6 +1124,7 @@ function AdminSliders() {
   const [editUrl, setEditUrl] = useState('');
   const [editMobileUrl, setEditMobileUrl] = useState('');
   const [editActive, setEditActive] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     setSliders(dbService.getSliders());
@@ -1106,38 +1132,61 @@ function AdminSliders() {
 
   const handleEdit = (slide) => {
     setEditingId(slide.id);
-    setEditUrl(slide.imageUrl);
+    setEditUrl(slide.imageUrl || '');
     setEditMobileUrl(slide.mobileImageUrl || '');
-    setEditActive(slide.active);
+    setEditActive(slide.active !== false);
   };
 
   const handleSave = async (id) => {
-    if (!editUrl) return;
-    const updated = sliders.map(s => {
-      if (s.id === id) {
-        return { ...s, imageUrl: editUrl, mobileImageUrl: editMobileUrl, active: editActive };
-      }
-      return s;
-    });
-    await dbService.saveSliders(updated);
-    setSliders(updated);
-    setEditingId(null);
+    const desktopImg = (editUrl || '').trim();
+    const mobileImg = (editMobileUrl || '').trim();
+
+    if (!desktopImg && !mobileImg) {
+      alert("Please provide or upload at least one image (Desktop or Mobile) for this banner slide.");
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      const finalDesktop = desktopImg || mobileImg;
+      const finalMobile = mobileImg || desktopImg;
+
+      const updated = sliders.map(s => {
+        if (s.id === id) {
+          return { ...s, imageUrl: finalDesktop, mobileImageUrl: finalMobile, active: editActive };
+        }
+        return s;
+      });
+      await dbService.saveSliders(updated);
+      setSliders(updated);
+      setEditingId(null);
+      alert("Banner slide updated and saved successfully!");
+    } catch (err) {
+      console.error("Failed to save banner slide:", err);
+      alert("Failed to save banner slide: " + (err.message || err));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleMoveSlide = async (currentIndex, targetIndex) => {
     if (targetIndex < 0 || targetIndex >= sliders.length || currentIndex === targetIndex) return;
-    const updated = [...sliders];
-    const [movedSlide] = updated.splice(currentIndex, 1);
-    updated.splice(targetIndex, 0, movedSlide);
-    
-    // Re-index orderIndex
-    const reindexed = updated.map((slide, idx) => ({
-      ...slide,
-      orderIndex: idx
-    }));
-    
-    await dbService.saveSliders(reindexed);
-    setSliders(reindexed);
+    try {
+      const updated = [...sliders];
+      const [movedSlide] = updated.splice(currentIndex, 1);
+      updated.splice(targetIndex, 0, movedSlide);
+      
+      // Re-index orderIndex
+      const reindexed = updated.map((slide, idx) => ({
+        ...slide,
+        orderIndex: idx
+      }));
+      
+      await dbService.saveSliders(reindexed);
+      setSliders(reindexed);
+    } catch (err) {
+      alert("Failed to reorder slides: " + (err.message || err));
+    }
   };
 
   const handleAddSlide = async () => {
@@ -1145,22 +1194,32 @@ function AdminSliders() {
       alert("Maximum limit of 10 sliders reached!");
       return;
     }
+    const newId = 's_' + Date.now();
     const newSlide = {
-      id: 's_' + Date.now(),
-      imageUrl: '',
-      mobileImageUrl: '',
+      id: newId,
+      imageUrl: '/images/slides/hero_slide_1_v2.webp',
+      mobileImageUrl: '/images/slides/hero_slide_1_mob_v2.webp',
       orderIndex: sliders.length,
       active: true
     };
-    const updated = [...sliders, newSlide];
-    await dbService.saveSliders(updated);
-    setSliders(updated);
+    try {
+      const updated = [...sliders, newSlide];
+      await dbService.saveSliders(updated);
+      setSliders(updated);
+      handleEdit(newSlide);
+    } catch (err) {
+      alert("Failed to create slide: " + (err.message || err));
+    }
   };
 
   const handleDeleteSlide = async (id) => {
     if (window.confirm("Are you sure you want to delete this banner slide?")) {
-      await dbService.deleteSlider(id);
-      setSliders(prev => prev.filter(s => s.id !== id));
+      try {
+        await dbService.deleteSlider(id);
+        setSliders(prev => prev.filter(s => s.id !== id));
+      } catch (err) {
+        alert("Failed to delete slide: " + (err.message || err));
+      }
     }
   };
 
@@ -1234,9 +1293,23 @@ function AdminSliders() {
                     />
                     <label htmlFor={`chk-${slide.id}`}>Show banner slide</label>
                   </div>
-                  <div style={{ display: 'flex', gap: '5px' }}>
-                    <button className="admin-btn" style={{ padding: '4px 8px', fontSize: '0.72rem' }} onClick={() => handleSave(slide.id)}>Save</button>
-                    <button className="admin-btn secondary" style={{ padding: '4px 8px', fontSize: '0.72rem' }} onClick={() => setEditingId(null)}>Cancel</button>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <button 
+                      className="admin-btn" 
+                      style={{ padding: '6px 12px', fontSize: '0.75rem', fontWeight: 600 }} 
+                      onClick={() => handleSave(slide.id)}
+                      disabled={isSaving}
+                    >
+                      {isSaving ? '⌛ Saving...' : '💾 Save Banner'}
+                    </button>
+                    <button 
+                      className="admin-btn secondary" 
+                      style={{ padding: '6px 12px', fontSize: '0.75rem' }} 
+                      onClick={() => setEditingId(null)}
+                      disabled={isSaving}
+                    >
+                      Cancel
+                    </button>
                   </div>
                 </>
               ) : (
@@ -3410,7 +3483,8 @@ function ImageUploadCompress({ value, onChange, label='Upload Image', maxWidth=8
     reader.onerror = () => { setError('Failed to read file.'); setCompressing(false); };
   };
 
-  const uid = 'file-' + label.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+  const compId = React.useMemo(() => 'upl_' + Math.random().toString(36).substring(2, 9), []);
+  const uid = compId + '-' + label.replace(/[^a-z0-9]/gi, '-').toLowerCase();
   return (
     <div style={{ marginTop: '6px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
