@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender.cjs",
     "convert:webp": "node scripts/convert_to_webp.cjs",
     "lint": "oxlint",
     "preview": "vite preview"
