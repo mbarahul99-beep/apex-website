@@ -27,7 +27,7 @@ const DB_KEYS = {
 };
 
 // Automatic cache migration: invalidate any stale browser cache holding deleted demo data or heavy base64
-const CACHE_VERSION = 'apex_live_v15';
+const CACHE_VERSION = 'apex_live_v16';
 if (typeof window !== 'undefined' && window.localStorage) {
   try {
     if (localStorage.getItem('apex_data_version') !== CACHE_VERSION) {
@@ -278,19 +278,20 @@ const ensureMobileSliders = (sliders) => {
   const activeOnly = (sliders || []).filter(s => s.id !== 's_1792327505092');
   const sorted = activeOnly.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
   const fallbackMobileMap = {
-    's_1794480218465': '/images/slides/current_slide_1_mob.webp',
-    's_1792327825822': '/images/slides/slide_2_mob.webp',
-    's_1792327827472': '/images/slides/slide_3_mob.webp',
-    's_1794480535869': '/images/slides/slide_4_mob.webp',
-    's_1793439553074': '/images/slides/slide_5_mob.webp',
-    's_1792575816493': '/images/slides/slide_6_mob.webp',
-    's_1794481114248': '/images/slides/slide_7_mob.webp',
-    's_1794481227750': '/images/slides/slide_8_mob.webp'
+    's_1795321874461': '/images/slides/current_slide_1_mob.webp',
+    's_1794480218465': '/images/slides/slide_2_mob.webp',
+    's_1792327825822': '/images/slides/slide_3_mob.webp',
+    's_1792327827472': '/images/slides/slide_4_mob.webp',
+    's_1794480535869': '/images/slides/slide_5_mob.webp',
+    's_1793439553074': '/images/slides/slide_6_mob.webp',
+    's_1792575816493': '/images/slides/slide_7_mob.webp',
+    's_1794481114248': '/images/slides/slide_8_mob.webp',
+    's_1794481227750': '/images/slides/slide_9_mob.webp'
   };
   return sorted.map((s, idx) => {
     let mob = s.mobileImageUrl;
     if (!mob || mob === '') {
-      mob = s.imageUrl || fallbackMobileMap[s.id] || `/images/slides/slide_${(idx % 8) + 1}_mob.webp`;
+      mob = s.imageUrl || fallbackMobileMap[s.id] || `/images/slides/slide_${(idx % 9) + 1}_mob.webp`;
     }
     return { ...s, mobileImageUrl: mob };
   });

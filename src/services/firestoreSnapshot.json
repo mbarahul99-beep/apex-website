@@ -1,60 +1,67 @@
 {
   "sliders": [
     {
-      "id": "s_1794480218465",
-      "active": true,
+      "id": "s_1795321874461",
       "orderIndex": 0,
-      "mobileImageUrl": "/images/slides/current_slide_1_mob.webp",
-      "imageUrl": "/images/slides/current_slide_1.webp"
+      "active": true,
+      "imageUrl": "/images/slides/current_slide_1.webp",
+      "mobileImageUrl": "/images/slides/current_slide_1_mob.webp"
+    },
+    {
+      "id": "s_1794480218465",
+      "orderIndex": 1,
+      "active": true,
+      "imageUrl": "/images/slides/slide_2.webp",
+      "mobileImageUrl": "/images/slides/slide_2_mob.webp"
     },
     {
       "id": "s_1792327825822",
-      "imageUrl": "/images/slides/slide_2.webp",
-      "orderIndex": 1,
-      "mobileImageUrl": "/images/slides/slide_2_mob.webp",
-      "active": true
-    },
-    {
-      "id": "s_1792327827472",
-      "imageUrl": "/images/slides/slide_3.webp",
-      "active": true,
       "orderIndex": 2,
+      "active": true,
+      "imageUrl": "/images/slides/slide_3.webp",
       "mobileImageUrl": "/images/slides/slide_3_mob.webp"
     },
     {
-      "id": "s_1794480535869",
+      "id": "s_1792327827472",
       "orderIndex": 3,
-      "imageUrl": "/images/slides/slide_4.webp",
       "active": true,
+      "imageUrl": "/images/slides/slide_4.webp",
       "mobileImageUrl": "/images/slides/slide_4_mob.webp"
     },
     {
-      "id": "s_1793439553074",
-      "active": true,
+      "id": "s_1794480535869",
       "orderIndex": 4,
-      "mobileImageUrl": "/images/slides/slide_5_mob.webp",
-      "imageUrl": "/images/slides/slide_5.webp"
+      "active": true,
+      "imageUrl": "/images/slides/slide_5.webp",
+      "mobileImageUrl": "/images/slides/slide_5_mob.webp"
+    },
+    {
+      "id": "s_1793439553074",
+      "orderIndex": 5,
+      "active": true,
+      "imageUrl": "/images/slides/slide_6.webp",
+      "mobileImageUrl": "/images/slides/slide_6_mob.webp"
     },
     {
       "id": "s_1792575816493",
+      "orderIndex": 6,
       "active": true,
-      "imageUrl": "/images/slides/slide_6.webp",
-      "mobileImageUrl": "/images/slides/slide_6_mob.webp",
-      "orderIndex": 5
+      "imageUrl": "/images/slides/slide_7.webp",
+      "mobileImageUrl": "/images/slides/slide_7_mob.webp"
     },
     {
       "id": "s_1794481114248",
-      "orderIndex": 6,
-      "imageUrl": "/images/slides/slide_7.webp",
-      "mobileImageUrl": "/images/slides/slide_7_mob.webp",
-      "active": true
+      "orderIndex": 7,
+      "active": true,
+      "imageUrl": "/images/slides/slide_8.webp",
+      "mobileImageUrl": "/images/slides/slide_8_mob.webp"
     },
     {
       "id": "s_1794481227750",
+      "orderIndex": 8,
       "active": true,
-      "orderIndex": 7,
-      "imageUrl": "/images/slides/slide_8.webp",
-      "mobileImageUrl": "/images/slides/slide_8_mob.webp"
+      "imageUrl": "/images/slides/slide_9.webp",
+      "mobileImageUrl": "/images/slides/slide_9_mob.webp"
     }
   ],
   "courses": [
