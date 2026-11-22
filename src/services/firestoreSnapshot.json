@@ -1,32 +1,60 @@
 {
   "sliders": [
     {
-      "id": "s_1792327822326",
-      "orderIndex": 0,
-      "mobileImageUrl": "/images/slides/mobile_slide_2.webp",
+      "id": "s_1794480218465",
       "active": true,
-      "imageUrl": "/images/slides/s_1792327825822.webp"
+      "orderIndex": 0,
+      "mobileImageUrl": "/images/slides/current_slide_1_mob.webp",
+      "imageUrl": "/images/slides/current_slide_1.webp"
     },
     {
       "id": "s_1792327825822",
-      "active": true,
+      "imageUrl": "/images/slides/slide_2.webp",
       "orderIndex": 1,
-      "imageUrl": "/images/slides/s_1792327825822.webp",
-      "mobileImageUrl": "/images/slides/mobile_slide_2.webp"
+      "mobileImageUrl": "/images/slides/slide_2_mob.webp",
+      "active": true
     },
     {
       "id": "s_1792327827472",
-      "orderIndex": 2,
+      "imageUrl": "/images/slides/slide_3.webp",
       "active": true,
-      "mobileImageUrl": "/images/slides/mobile_slide_4.webp",
-      "imageUrl": "/images/slides/s_1792327827472.webp"
+      "orderIndex": 2,
+      "mobileImageUrl": "/images/slides/slide_3_mob.webp"
+    },
+    {
+      "id": "s_1794480535869",
+      "orderIndex": 3,
+      "imageUrl": "/images/slides/slide_4.webp",
+      "active": true,
+      "mobileImageUrl": "/images/slides/slide_4_mob.webp"
+    },
+    {
+      "id": "s_1793439553074",
+      "active": true,
+      "orderIndex": 4,
+      "mobileImageUrl": "/images/slides/slide_5_mob.webp",
+      "imageUrl": "/images/slides/slide_5.webp"
     },
     {
       "id": "s_1792575816493",
-      "mobileImageUrl": "/images/slides/mobile_slide_5.webp",
-      "imageUrl": "/images/slides/s_1792575816493.webp",
       "active": true,
-      "orderIndex": 3
+      "imageUrl": "/images/slides/slide_6.webp",
+      "mobileImageUrl": "/images/slides/slide_6_mob.webp",
+      "orderIndex": 5
+    },
+    {
+      "id": "s_1794481114248",
+      "orderIndex": 6,
+      "imageUrl": "/images/slides/slide_7.webp",
+      "mobileImageUrl": "/images/slides/slide_7_mob.webp",
+      "active": true
+    },
+    {
+      "id": "s_1794481227750",
+      "active": true,
+      "orderIndex": 7,
+      "imageUrl": "/images/slides/slide_8.webp",
+      "mobileImageUrl": "/images/slides/slide_8_mob.webp"
     }
   ],
   "courses": [
@@ -482,33 +510,48 @@
     }
   ],
   "settings": {
-    "lastConnectionCheck": "2026-10-03T05:16:30.999Z",
-    "showInfoCard": false,
-    "instituteName": "Institute APEX",
-    "logoIconHeight": "44px",
-    "examPortalUrl": "https://app.instituteapex.in?app=student",
-    "lastTestedAt": "2026-10-11T04:47:00.249Z",
-    "logoWidth": "345px",
-    "showFeaturedCourses": true,
-    "address": "#1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana)",
+    "ogImage": "/logo_full.webp",
     "allowedAdminEmails": "instituteapex12@gmail.com, instituteapexjind@gmail.com, mbarahul99@gmail.com, naveendhanda21@gmail.com",
-    "logoUrl": "/logo_full.webp",
-    "showQuickLinks": false,
-    "timestamp": "2026-08-13T13:05:44.935Z",
-    "logoHeight": "78px",
-    "phone": "94677-52374",
+    "canonicalDomain": "https://instituteapex.in",
+    "elevenLabsVoiceId": "21m00Tcm4TlvDq8ikWAM",
     "telephone": "01681-247700",
-    "showSliders": true,
-    "showBlogs": false,
-    "email": "instituteapexjind@gmail.com",
-    "showBlogImagesOnHome": false,
-    "tagline": "Institute of Medical Entrance Exams (NEET) & IIT-JEE Coaching & Tuition",
-    "whatsappText": "Hello Apex Institute, I would like to enquire about your coaching courses.",
-    "showTestimonials": true,
-    "showEnquiryInline": true,
-    "showAlumni": true,
-    "testConnected": true,
     "logoNameUrl": "/logo_full.webp",
-    "showToppers": true
+    "showEnquiryInline": true,
+    "showFeaturedCourses": true,
+    "showToppers": true,
+    "aiVoiceName": "Aoede",
+    "showAlumni": true,
+    "googleAnalyticsId": "",
+    "whatsappNumber": "9992017067",
+    "logoHeight": "64px",
+    "examPortalUrl": "https://app.instituteapex.in?app=student",
+    "showBlogImagesOnHome": false,
+    "googleSiteVerification": "",
+    "timestamp": "2026-08-13T13:05:44.935Z",
+    "showInfoCard": false,
+    "lastTestedAt": "2026-10-11T04:47:00.249Z",
+    "showSliders": true,
+    "showKalam": false,
+    "instituteName": "Institute APEX",
+    "showBlogs": false,
+    "whatsappText": "Hello Apex Institute, I would like to enquire about your coaching courses.",
+    "lastConnectionCheck": "2026-10-03T05:16:30.999Z",
+    "email": "instituteapexjind@gmail.com",
+    "logoIconHeight": "44px",
+    "tagline": "Institute of Medical Entrance Exams (NEET) & IIT-JEE Coaching & Tuition",
+    "enableElevenLabsVoice": false,
+    "seoDescription": "Looking for the best coaching for NEET, IIT-JEE, CBSE & ICSE in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches for Class 9th-12th at Urban Estate, Jind. Call 94677-52374.",
+    "testConnected": true,
+    "seoTitle": "Best NEET & IIT-JEE Coaching in Jind | Institute APEX (CBSE & ICSE)",
+    "geminiApiKey": "",
+    "elevenLabsApiKey": "",
+    "logoUrl": "/logo_full.webp",
+    "seoKeywords": "Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best ICSE Coaching in Jind, Best Coaching for 12th Science in Jind, ICSE tuition Jind, apex institute jind, coaching institute in jind haryana, cbse tuition jind",
+    "logoWidth": "360px",
+    "address": "#1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana)",
+    "showQuickLinks": false,
+    "showTestimonials": false,
+    "aiCounselorPrompt": "You are the Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 94677-52374, Landline: 01681-247700).\nWe offer premier coaching for: NEET (UG) for Class 11, 12, and Droppers; IIT-JEE (Main & Advanced) for Class 11 and 12; Foundation for Class 9th and 10th (Olympiads, NTSE, School Boards); and ASAT Scholarship Test with up to 90% fee waiver. Free 2-3 day trial demo classes are available.\nPlease reply strictly in clear, professional English in 2 to 3 concise, helpful sentences.",
+    "phone": "94677-52374"
   }
 }

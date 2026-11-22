@@ -27,7 +27,7 @@ const DB_KEYS = {
 };
 
 // Automatic cache migration: invalidate any stale browser cache holding deleted demo data or heavy base64
-const CACHE_VERSION = 'apex_live_v13';
+const CACHE_VERSION = 'apex_live_v15';
 if (typeof window !== 'undefined' && window.localStorage) {
   try {
     if (localStorage.getItem('apex_data_version') !== CACHE_VERSION) {
@@ -239,7 +239,25 @@ const saveData = (key, data) => {
   try {
     localStorage.setItem(key, JSON.stringify(data));
   } catch (e) {
-    console.warn("LocalStorage saveData error:", e);
+    console.warn("LocalStorage saveData error, trying lightweight fallback:", key, e);
+    if (key === DB_KEYS.SLIDERS && Array.isArray(data)) {
+      try {
+        // Strip heavy base64 from non-primary slides to fit inside browser storage limit
+        const lightweight = data.map((sl, idx) => {
+          if (idx > 0 && sl.imageUrl && sl.imageUrl.length > 50000) {
+            return {
+              ...sl,
+              imageUrl: `/images/slides/slide_${idx + 1}.webp`,
+              mobileImageUrl: `/images/slides/slide_${idx + 1}_mob.webp`
+            };
+          }
+          return sl;
+        });
+        localStorage.setItem(key, JSON.stringify(lightweight));
+      } catch (innerErr) {
+        console.warn("Even lightweight sliders failed to save to LocalStorage:", innerErr);
+      }
+    }
   }
 };
 
@@ -260,15 +278,19 @@ const ensureMobileSliders = (sliders) => {
   const activeOnly = (sliders || []).filter(s => s.id !== 's_1792327505092');
   const sorted = activeOnly.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
   const fallbackMobileMap = {
-    's_1792327825822': '/images/slides/mobile_slide_2.webp',
-    's_1792327827472': '/images/slides/mobile_slide_3.webp',
-    's_1792575816493': '/images/slides/mobile_slide_4.webp',
-    's_1793439553074': '/images/slides/mobile_slide_5.webp'
+    's_1794480218465': '/images/slides/current_slide_1_mob.webp',
+    's_1792327825822': '/images/slides/slide_2_mob.webp',
+    's_1792327827472': '/images/slides/slide_3_mob.webp',
+    's_1794480535869': '/images/slides/slide_4_mob.webp',
+    's_1793439553074': '/images/slides/slide_5_mob.webp',
+    's_1792575816493': '/images/slides/slide_6_mob.webp',
+    's_1794481114248': '/images/slides/slide_7_mob.webp',
+    's_1794481227750': '/images/slides/slide_8_mob.webp'
   };
   return sorted.map((s, idx) => {
     let mob = s.mobileImageUrl;
     if (!mob || mob === '') {
-      mob = s.imageUrl || fallbackMobileMap[s.id] || `/images/slides/mobile_slide_${(idx % 5) + 1}.webp`;
+      mob = s.imageUrl || fallbackMobileMap[s.id] || `/images/slides/slide_${(idx % 8) + 1}_mob.webp`;
     }
     return { ...s, mobileImageUrl: mob };
   });

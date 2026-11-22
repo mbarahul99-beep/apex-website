@@ -283,7 +283,7 @@ function AdminPanel({ navigate, onUpdateSettings }) {
             </div>
           )}
           {activeTab === 'overview' && <AdminOverview setActiveTab={setActiveTab} onUpdateSettings={onUpdateSettings} />}
-          {activeTab === 'sliders' && <AdminSliders />}
+          {activeTab === 'sliders' && <AdminSliders currentUser={currentUser} onGoogleLogin={handleGoogleLogin} />}
           {/* Kalam tab removed */}
           {activeTab === 'courses' && <AdminCourses />}
           {activeTab === 'results' && <AdminResults />}
@@ -1178,7 +1178,7 @@ function SettingsForm({ onUpdateSettings }) {
 }
 
 // ---------------- ADMIN SLIDERS SUB-VIEW ----------------
-function AdminSliders() {
+function AdminSliders({ currentUser, onGoogleLogin }) {
   const [sliders, setSliders] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [editUrl, setEditUrl] = useState('');
@@ -1226,7 +1226,14 @@ function AdminSliders() {
       alert("✓ Banner slide updated and saved successfully!");
     } catch (err) {
       console.error("Failed to save banner slide:", err);
-      alert("⚠️ Note: Banner saved locally, but database sync returned: " + (err.message || err) + "\nIf permissions failed, please sign in with your Google Admin account.");
+      const isPermErr = err?.message?.toLowerCase().includes("permission") || err?.code?.includes("permission");
+      if (isPermErr && onGoogleLogin) {
+        if (window.confirm("⚠️ Database Sync Warning: " + (err.message || err) + "\n\nFirestore Security Rules require an active Google Admin login to save changes.\nWould you like to sign in with Google now?")) {
+          onGoogleLogin();
+        }
+      } else {
+        alert("⚠️ Note: Banner saved locally, but database sync returned: " + (err.message || err) + "\n\nIf permissions failed, please click 'Sign in with Google' in the top right header.");
+      }
     } finally {
       setIsSaving(false);
     }
@@ -1251,7 +1258,7 @@ function AdminSliders() {
       await dbService.saveSliders(reindexed);
     } catch (err) {
       console.error("Failed to save slide order:", err);
-      alert("⚠️ Note: Order updated locally, but database sync returned: " + (err.message || err));
+      alert("⚠️ Note: Order updated locally, but database sync returned: " + (err.message || err) + "\n\nIf permissions failed, please click 'Sign in with Google' in the top right header.");
     }
   };
 
@@ -1291,6 +1298,24 @@ function AdminSliders() {
 
   return (
     <div className="admin-card fade-in">
+      {!isDefault && !currentUser && (
+        <div style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a', padding: '10px 16px', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '18px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '1.1rem' }}>⚠️</span>
+            <span style={{ fontSize: '0.82rem', color: '#92400e' }}>
+              <strong>Google Sign-in Required:</strong> To save banner changes to live Firebase, please sign in with your administrator Google account.
+            </span>
+          </div>
+          <button 
+            type="button"
+            onClick={onGoogleLogin} 
+            className="admin-btn" 
+            style={{ padding: '6px 14px', fontSize: '0.78rem', backgroundColor: '#4285F4', color: '#fff', border: 'none', cursor: 'pointer', borderRadius: '4px' }}
+          >
+            Sign In With Google
+          </button>
+        </div>
+      )}
       <div className="admin-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span className="admin-card-title">Homepage Banner Carousel (Max 10 Images)</span>
         <button className="admin-btn" style={{ padding: '8px 16px', fontSize: '0.8rem' }} onClick={handleAddSlide}>+ Add New Slide</button>
