@@ -762,6 +762,56 @@ function SettingsForm({ onUpdateSettings }) {
           When signing in via Google, only these emails will be authorized to access the dashboard.
         </span>
       </div>
+
+      <div style={{ marginTop: '20px', marginBottom: '15px', borderTop: '1px solid #e2e8f0', paddingTop: '15px' }}>
+        <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0f2b48', margin: '0 0 10px 0' }}>
+          Official Social Media & Google Business Profile (Local SEO)
+        </h4>
+        <div className="admin-form-row">
+          <div className="admin-input-group">
+            <label>Instagram Profile URL</label>
+            <input 
+              type="text" 
+              name="instagramUrl" 
+              value={settings.instagramUrl || ''} 
+              onChange={handleChange} 
+              placeholder="e.g. https://www.instagram.com/instituteapexjind/" 
+            />
+          </div>
+          <div className="admin-input-group">
+            <label>Facebook Page URL</label>
+            <input 
+              type="text" 
+              name="facebookUrl" 
+              value={settings.facebookUrl || ''} 
+              onChange={handleChange} 
+              placeholder="e.g. https://www.facebook.com/profile.php?id=61594987565496" 
+            />
+          </div>
+        </div>
+        <div className="admin-form-row">
+          <div className="admin-input-group">
+            <label>YouTube Channel URL</label>
+            <input 
+              type="text" 
+              name="youtubeUrl" 
+              value={settings.youtubeUrl || ''} 
+              onChange={handleChange} 
+              placeholder="e.g. https://www.youtube.com/@instituteapexjind" 
+            />
+          </div>
+          <div className="admin-input-group">
+            <label>Google Maps / Business Profile Link</label>
+            <input 
+              type="text" 
+              name="gmbUrl" 
+              value={settings.gmbUrl || ''} 
+              onChange={handleChange} 
+              placeholder="e.g. https://share.google/Z2gJxrqO0cMQCY8VV" 
+            />
+          </div>
+        </div>
+      </div>
       <div className="admin-input-group" style={{ flexDirection: 'row', alignItems: 'center', gap: '10px', marginTop: '10px', marginBottom: '20px' }}>
         <input 
           type="checkbox" 

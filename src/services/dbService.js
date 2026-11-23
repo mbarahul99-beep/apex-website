@@ -84,7 +84,7 @@ const DEFAULT_SETTINGS = {
   googleAnalyticsId: "G-FQ3CBQW6DP",
   ogImage: "/logo_full.webp",
   instagramUrl: "https://www.instagram.com/instituteapexjind/",
-  facebookUrl: "https://www.facebook.com/profile.php?id=122099612901499585",
+  facebookUrl: "https://www.facebook.com/profile.php?id=61594987565496",
   youtubeUrl: "https://www.youtube.com/@instituteapexjind",
   gmbUrl: "https://share.google/Z2gJxrqO0cMQCY8VV",
   gmbSearchUrl: "https://www.google.com/search?kgmid=/g/11vyg43452&q=Institute+APEX+Jind+For+NEET+%26+IIT",

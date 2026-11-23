@@ -476,7 +476,7 @@ const routes = [
         "https://www.google.com/search?kgmid=/g/11vyg43452&q=Institute+APEX+Jind+For+NEET+%26+IIT",
         "https://share.google/Z2gJxrqO0cMQCY8VV",
         "https://www.instagram.com/instituteapexjind/",
-        "https://www.facebook.com/profile.php?id=122099612901499585",
+        "https://www.facebook.com/profile.php?id=61594987565496",
         "https://www.youtube.com/@instituteapexjind"
       ]
     }
