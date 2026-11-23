@@ -3274,10 +3274,14 @@ function AllResultsView({ navigate }) {
 
 // ---------------- ALL BLOGS VIEW ----------------
 function AllBlogsView({ navigate }) {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState(() => dbService.getPosts ? dbService.getPosts() : []);
 
   useEffect(() => {
-    setPosts(dbService.getPosts());
+    setPosts(dbService.getPosts ? dbService.getPosts() : []);
+    const unsubscribe = dbService.subscribe ? dbService.subscribe(() => {
+      setPosts(dbService.getPosts ? dbService.getPosts() : []);
+    }) : () => {};
+    return () => unsubscribe();
   }, []);
 
   return (
@@ -3304,8 +3308,7 @@ function AllBlogsView({ navigate }) {
                 className="info-card" 
                 style={{ 
                   flexDirection: 'column', 
-                  padding: '0', 
-                  overflow: 'hidden', 
+                  padding: '24px', 
                   borderRadius: 'var(--radius-lg)', 
                   border: '1px solid var(--border-light)', 
                   boxShadow: 'var(--shadow-sm)',
@@ -3313,17 +3316,8 @@ function AllBlogsView({ navigate }) {
                   transition: 'transform 0.2s, box-shadow 0.2s'
                 }}
               >
-                {post.coverImage && (
-                  <div style={{ width: '100%', overflow: 'hidden', background: '#f8fafc', borderBottom: '1px solid #f1f5f9' }}>
-                    <img 
-                      src={post.coverImage} 
-                      alt={post.title} 
-                      style={{ width: '100%', height: 'auto', display: 'block', maxHeight: '240px', objectFit: 'contain' }} 
-                    />
-                  </div>
-                )}
-                <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', alignItems: 'center' }}>
                     {post.category && (
                       <span className="status-badge new" style={{ fontSize: '0.7rem', padding: '3px 8px' }}>
                         {post.category}
@@ -3336,13 +3330,17 @@ function AllBlogsView({ navigate }) {
                     )}
                   </div>
                   
-                  <h3 style={{ 
-                    fontSize: '1.25rem', 
-                    color: 'var(--navy-blue)', 
-                    margin: '0 0 12px 0', 
-                    fontWeight: 700,
-                    lineHeight: 1.4
-                  }}>
+                  <h3 
+                    style={{ 
+                      fontSize: '1.25rem', 
+                      color: 'var(--navy-blue)', 
+                      margin: '0 0 12px 0', 
+                      fontWeight: 700,
+                      lineHeight: 1.4,
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => navigate(`/posts/${post.slug}`)}
+                  >
                     {post.title}
                   </h3>
                   
@@ -3369,7 +3367,7 @@ function AllBlogsView({ navigate }) {
                     }}
                     onClick={(e) => { e.preventDefault(); navigate(`/posts/${post.slug}`); }}
                   >
-                    Read Full Post
+                    Read Full Post &rarr;
                   </a>
                 </div>
               </div>
