@@ -416,7 +416,7 @@ function FaqSection() {
     },
     {
       q: "Where is Institute APEX located in Jind and how can I contact for admissions?",
-      a: "Institute APEX is located at #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana). You can contact the institute administration at 94677-52374 or 01681-247700, or enquire online directly on our website to learn about current batches and admissions."
+      a: "Institute APEX is located at #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana). You can contact the institute administration at 99920-17067 or 01681-247700, or enquire online directly on our website to learn about current batches and admissions."
     }
   ];
 
@@ -484,7 +484,7 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
   }, []);
 
   const handleWhatsApp = () => {
-    const rawNumber = settings.whatsappNumber || settings.phone || '9467752374';
+    const rawNumber = settings.whatsappNumber || settings.phone || '9992017067';
     const formattedPhone = rawNumber.replace(/[^0-9]/g, '');
     const defaultMsg = settings.whatsappText || 'Hello Apex Institute, I would like to enquire about coaching courses.';
     const url = `https://wa.me/91${formattedPhone}?text=${encodeURIComponent(defaultMsg)}`;
@@ -542,7 +542,7 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
     siteKeywords = 'neet exam alerts jind, jee prep blogs haryana, cbse preparation tips, board exam guides jind';
   } else if (cleanPath === '/contact' || cleanPath === '/contact-us') {
     siteTitle = 'Contact Institute APEX Jind | #1257 Urban Estate Near HUDA Ground';
-    siteDesc = 'Visit Institute APEX at #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana). Call 94677-52374 or 01681-247700 for course details, admission counseling, and batch schedules.';
+    siteDesc = 'Visit Institute APEX at #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana). Call 99920-17067 or 01681-247700 for course details, admission counseling, and batch schedules.';
     siteKeywords = 'contact apex institute jind, apex coaching phone number jind, apex address urban estate jind';
   } else if (cleanPath === '/online-prep' || cleanPath === '/student-portal') {
     siteTitle = 'Online CBT Test Prep & Student Exam Portal | Institute APEX Jind';
@@ -632,7 +632,7 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
           "longitude": 76.3145
         },
         "hasMap": "https://www.google.com/search?kgmid=/g/11vyg43452&q=Institute+APEX+Jind+For+NEET+%26+IIT",
-        "telephone": `+91-${(settings.phone || "94677-52374").replace(/[^0-9]/g, '')}`,
+        "telephone": `+91-${(settings.phone || "99920-17067").replace(/[^0-9]/g, '')}`,
         "email": settings.email || "instituteapexjind@gmail.com",
         "priceRange": "₹₹",
         "currenciesAccepted": "INR",
@@ -761,7 +761,7 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
             "name": "Where is Institute APEX located in Jind and how can I contact for admissions?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": `Institute APEX is located at ${settings.address || '#1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana)'}. You can contact the institute administration at ${settings.phone || '94677-52374'} or enquire online at ${baseCanonical}.`
+              "text": `Institute APEX is located at ${settings.address || '#1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana)'}. You can contact the institute administration at ${settings.phone || '99920-17067'} or enquire online at ${baseCanonical}.`
             }
           }
         ]
@@ -2001,7 +2001,7 @@ function CourseDetailView({ courseId, navigate, openEnquiry, settings }) {
   }
 
   const otherCourses = allCourses.filter(c => c.id !== course.id);
-  const rawWhatsApp = (settings?.whatsappNumber || settings?.phone || '9467752374').replace(/[^0-9]/g, '');
+  const rawWhatsApp = (settings?.whatsappNumber || settings?.phone || '9992017067').replace(/[^0-9]/g, '');
   const courseWhatsAppUrl = `https://wa.me/91${rawWhatsApp}?text=${encodeURIComponent(`Hello Institute APEX, I am interested in admission for ${course.title}. Please share curriculum and batch details.`)}`;
 
   return (
@@ -2205,9 +2205,9 @@ function CourseDetailView({ courseId, navigate, openEnquiry, settings }) {
               <button 
                 className="courses-action-btn secondary"
                 style={{ width: '100%', padding: '10px', fontSize: '0.88rem', fontWeight: 600, backgroundColor: '#ffffff', color: 'var(--navy-blue)', border: '1px solid var(--border-light)' }}
-                onClick={() => window.open(`tel:${settings.phone || '9467752374'}`, '_self')}
+                onClick={() => window.open(`tel:${settings.phone || '9992017067'}`, '_self')}
               >
-                Call: {settings.phone || '94677-52374'}
+                Call: {settings.phone || '99920-17067'}
               </button>
             </div>
           </div>
@@ -2599,10 +2599,10 @@ function ContactUsView({ settings, navigate }) {
 
   const instituteName = settings?.instituteName || 'Institute APEX';
   const address = settings?.address || '#1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana)';
-  const phone = settings?.phone || '94677-52374';
+  const phone = settings?.phone || '99920-17067';
   const telephone = settings?.telephone || '01681-247700';
   const email = settings?.email || 'instituteapexjind@gmail.com';
-  const rawWhatsApp = (settings?.whatsappNumber || settings?.phone || '9467752374').replace(/[^0-9]/g, '');
+  const rawWhatsApp = (settings?.whatsappNumber || settings?.phone || '9992017067').replace(/[^0-9]/g, '');
   const whatsappUrl = `https://wa.me/91${rawWhatsApp}?text=${encodeURIComponent(settings?.whatsappText || 'Hello Apex Institute, I would like to enquire about coaching courses.')}`;
   const cleanPhoneLink = `tel:${phone.replace(/[^0-9+]/g, '')}`;
   const cleanTelLink = `tel:${telephone.replace(/[^0-9+]/g, '')}`;

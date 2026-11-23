@@ -60,7 +60,7 @@ const routes = [
         <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:16px;">Frequently Asked Questions (FAQs)</h2>
         <div style="background:#f8fafc;padding:20px;border-radius:12px;margin-bottom:30px;">
           <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:6px;">How can I enroll in Institute APEX courses?</h3>
-          <p style="font-size:0.95rem;color:#475569;line-height:1.5;margin-bottom:16px;">Visit our campus at #1257, Urban Estate, Near HUDA Ground, Jind, or call 94677-52374 / 01681-247700 to speak with an academic counselor about current courses and admissions.</p>
+          <p style="font-size:0.95rem;color:#475569;line-height:1.5;margin-bottom:16px;">Visit our campus at #1257, Urban Estate, Near HUDA Ground, Jind, or call 99920-17067 / 01681-247700 to speak with an academic counselor about current courses and admissions.</p>
           <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:6px;">Are scholarships available for bright students?</h3>
           <p style="font-size:0.95rem;color:#475569;line-height:1.5;">Yes, we conduct the ASAT (APEX Scholarship Admission Test) offering up to 90% tuition fee concessions based on merit.</p>
         </div>
@@ -206,7 +206,7 @@ const routes = [
           <h2 style="font-size:1.35rem;font-weight:700;color:#0369a1;margin-bottom:10px;">Campus & Contact Details</h2>
           <p style="font-size:0.95rem;color:#475569;line-height:1.6;">
             <strong>Location:</strong> #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana)<br/>
-            <strong>Helpline:</strong> 94677-52374 | Landline: 01681-247700<br/>
+            <strong>Helpline:</strong> 99920-17067 | Landline: 01681-247700<br/>
             <strong>Email:</strong> instituteapexjind@gmail.com
           </p>
         </div>
@@ -286,7 +286,7 @@ const routes = [
   {
     path: 'contact',
     title: 'Contact Institute APEX Jind | #1257 Urban Estate Near HUDA Ground',
-    description: 'Visit Institute APEX at #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana). Call 94677-52374 or 01681-247700 for course details, admission counseling, and batch schedules.',
+    description: 'Visit Institute APEX at #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana). Call 99920-17067 or 01681-247700 for course details, admission counseling, and batch schedules.',
     canonical: 'https://instituteapex.in/contact',
     heading: 'Contact Us - Institute APEX Jind Admissions Office',
     contentHtml: `
@@ -297,9 +297,9 @@ const routes = [
         </p>
         <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;line-height:1.8;">
           <p><strong>Campus Address:</strong> #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana)</p>
-          <p><strong>Direct Helpline:</strong> <a href="tel:9467752374" style="color:#0284c7;text-decoration:none;">94677-52374</a></p>
+          <p><strong>Direct Helpline:</strong> <a href="tel:9992017067" style="color:#0284c7;text-decoration:none;">99920-17067</a></p>
           <p><strong>Landline:</strong> <a href="tel:01681247700" style="color:#0284c7;text-decoration:none;">01681-247700</a></p>
-          <p><strong>WhatsApp Support:</strong> <a href="https://wa.me/919467752374" style="color:#16a34a;text-decoration:none;">Chat on WhatsApp</a></p>
+          <p><strong>WhatsApp Support:</strong> <a href="https://wa.me/919992017067" style="color:#16a34a;text-decoration:none;">Chat on WhatsApp</a></p>
           <p><strong>Email:</strong> instituteapexjind@gmail.com</p>
           <p><strong>Counseling Hours:</strong> Monday - Sunday: 8:00 AM - 7:00 PM</p>
         </div>
@@ -447,7 +447,7 @@ const routes = [
         <h2 style="font-size:1.35rem;font-weight:700;color:#0f2b48;margin-bottom:12px;">Campus Visit & Contact Information</h2>
         <p style="color:#334155;line-height:1.6;">
           <b>Campus Address:</b> #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana)<br/>
-          <b>Phone:</b> 94677-52374 | <b>Landline:</b> 01681-247700 | <b>Email:</b> instituteapexjind@gmail.com
+          <b>Phone:</b> 99920-17067 | <b>Landline:</b> 01681-247700 | <b>Email:</b> instituteapexjind@gmail.com
         </p>
       </section>
     `,
@@ -457,7 +457,7 @@ const routes = [
       "name": "Institute APEX",
       "alternateName": "Institute APEX Jind For NEET & IIT",
       "url": "https://instituteapex.in/best-neet-coaching-in-jind",
-      "telephone": "+91-94677-52374",
+      "telephone": "+91-99920-17067",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "#1257, Urban Estate, Near HUDA Ground",

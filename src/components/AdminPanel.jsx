@@ -428,7 +428,7 @@ function SettingsForm({ onUpdateSettings }) {
     setSettings(prev => ({
       ...prev,
       seoTitle: "Best NEET & IIT-JEE Coaching in Jind | Institute APEX (CBSE & ICSE)",
-      seoDescription: "Looking for the best coaching for NEET, IIT-JEE, CBSE & ICSE in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches for Class 9th-12th at Urban Estate, Jind. Call 94677-52374.",
+      seoDescription: "Looking for the best coaching for NEET, IIT-JEE, CBSE & ICSE in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches for Class 9th-12th at Urban Estate, Jind. Call 99920-17067.",
       seoKeywords: "Best Coaching For NEET in Jind, Best NEET coaching in Jind, Best IIT Coaching in Jind, Best Coaching for 10th CBSE in Jind, Best ICSE Coaching in Jind, Best Coaching for 12th Science in Jind, ICSE tuition Jind, apex institute jind, coaching institute in jind haryana, cbse tuition jind",
       canonicalDomain: "https://instituteapex.in",
       ogImage: "/logo_full.webp"
@@ -700,7 +700,7 @@ function SettingsForm({ onUpdateSettings }) {
       <div className="admin-form-row">
         <div className="admin-input-group">
           <label>Mobile Number (for Direct Calls)</label>
-          <input type="text" name="phone" value={settings.phone} onChange={handleChange} placeholder="e.g. 94677-52374" required />
+          <input type="text" name="phone" value={settings.phone} onChange={handleChange} placeholder="e.g. 99920-17067" required />
           <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px' }}>
             Primary calling number shown in header, contact page & call buttons.
           </span>
@@ -712,7 +712,7 @@ function SettingsForm({ onUpdateSettings }) {
             name="whatsappNumber" 
             value={settings.whatsappNumber || ''} 
             onChange={handleChange} 
-            placeholder="e.g. 9467752374 (Leave empty to use Mobile Number)" 
+            placeholder="e.g. 9992017067 (Leave empty to use Mobile Number)" 
           />
           <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px' }}>
             Controls the WhatsApp floating button & quick chat links.
@@ -963,7 +963,7 @@ function SettingsForm({ onUpdateSettings }) {
               className="admin-btn secondary" 
               style={{ padding: '3px 10px', fontSize: '0.72rem' }}
               onClick={() => {
-                const defaultPrompt = "You are the Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 94677-52374, Landline: 01681-247700).\nWe offer premier coaching for: NEET (UG) for Class 11, 12, and Droppers; IIT-JEE (Main & Advanced) for Class 11 and 12; Foundation for Class 9th and 10th (Olympiads, NTSE, School Boards); and ASAT Scholarship Test with up to 90% fee waiver.\nLanguage Policy: If the student speaks or asks in Hindi or Hinglish, answer warmly in polite, clear Hindi. If the student speaks in English, answer in clear, professional English. Keep responses concise in 2 to 3 sentences.";
+                const defaultPrompt = "You are the Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 99920-17067, Landline: 01681-247700).\nWe offer premier coaching for: NEET (UG) for Class 11, 12, and Droppers; IIT-JEE (Main & Advanced) for Class 11 and 12; Foundation for Class 9th and 10th (Olympiads, NTSE, School Boards); and ASAT Scholarship Test with up to 90% fee waiver.\nLanguage Policy: If the student speaks or asks in Hindi or Hinglish, answer warmly in polite, clear Hindi. If the student speaks in English, answer in clear, professional English. Keep responses concise in 2 to 3 sentences.";
                 setSettings(prev => ({ ...prev, aiCounselorPrompt: defaultPrompt }));
               }}
             >
@@ -975,7 +975,7 @@ function SettingsForm({ onUpdateSettings }) {
           </p>
           <textarea 
             name="aiCounselorPrompt" 
-            value={settings.aiCounselorPrompt !== undefined ? settings.aiCounselorPrompt : "You are the Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 94677-52374, Landline: 01681-247700).\nWe offer premier coaching for: NEET (UG) for Class 11, 12, and Droppers; IIT-JEE (Main & Advanced) for Class 11 and 12; Foundation for Class 9th and 10th (Olympiads, NTSE, School Boards); and ASAT Scholarship Test with up to 90% fee waiver.\nLanguage Policy: If the student speaks or asks in Hindi or Hinglish, answer warmly in polite, clear Hindi. If the student speaks in English, answer in clear, professional English. Keep responses concise in 2 to 3 sentences."} 
+            value={settings.aiCounselorPrompt !== undefined ? settings.aiCounselorPrompt : "You are the Senior Academic Counselor at Institute APEX, Jind (#1257, Urban Estate, Near HUDA Ground, Jind-126102, Haryana. Phone: 99920-17067, Landline: 01681-247700).\nWe offer premier coaching for: NEET (UG) for Class 11, 12, and Droppers; IIT-JEE (Main & Advanced) for Class 11 and 12; Foundation for Class 9th and 10th (Olympiads, NTSE, School Boards); and ASAT Scholarship Test with up to 90% fee waiver.\nLanguage Policy: If the student speaks or asks in Hindi or Hinglish, answer warmly in polite, clear Hindi. If the student speaks in English, answer in clear, professional English. Keep responses concise in 2 to 3 sentences."} 
             onChange={handleChange} 
             rows="6"
             style={{ width: '100%', fontSize: '0.85rem', lineHeight: 1.5, fontFamily: 'inherit', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '10px' }}
@@ -1133,7 +1133,7 @@ function SettingsForm({ onUpdateSettings }) {
           <textarea
             name="seoDescription"
             rows={3}
-            value={settings.seoDescription !== undefined ? settings.seoDescription : 'Looking for the best coaching for NEET, IIT-JEE, CBSE & ICSE in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches for Class 9th-12th at Urban Estate, Jind. Call 94677-52374.'}
+            value={settings.seoDescription !== undefined ? settings.seoDescription : 'Looking for the best coaching for NEET, IIT-JEE, CBSE & ICSE in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches for Class 9th-12th at Urban Estate, Jind. Call 99920-17067.'}
             onChange={handleChange}
             placeholder="Looking for the best coaching for NEET, IIT-JEE, CBSE & ICSE in Jind? Institute APEX offers 16+ years of proven ranks, expert faculty & small batches..."
             required
