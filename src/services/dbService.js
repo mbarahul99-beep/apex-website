@@ -83,6 +83,11 @@ const DEFAULT_SETTINGS = {
   googleSiteVerification: "",
   googleAnalyticsId: "G-FQ3CBQW6DP",
   ogImage: "/logo_full.webp",
+  instagramUrl: "https://www.instagram.com/instituteapexjind/",
+  facebookUrl: "https://www.facebook.com/profile.php?id=122099612901499585",
+  youtubeUrl: "https://www.youtube.com/@instituteapexjind",
+  gmbUrl: "https://share.google/Z2gJxrqO0cMQCY8VV",
+  gmbSearchUrl: "https://www.google.com/search?kgmid=/g/11vyg43452&q=Institute+APEX+Jind+For+NEET+%26+IIT",
   ...(snapshot.settings || {})
 };
 
@@ -197,6 +202,16 @@ const DEFAULT_PAGES = [
     metaDescription: "Learn more about Apex Institute Jind, Haryana's premium educational center for IIT-JEE, NEET entrance coaching and secondary board tuitions.",
     keywords: "apex institute jind, jee coaching jind, neet coaching jind, tuitions in jind",
     lastUpdated: new Date().toISOString()
+  },
+  {
+    id: "p_best_neet_jind",
+    title: "Best NEET Coaching in Jind | 16+ Years Medical Ranks - Institute APEX",
+    slug: "best-neet-coaching-in-jind",
+    metaTitle: "Best NEET Coaching in Jind | 16+ Yrs Top Medical Ranks - APEX",
+    metaDescription: "Looking for the best NEET coaching in Jind? Institute APEX offers 16+ years of proven medical selections, NCERT line-by-line mastery, small batches & daily doubt removal at Urban Estate, Jind.",
+    keywords: "best neet coaching in jind, neet coaching in jind, neet classes jind haryana, medical entrance coaching jind, biology tuition jind, apex institute jind",
+    content: `<h2>Premier Classroom Coaching for NEET (UG) in Jind</h2><p>Institute APEX is Jind's leading classroom coaching center dedicated to medical entrance examination (NEET-UG) preparation. Operating since 2009 at Urban Estate, Jind, APEX has guided students to top government medical colleges including AIIMS, MAMC, and PGIMS Rohtak.</p><p>Under the direct academic leadership of Director N. Dhanda and veteran subject faculty, our classroom programs combine rigorous NCERT line-by-line conceptual mastery with daily problem solving, small focused batches, and individual student doubt resolution.</p><h3>Why Offline Classroom Coaching in Jind Beats Online Apps & Distant Hostels</h3><p>Many students struggle when relying solely on remote online apps or relocating to crowded coaching factories in Kota. Institute APEX offers Jind students the ideal balance:</p><ul><li><b>Daily Face-to-Face Teacher Doubt Clearance:</b> Clear difficult physics numericals and organic mechanisms directly with your teachers immediately after class, without waiting in queues or submitting chat tickets.</li><li><b>Home Support & Health:</b> Prepare in a disciplined, focused environment with family emotional support and nutritious home food, eliminating hostel burnout.</li><li><b>Distraction-Free Classroom Discipline:</b> Real offline peer learning, dedicated study desks, and daily faculty attendance monitoring.</li></ul><h3>The 4 Pillars of NEET Preparation at Institute APEX</h3><ol><li><b>100% NCERT Line-by-Line Mastery:</b> Thorough coverage of NCERT Physics, Chemistry, Botany, and Zoology textbooks, diagrams, summaries, and Exemplar problems.</li><li><b>Small Batch Sizes for Personal Care:</b> Limited seats per batch so teachers personally track each student's academic progress, test scores, and weak topics.</li><li><b>Weekly Sunday OMR Mock Tests (720 Marks):</b> Timed 3-hour 20-minute mock examinations matching the exact NTA NEET examination pattern with negative marking and detailed answer discussions.</li><li><b>Printed Daily Practice Problem (DPP) Sets:</b> Chapter-wise question sheets with past 36 years NEET & AIPMT previous year questions (PYQs).</li></ol><h3>Comparison: Institute APEX vs. Remote Online Apps vs. Mega Hostels</h3><table style="width:100%;border-collapse:collapse;margin:20px 0;font-size:0.95rem;"><thead><tr style="background:#0f2b48;color:#fff;"><th style="padding:12px;border:1px solid #cbd5e1;text-align:left;">Parameter</th><th style="padding:12px;border:1px solid #cbd5e1;text-align:left;">Institute APEX Jind</th><th style="padding:12px;border:1px solid #cbd5e1;text-align:left;">Remote Online Apps</th><th style="padding:12px;border:1px solid #cbd5e1;text-align:left;">Crowded Mega Hostels</th></tr></thead><tbody><tr><td style="padding:10px;border:1px solid #cbd5e1;"><b>Physical Campus in Jind</b></td><td style="padding:10px;border:1px solid #cbd5e1;color:#16a34a;font-weight:700;">✓ #1257 Urban Estate</td><td style="padding:10px;border:1px solid #cbd5e1;color:#dc2626;">✗ Virtual Only (Kolkata/Bangalore)</td><td style="padding:10px;border:1px solid #cbd5e1;color:#dc2626;">✗ Relocation Required (Kota/Sikar)</td></tr><tr style="background:#f8fafc;"><td style="padding:10px;border:1px solid #cbd5e1;"><b>Batch Size & Attention</b></td><td style="padding:10px;border:1px solid #cbd5e1;color:#16a34a;font-weight:700;">✓ Small, Focused Batches</td><td style="padding:10px;border:1px solid #cbd5e1;">Massive (Thousands on 1 stream)</td><td style="padding:10px;border:1px solid #cbd5e1;">100 to 150 students per auditorium</td></tr><tr><td style="padding:10px;border:1px solid #cbd5e1;"><b>Teacher Doubt Clearance</b></td><td style="padding:10px;border:1px solid #cbd5e1;color:#16a34a;font-weight:700;">✓ Daily 1-on-1 with Subject Faculty</td><td style="padding:10px;border:1px solid #cbd5e1;">Automated Chat / Delayed Tickets</td><td style="padding:10px;border:1px solid #cbd5e1;">Long queues at doubt counters</td></tr><tr style="background:#f8fafc;"><td style="padding:10px;border:1px solid #cbd5e1;"><b>Local Selection Track Record</b></td><td style="padding:10px;border:1px solid #cbd5e1;color:#16a34a;font-weight:700;">✓ 16+ Years in Jind</td><td style="padding:10px;border:1px solid #cbd5e1;">Zero physical presence in Jind</td><td style="padding:10px;border:1px solid #cbd5e1;">Distant national statistics</td></tr></tbody></table><h3>NEET Medical Courses Available</h3><ul><li><b>Class 11 (2-Year Integrated NEET Course):</b> Comprehensive foundation covering complete 11th and 12th syllabus with school board synchronization (CBSE, ICSE & HBSE).</li><li><b>Class 12 (1-Year Intensive NEET Course):</b> Focused entrance syllabus completed by December, followed by rigorous full-syllabus revision and sample paper test series.</li><li><b>NEET Droppers / Repeater Batch:</b> Intensive test-driven program with targeted concept reinforcement and high-yield numerical problem solving.</li></ul><h3>ASAT Scholarship Admission Test</h3><p>Institute APEX conducts the regular ASAT (APEX Scholarship Admission Test), offering up to 90% tuition fee concessions for meritorious students. Meritorious board exam rank holders can also apply directly with report cards.</p><h3>Frequently Asked Questions (FAQs)</h3><h4>How can I visit Institute APEX for admission counseling?</h4><p>Parents and students are welcome to visit our campus at <b>#1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana)</b>. You can also call us at <b>94677-52374</b> or landline <b>01681-247700</b> to schedule an academic counseling session.</p><h4>Does APEX cover board exams along with NEET coaching?</h4><p>Yes. Our integrated methodology ensures dual excellence: subjective derivations and descriptive practice for CBSE/HBSE/ICSE board exams, alongside objective speed and accuracy drills for NEET.</p>`,
+    lastUpdated: new Date().toISOString()
   }
 ];
 
@@ -297,6 +312,16 @@ const ensureMobileSliders = (sliders) => {
   });
 };
 
+const ensureDefaultPages = (pages) => {
+  const list = Array.isArray(pages) ? [...pages] : [];
+  DEFAULT_PAGES.forEach(dp => {
+    if (!list.some(p => p.slug === dp.slug || p.id === dp.id)) {
+      list.push(dp);
+    }
+  });
+  return list;
+};
+
 const cache = {
   settings: { ...DEFAULT_SETTINGS, ...loadData(DB_KEYS.SETTINGS, DEFAULT_SETTINGS) },
   sliders: ensureMobileSliders(loadData(DB_KEYS.SLIDERS, DEFAULT_SLIDERS)).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0)),
@@ -306,7 +331,7 @@ const cache = {
   results: sortResultsDesc(loadData(DB_KEYS.RESULTS, DEFAULT_RESULTS)),
   alumni: loadData(DB_KEYS.ALUMNI, DEFAULT_ALUMNI),
   enquiries: loadData(DB_KEYS.ENQUIRIES, []),
-  pages: loadData(DB_KEYS.PAGES, DEFAULT_PAGES),
+  pages: ensureDefaultPages(loadData(DB_KEYS.PAGES, DEFAULT_PAGES)),
   posts: loadData(DB_KEYS.POSTS, DEFAULT_POSTS),
   scholarships: loadData(DB_KEYS.SCHOLARSHIPS, DEFAULT_SCHOLARSHIPS).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0))
 };
@@ -328,7 +353,7 @@ export const dbService = {
       cache.results = sortResultsDesc(loadData(DB_KEYS.RESULTS, DEFAULT_RESULTS));
       cache.alumni = loadData(DB_KEYS.ALUMNI, DEFAULT_ALUMNI);
       cache.enquiries = loadData(DB_KEYS.ENQUIRIES, []);
-      cache.pages = loadData(DB_KEYS.PAGES, DEFAULT_PAGES);
+      cache.pages = ensureDefaultPages(loadData(DB_KEYS.PAGES, DEFAULT_PAGES));
       cache.posts = loadData(DB_KEYS.POSTS, DEFAULT_POSTS);
       cache.scholarships = loadData(DB_KEYS.SCHOLARSHIPS, DEFAULT_SCHOLARSHIPS).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
       return Promise.resolve();
@@ -414,7 +439,7 @@ export const dbService = {
       cache.testimonials = testimonialsData;
       cache.results = sortResultsDesc(resultsData);
       cache.alumni = alumniData;
-      cache.pages = pagesData;
+      cache.pages = ensureDefaultPages(pagesData);
       cache.posts = postsData;
       cache.scholarships = (scholarshipsData || []).sort((a,b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
@@ -457,7 +482,7 @@ export const dbService = {
       cache.results = sortResultsDesc(loadData(DB_KEYS.RESULTS, DEFAULT_RESULTS));
       cache.alumni = loadData(DB_KEYS.ALUMNI, DEFAULT_ALUMNI);
       cache.enquiries = loadData(DB_KEYS.ENQUIRIES, []);
-      cache.pages = loadData(DB_KEYS.PAGES, DEFAULT_PAGES);
+      cache.pages = ensureDefaultPages(loadData(DB_KEYS.PAGES, DEFAULT_PAGES));
       cache.posts = loadData(DB_KEYS.POSTS, DEFAULT_POSTS);
       cache.scholarships = loadData(DB_KEYS.SCHOLARSHIPS, DEFAULT_SCHOLARSHIPS);
       notifyDbUpdates();

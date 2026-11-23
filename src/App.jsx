@@ -221,6 +221,8 @@ export default function App() {
         navigate={navigate} 
       />
     );
+  } else if (cleanCurrentPath === '/best-neet-coaching-in-jind') {
+    viewComponent = <DynamicPageView slug="best-neet-coaching-in-jind" navigate={navigate} />;
   } else if (cleanCurrentPath.startsWith('/pages/')) {
     const slug = cleanCurrentPath.substring(7);
     viewComponent = <DynamicPageView slug={slug} navigate={navigate} />;
@@ -546,6 +548,10 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
     siteTitle = 'Online CBT Test Prep & Student Exam Portal | Institute APEX Jind';
     siteDesc = 'Access the APEX online computer-based test (CBT) portal for NEET and JEE Main mock exams, question papers, performance analytics, and OMR test series.';
     siteKeywords = 'apex student portal, neet online test series jind, jee dpp practice online';
+  } else if (cleanPath === '/best-neet-coaching-in-jind') {
+    siteTitle = 'Best NEET Coaching in Jind | 16+ Yrs Top Medical Ranks - APEX';
+    siteDesc = 'Looking for the best NEET coaching in Jind? Institute APEX offers 16+ years of proven medical selections, NCERT line-by-line mastery, small batches & daily doubt removal at Urban Estate, Jind.';
+    siteKeywords = 'best neet coaching in jind, neet coaching in jind, neet classes jind haryana, medical entrance coaching jind, biology tuition jind, apex institute jind';
   } else if (cleanPath.startsWith('/posts/')) {
     const slug = cleanPath.substring(7);
     const post = dbService.getPostBySlug ? dbService.getPostBySlug(slug) : null;
@@ -602,6 +608,7 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
         "alternateName": [
           "Apex Institute Jind",
           "Institute APEX Jind",
+          "Institute APEX Jind For NEET & IIT",
           "Apex Coaching Jind"
         ],
         "url": baseCanonical,
@@ -624,7 +631,7 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
           "latitude": 29.3140,
           "longitude": 76.3145
         },
-        "hasMap": "https://maps.google.com/?q=Institute+APEX+Jind+Urban+Estate",
+        "hasMap": "https://www.google.com/search?kgmid=/g/11vyg43452&q=Institute+APEX+Jind+For+NEET+%26+IIT",
         "telephone": `+91-${(settings.phone || "94677-52374").replace(/[^0-9]/g, '')}`,
         "email": settings.email || "instituteapexjind@gmail.com",
         "priceRange": "₹₹",
@@ -661,8 +668,11 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
           { "@type": "AdministrativeArea", "name": "Haryana" }
         ],
         "sameAs": [
-          "https://www.facebook.com/instituteapexjind",
-          "https://www.youtube.com/@instituteapexjind"
+          "https://www.google.com/search?kgmid=/g/11vyg43452&q=Institute+APEX+Jind+For+NEET+%26+IIT",
+          "https://share.google/Z2gJxrqO0cMQCY8VV",
+          settings.instagramUrl || "https://www.instagram.com/instituteapexjind/",
+          settings.facebookUrl || "https://www.facebook.com/profile.php?id=122099612901499585",
+          settings.youtubeUrl || "https://www.youtube.com/@instituteapexjind"
         ]
       },
       ...dynamicCourses.map(c => ({
@@ -984,6 +994,44 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
               <p className="footer-desc">
                 Jind's premium classroom tutoring center providing highly structured coaching for NEET (Medical), IIT-JEE (Engineering) and Junior Foundations (Class 9th-10th, NTSE & Olympiads).
               </p>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+                <a 
+                  href={settings.instagramUrl || "https://www.instagram.com/instituteapexjind/"} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  title="Follow Institute APEX on Instagram"
+                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)', color: '#fff', textDecoration: 'none' }}
+                >
+                  <svg style={{ width: '18px', height: '18px', fill: 'currentColor' }} viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                </a>
+                <a 
+                  href={settings.facebookUrl || "https://www.facebook.com/profile.php?id=122099612901499585"} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  title="Follow Institute APEX on Facebook"
+                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)', color: '#fff', textDecoration: 'none' }}
+                >
+                  <svg style={{ width: '18px', height: '18px', fill: 'currentColor' }} viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
+                </a>
+                <a 
+                  href={settings.youtubeUrl || "https://www.youtube.com/@instituteapexjind"} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  title="Watch Institute APEX on YouTube"
+                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)', color: '#fff', textDecoration: 'none' }}
+                >
+                  <svg style={{ width: '18px', height: '18px', fill: 'currentColor' }} viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                </a>
+                <a 
+                  href={settings.gmbUrl || "https://share.google/Z2gJxrqO0cMQCY8VV"} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  title="View Institute APEX on Google Maps"
+                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)', color: '#fff', textDecoration: 'none' }}
+                >
+                  <svg style={{ width: '18px', height: '18px', fill: 'none', stroke: 'currentColor', strokeWidth: '2' }} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+                </a>
+              </div>
             </div>
             
             <div className="footer-col">

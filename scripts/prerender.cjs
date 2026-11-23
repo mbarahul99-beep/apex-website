@@ -414,6 +414,72 @@ const routes = [
       "name": "About Apex Institute Jind",
       "url": "https://instituteapex.in/pages/about-apex-jind"
     }
+  },
+  {
+    path: 'best-neet-coaching-in-jind',
+    title: 'Best NEET Coaching in Jind | 16+ Yrs Top Medical Ranks - APEX',
+    description: 'Looking for the best NEET coaching in Jind? Institute APEX offers 16+ years of proven medical selections, NCERT line-by-line mastery, small batches & daily doubt removal at Urban Estate, Jind.',
+    canonical: 'https://instituteapex.in/best-neet-coaching-in-jind',
+    heading: 'Best NEET Coaching Institute in Jind (Urban Estate)',
+    contentHtml: `
+      <section style="max-width:1100px;margin:30px auto;padding:0 20px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:#0f2b48;">
+        <h1 style="font-size:2.2rem;font-weight:800;color:#0f2b48;margin-bottom:14px;">Best NEET Coaching Institute in Jind | Institute APEX</h1>
+        <p style="font-size:1.1rem;line-height:1.7;color:#334155;margin-bottom:24px;">
+          Institute APEX is Jind's premier classroom coaching institution for medical entrance examinations (NEET-UG). Mentoring aspirants since 2009 at Urban Estate, Jind, APEX provides 1-Year and 2-Year integrated classroom programs for Class 11th, Class 12th, and Droppers targeting AIIMS, MAMC, and PGIMS Rohtak.
+        </p>
+
+        <div style="background:#f8fafc;border-left:4px solid #0369a1;padding:20px;border-radius:8px;margin-bottom:30px;">
+          <h2 style="font-size:1.25rem;font-weight:700;color:#0369a1;margin-bottom:8px;">Direct Campus Classroom Advantage at Urban Estate, Jind</h2>
+          <p style="color:#475569;margin-bottom:0;line-height:1.6;">
+            Unlike remote online portals operating from Kolkata or Delhi that lack a physical center in Jind, Institute APEX provides daily face-to-face instruction, daily 1-on-1 teacher doubt removal, and timed weekly Sunday OMR test series at our physical campus (#1257, Urban Estate, Near HUDA Ground).
+          </p>
+        </div>
+
+        <h2 style="font-size:1.4rem;font-weight:700;color:#0f2b48;margin-bottom:12px;">Core Academic Methodology for NEET Aspirants</h2>
+        <ul style="padding-left:20px;line-height:1.8;color:#334155;font-size:1rem;margin-bottom:30px;">
+          <li><b>100% NCERT Line-by-Line Mastery:</b> In-depth conceptual coverage of Physics, Chemistry, Botany, and Zoology textbooks and Exemplar problems.</li>
+          <li><b>Small Focused Batches:</b> Limited seats per batch ensuring personalized academic tracking and zero back-bench neglect.</li>
+          <li><b>Weekly Sunday OMR Mock Tests (720 Marks):</b> Timed 3-hour 20-minute mock exams following the strict NTA NEET examination pattern.</li>
+          <li><b>Daily Doubt Resolution:</b> Direct access to subject teachers after every class to resolve difficult numericals and mechanisms.</li>
+          <li><b>ASAT Scholarship Test:</b> Up to 90% tuition fee concessions based on merit.</li>
+        </ul>
+
+        <h2 style="font-size:1.35rem;font-weight:700;color:#0f2b48;margin-bottom:12px;">Campus Visit & Contact Information</h2>
+        <p style="color:#334155;line-height:1.6;">
+          <b>Campus Address:</b> #1257, Urban Estate, Near HUDA Ground, Jind-126102 (Haryana)<br/>
+          <b>Phone:</b> 94677-52374 | <b>Landline:</b> 01681-247700 | <b>Email:</b> instituteapexjind@gmail.com
+        </p>
+      </section>
+    `,
+    schema: {
+      "@context": "https://schema.org",
+      "@type": ["EducationalOrganization", "LocalBusiness"],
+      "name": "Institute APEX",
+      "alternateName": "Institute APEX Jind For NEET & IIT",
+      "url": "https://instituteapex.in/best-neet-coaching-in-jind",
+      "telephone": "+91-94677-52374",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "#1257, Urban Estate, Near HUDA Ground",
+        "addressLocality": "Jind",
+        "addressRegion": "Haryana",
+        "postalCode": "126102",
+        "addressCountry": "IN"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 29.3140,
+        "longitude": 76.3145
+      },
+      "hasMap": "https://www.google.com/search?kgmid=/g/11vyg43452&q=Institute+APEX+Jind+For+NEET+%26+IIT",
+      "sameAs": [
+        "https://www.google.com/search?kgmid=/g/11vyg43452&q=Institute+APEX+Jind+For+NEET+%26+IIT",
+        "https://share.google/Z2gJxrqO0cMQCY8VV",
+        "https://www.instagram.com/instituteapexjind/",
+        "https://www.facebook.com/profile.php?id=122099612901499585",
+        "https://www.youtube.com/@instituteapexjind"
+      ]
+    }
   }
 ];
 
@@ -592,8 +658,8 @@ const sitemapUrls = [
   { loc: 'https://instituteapex.in/', priority: '1.0', changefreq: 'daily' },
   ...routes.map(r => ({
     loc: r.canonical,
-    priority: r.path.startsWith('courses/') ? '0.9' : r.path.startsWith('posts/') ? '0.8' : r.path.startsWith('pages/') ? '0.8' : '0.9',
-    changefreq: r.path.startsWith('posts/') ? 'weekly' : 'monthly'
+    priority: r.path === 'best-neet-coaching-in-jind' ? '1.0' : r.path.startsWith('courses/') ? '0.9' : r.path.startsWith('posts/') ? '0.8' : r.path.startsWith('pages/') ? '0.8' : '0.9',
+    changefreq: r.path === 'best-neet-coaching-in-jind' ? 'weekly' : r.path.startsWith('posts/') ? 'weekly' : 'monthly'
   }))
 ];
 
