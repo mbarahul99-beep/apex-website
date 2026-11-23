@@ -375,6 +375,14 @@ const routes = [
         <p style="color:#334155;margin-bottom:16px;">
           Many students lose board marks not due to lack of knowledge, but due to poor answer presentation. Dedicate 2 hours every Sunday to write step-by-step solutions with labeled diagrams, standard SI units, and structured derivations.
         </p>
+        <h2 style="font-size:1.4rem;font-weight:700;color:#0369a1;margin-top:24px;margin-bottom:12px;">3. Timed Mock Tests & Error Log Analysis</h2>
+        <p style="color:#334155;margin-bottom:16px;">
+          Take regular mock tests at APEX to refine your speed and accuracy. Review every mistake in an error notebook so you avoid repeating the same conceptual gaps on exam day.
+        </p>
+        <h2 style="font-size:1.4rem;font-weight:700;color:#0369a1;margin-top:24px;margin-bottom:12px;">4. Daily Doubt Resolution</h2>
+        <p style="color:#334155;margin-bottom:16px;">
+          Never let doubts accumulate. Clarify challenging concepts with your teachers immediately after class to keep your preparation smooth and confident.
+        </p>
       </article>
     `,
     schema: {

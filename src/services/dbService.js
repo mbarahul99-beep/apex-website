@@ -205,12 +205,12 @@ const DEFAULT_POSTS = [
     id: "po1",
     title: "How to Balance Board Exam Preparations with JEE Main Coaching",
     slug: "balance-boards-with-jee",
-    content: "<p>Balancing board exams (CBSE/HBSE) alongside rigorous JEE preparation is a common concern for Class 12 aspirants. Here are crucial strategies:</p><ul><li><b>Align Topics:</b> Physics and Chemistry syllabus overlaps heavily. Study them concurrently.</li><li><b>Solve Board Previous Years:</b> Allocate weekend slots to practice writing descriptive answers for board prep.</li><li><b>Mock Exams:</b> Take regular mock OMR tests at APEX to refine speed while writing subjective tests at school.</li></ul>",
+    content: "<p>Balancing board exams (CBSE/HBSE) alongside rigorous JEE preparation is a frequent dilemma for Class 12 aspirants. However, with synchronized study schedules and strategic focus, students can easily excel in both examinations.</p><h3>1. Synchronize Common Syllabi</h3><p>Over 80% of Physics and Chemistry syllabus overlaps directly between CBSE Class 12 boards and JEE Main. When studying Electrostatics, Thermodynamics, or Organic Chemistry mechanisms, master the conceptual derivations required for subjective board answers while simultaneously solving objective numericals for JEE.</p><h3>2. Allocate Weekend Slots for Subjective Writing Practice</h3><p>Many students lose board marks not due to lack of knowledge, but due to poor answer presentation. Dedicate 2 hours every Sunday to write step-by-step solutions with labeled diagrams, standard SI units, and structured derivations.</p><h3>3. Timed Mock Tests & Error Log Analysis</h3><p>Take regular mock tests at APEX to refine your speed and accuracy. Review every mistake in an error notebook so you avoid repeating the same conceptual gaps on exam day.</p><h3>4. Daily Doubt Resolution</h3><p>Never let doubts accumulate. Clarify challenging concepts with your teachers immediately after class to keep your preparation smooth and confident.</p>",
     coverImage: "/images/courses/c2.webp",
     metaTitle: "Tips to Balance CBSE/HBSE Board Exams with JEE Prep",
     metaDescription: "Struggling to balance JEE Main coaching with CBSE or HBSE Board Exam preparations? Read the expert guidelines from Apex Institute teachers.",
-    keywords: "boards and jee, school and coaching, cbse preparation, hbse exam tips",
-    publishDate: new Date().toLocaleDateString(),
+    keywords: "boards and jee, school and coaching, cbse preparation, hbse exam tips, jee main coaching jind",
+    publishDate: "2026-08-01",
     category: "JEE"
   }
 ];
@@ -725,10 +725,23 @@ export const dbService = {
 
   // Pages
   getPages() {
-    return cache.pages;
+    return cache.pages || DEFAULT_PAGES;
+  },
+  getCustomPages() {
+    return this.getPages();
   },
   getPageBySlug(slug) {
-    return cache.pages.find(p => p.slug === slug);
+    if (!slug) return null;
+    const target = decodeURIComponent(String(slug)).toLowerCase().trim();
+    const list = cache.pages || [];
+    return list.find(p => 
+      (p.slug && p.slug.toLowerCase().trim() === target) ||
+      String(p.id).toLowerCase() === target ||
+      (p.title && p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') === target)
+    ) || DEFAULT_PAGES.find(p => p.slug === target || String(p.id).toLowerCase() === target) || null;
+  },
+  getCustomPage(slug) {
+    return this.getPageBySlug(slug);
   },
   async savePage(page) {
     const list = [...cache.pages];
@@ -760,10 +773,23 @@ export const dbService = {
 
   // Posts
   getPosts() {
-    return cache.posts;
+    return cache.posts || DEFAULT_POSTS;
+  },
+  getBlogPosts() {
+    return this.getPosts();
   },
   getPostBySlug(slug) {
-    return cache.posts.find(p => p.slug === slug);
+    if (!slug) return null;
+    const target = decodeURIComponent(String(slug)).toLowerCase().trim();
+    const list = cache.posts || [];
+    return list.find(p => 
+      (p.slug && p.slug.toLowerCase().trim() === target) ||
+      String(p.id).toLowerCase() === target ||
+      (p.title && p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') === target)
+    ) || DEFAULT_POSTS.find(p => p.slug === target || String(p.id).toLowerCase() === target) || null;
+  },
+  getBlogPost(slug) {
+    return this.getPostBySlug(slug);
   },
   async savePost(post) {
     const list = [...cache.posts];

@@ -308,11 +308,13 @@ export default function App() {
               </div>
               <div className="modal-body" style={{ padding: '20px', maxHeight: '75vh', overflowY: 'auto' }}>
                 {selectedCourseDetails.showImage !== false && selectedCourseDetails.image && (
-                  <img 
-                    src={selectedCourseDetails.image} 
-                    alt={selectedCourseDetails.title} 
-                    style={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: 'var(--radius-md)', marginBottom: '15px' }} 
-                  />
+                  <div style={{ width: '100%', marginBottom: '15px', borderRadius: 'var(--radius-md)', overflow: 'hidden', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                    <img 
+                      src={selectedCourseDetails.image} 
+                      alt={selectedCourseDetails.title} 
+                      style={{ width: '100%', height: 'auto', display: 'block', maxHeight: '350px', objectFit: 'contain' }} 
+                    />
+                  </div>
                 )}
                 
                 <h3 style={{ color: 'var(--navy-dark)', fontFamily: 'var(--font-family)', fontSize: '1.2rem', marginBottom: '12px', fontWeight: 700 }}>
@@ -546,18 +548,18 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
     siteKeywords = 'apex student portal, neet online test series jind, jee dpp practice online';
   } else if (cleanPath.startsWith('/posts/')) {
     const slug = cleanPath.substring(7);
-    const post = (dbService.getBlogPosts() || []).find(p => p.slug === slug);
+    const post = dbService.getPostBySlug ? dbService.getPostBySlug(slug) : null;
     if (post) {
-      siteTitle = post.metaTitle || post.title;
-      siteDesc = post.metaDescription || siteDesc;
+      siteTitle = post.metaTitle || `${post.title} | Institute APEX Jind`;
+      siteDesc = post.metaDescription || (post.content ? post.content.replace(/<[^>]*>/g, '').replace(/\n+/g, ' ').slice(0, 160) : siteDesc);
       if (post.keywords) siteKeywords = post.keywords;
     }
   } else if (cleanPath.startsWith('/pages/')) {
     const slug = cleanPath.substring(7);
-    const page = (dbService.getCustomPages() || []).find(p => p.slug === slug);
+    const page = dbService.getPageBySlug ? dbService.getPageBySlug(slug) : null;
     if (page) {
-      siteTitle = page.metaTitle || page.title;
-      siteDesc = page.metaDescription || siteDesc;
+      siteTitle = page.metaTitle || `${page.title} | Institute APEX Jind`;
+      siteDesc = page.metaDescription || (page.content ? page.content.replace(/<[^>]*>/g, '').replace(/\n+/g, ' ').slice(0, 160) : siteDesc);
       if (page.keywords) siteKeywords = page.keywords;
     }
   }
@@ -1627,13 +1629,13 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
                   }}
                 >
                   {showImages && post.coverImage && (
-                    <div style={{ height: '180px', width: '100%', overflow: 'hidden' }}>
+                    <div style={{ width: '100%', overflow: 'hidden', background: '#f8fafc', borderBottom: '1px solid #f1f5f9' }}>
                       <img 
                         src={post.coverImage} 
                         alt={post.title} 
                         loading="lazy"
                         decoding="async"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                        style={{ width: '100%', height: 'auto', display: 'block', maxHeight: '220px', objectFit: 'contain' }} 
                       />
                     </div>
                   )}
@@ -2867,11 +2869,14 @@ function ContactUsView({ settings, navigate }) {
 
 // ---------------- DYNAMIC CUSTOM PAGE VIEW ----------------
 function DynamicPageView({ slug, navigate }) {
-  const [page, setPage] = useState(null);
+  const [page, setPage] = useState(() => dbService.getPageBySlug ? dbService.getPageBySlug(slug) : null);
 
   useEffect(() => {
-    const loaded = dbService.getPageBySlug(slug);
-    setPage(loaded);
+    setPage(dbService.getPageBySlug ? dbService.getPageBySlug(slug) : null);
+    const unsubscribe = dbService.subscribe ? dbService.subscribe(() => {
+      setPage(dbService.getPageBySlug ? dbService.getPageBySlug(slug) : null);
+    }) : () => {};
+    return () => unsubscribe();
   }, [slug]);
 
   if (!page) {
@@ -2886,9 +2891,16 @@ function DynamicPageView({ slug, navigate }) {
 
   return (
     <div className="dynamic-page-wrap student-content-wrap fade-in">
+      {/* Breadcrumb Navigation */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: '#64748b', marginBottom: '18px' }}>
+        <span style={{ cursor: 'pointer', color: '#0284c7', fontWeight: 600 }} onClick={() => navigate('/')}>Home</span>
+        <span>/</span>
+        <span style={{ color: '#0f2b48', fontWeight: 600 }}>{page.title}</span>
+      </div>
+
       <h1 className="dynamic-page-title">{page.title}</h1>
       <div className="dynamic-page-meta">
-        <span>Last updated: {new Date(page.lastUpdated).toLocaleDateString()}</span>
+        <span>Last updated: {new Date(page.lastUpdated || Date.now()).toLocaleDateString()}</span>
       </div>
       <div 
         className="dynamic-page-body" 
@@ -2908,32 +2920,49 @@ function DynamicPageView({ slug, navigate }) {
 
 // ---------------- DYNAMIC POST / BLOG VIEW ----------------
 function DynamicPostView({ slug, navigate }) {
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState(() => dbService.getPostBySlug ? dbService.getPostBySlug(slug) : null);
 
   useEffect(() => {
-    const loaded = dbService.getPostBySlug(slug);
-    setPost(loaded);
+    setPost(dbService.getPostBySlug ? dbService.getPostBySlug(slug) : null);
+    const unsubscribe = dbService.subscribe ? dbService.subscribe(() => {
+      setPost(dbService.getPostBySlug ? dbService.getPostBySlug(slug) : null);
+    }) : () => {};
+    return () => unsubscribe();
   }, [slug]);
 
   if (!post) {
     return (
       <div className="dynamic-page-wrap student-content-wrap fade-in" style={{ textAlign: 'center', padding: '100px var(--spacing-md)' }}>
         <h2 className="dynamic-page-title">Post Not Found</h2>
-        <p style={{ color: 'var(--light-gray)', marginBottom: '25px' }}>The blog post or news update does not exist.</p>
-        <button className="enrol-btn" onClick={() => navigate('/')}>Go to Home</button>
+        <p style={{ color: 'var(--light-gray)', marginBottom: '25px' }}>The blog post or news update does not exist or may have been moved.</p>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+          <button className="enrol-btn secondary" onClick={() => navigate('/blogs')}>View All Blogs</button>
+          <button className="enrol-btn" onClick={() => navigate('/')}>Go to Home</button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="dynamic-page-wrap student-content-wrap fade-in">
-      <span className="testimonial-rank" style={{ marginBottom: '12px' }}>{post.category}</span>
+      {/* Breadcrumb Navigation */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: '#64748b', marginBottom: '18px' }}>
+        <span style={{ cursor: 'pointer', color: '#0284c7', fontWeight: 600 }} onClick={() => navigate('/')}>Home</span>
+        <span>/</span>
+        <span style={{ cursor: 'pointer', color: '#0284c7', fontWeight: 600 }} onClick={() => navigate('/blogs')}>Academic Blogs</span>
+        <span>/</span>
+        <span style={{ color: '#0f2b48', fontWeight: 600, maxWidth: '280px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{post.title}</span>
+      </div>
+
+      {post.category && (
+        <span className="testimonial-rank" style={{ marginBottom: '12px', display: 'inline-block' }}>{post.category}</span>
+      )}
       <h1 className="dynamic-page-title">{post.title}</h1>
       <div className="dynamic-page-meta">
         <span>Published on: {post.publishDate}</span>
       </div>
       {post.coverImage && (
-        <div style={{ borderRadius: 'var(--radius-lg)', overflow: 'hidden', marginBottom: '25px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
+        <div style={{ borderRadius: 'var(--radius-lg)', overflow: 'hidden', marginBottom: '25px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.04)', background: '#f8fafc' }}>
           <img 
             src={post.coverImage} 
             alt={post.title} 
@@ -2946,13 +2975,22 @@ function DynamicPostView({ slug, navigate }) {
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
       
-      <button 
-        className="admin-btn secondary" 
-        style={{ width: '100%', marginTop: '40px', padding: '14px', fontWeight: 600 }}
-        onClick={() => navigate('/')}
-      >
-        Back to Home Page
-      </button>
+      <div style={{ display: 'flex', gap: '14px', marginTop: '40px' }}>
+        <button 
+          className="admin-btn secondary" 
+          style={{ flex: 1, padding: '14px', fontWeight: 600 }}
+          onClick={() => navigate('/blogs')}
+        >
+          &larr; More Articles & Guides
+        </button>
+        <button 
+          className="admin-btn" 
+          style={{ flex: 1, padding: '14px', fontWeight: 600 }}
+          onClick={() => navigate('/')}
+        >
+          Back to Home Page
+        </button>
+      </div>
     </div>
   );
 }
@@ -3276,11 +3314,11 @@ function AllBlogsView({ navigate }) {
                 }}
               >
                 {post.coverImage && (
-                  <div style={{ height: '200px', width: '100%', overflow: 'hidden' }}>
+                  <div style={{ width: '100%', overflow: 'hidden', background: '#f8fafc', borderBottom: '1px solid #f1f5f9' }}>
                     <img 
                       src={post.coverImage} 
                       alt={post.title} 
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                      style={{ width: '100%', height: 'auto', display: 'block', maxHeight: '240px', objectFit: 'contain' }} 
                     />
                   </div>
                 )}
