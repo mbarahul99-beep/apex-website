@@ -516,9 +516,9 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
       (c.title && c.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') === String(courseId).toLowerCase())
     );
     if (course) {
-      siteTitle = `${course.title} in Jind | Institute APEX (Medical & Engineering Coaching)`;
-      siteDesc = course.details ? course.details.replace(/\n+/g, ' ').slice(0, 160) : `Join ${course.title} at Institute APEX Jind. Small batches, NCERT mastery & 16+ years of top ranks.`;
-      siteKeywords = `${course.title}, coaching in jind, neet coaching jind, iit jee coaching jind, apex institute jind`;
+      siteTitle = course.metaTitle || course.seoTitle || `${course.title} in Jind | Institute APEX (Medical & Engineering Coaching)`;
+      siteDesc = course.metaDescription || course.seoDescription || (course.details ? course.details.replace(/<[^>]*>/g, '').replace(/\n+/g, ' ').slice(0, 160) : `Join ${course.title} at Institute APEX Jind. Small batches, NCERT mastery & 16+ years of top ranks.`);
+      siteKeywords = course.keywords || course.seoKeywords || `${course.title}, coaching in jind, neet coaching jind, iit jee coaching jind, apex institute jind`;
     }
   } else if (cleanPath === '/about' || cleanPath === '/about-us' || cleanPath === '/pages/about-apex-jind') {
     siteTitle = 'About Institute APEX Jind | 16+ Years Medical & Engineering Coaching';
@@ -1991,7 +1991,7 @@ function CourseDetailView({ courseId, navigate, openEnquiry, settings }) {
           {course.title}
         </h1>
         <p style={{ fontSize: '1.05rem', color: '#475569', lineHeight: 1.6, marginBottom: '25px', maxWidth: '850px' }}>
-          Classroom coaching program in Jind designed to help students master syllabus concepts, build problem-solving speed, and prepare thoroughly for competitive and school board exams.
+          {course.subtitle || 'Classroom coaching program in Jind designed to help students master syllabus concepts, build problem-solving speed, and prepare thoroughly for competitive and school board exams.'}
         </p>
 
         {/* Action Buttons Top Bar */}
@@ -2055,9 +2055,10 @@ function CourseDetailView({ courseId, navigate, openEnquiry, settings }) {
               Curriculum & Course Overview
             </h2>
             {course.details ? (
-              <div style={{ fontSize: '1rem', color: '#334155', lineHeight: 1.75, whiteSpace: 'pre-line' }}>
-                {course.details}
-              </div>
+              <div 
+                style={{ fontSize: '1rem', color: '#334155', lineHeight: 1.75 }}
+                dangerouslySetInnerHTML={{ __html: course.details.includes('<') ? course.details : course.details.replace(/\n/g, '<br/>') }}
+              />
             ) : (
               <p style={{ color: '#64748b' }}>Curriculum and topic coverage details are available at the institute admission desk.</p>
             )}
@@ -2067,11 +2068,23 @@ function CourseDetailView({ courseId, navigate, openEnquiry, settings }) {
               What Students Get in This Course
             </h3>
             <ul style={{ paddingLeft: '20px', color: '#334155', lineHeight: 1.8, fontSize: '0.96rem' }}>
-              <li><strong>Small Batch Sizes:</strong> Small batches so teachers can give personal attention and resolve doubts directly for every student.</li>
-              <li><strong>Thorough Concept Coverage:</strong> Step-by-step NCERT coverage combined with focused practice on competitive exam problem patterns.</li>
-              <li><strong>Weekly Tests & Feedback:</strong> Regular practice tests modeled on actual exam patterns to track progress and identify areas for improvement.</li>
-              <li><strong>Daily Doubt Clearing:</strong> Direct access to subject teachers after class to ask questions and clear doubts immediately.</li>
-              <li><strong>Printed Study Material & DPPs:</strong> Structured topic booklets, previous year question banks, and daily practice problem sheets.</li>
+              {Array.isArray(course.highlights) && course.highlights.length > 0 ? (
+                course.highlights.map((h, hIdx) => (
+                  <li key={hIdx}>
+                    {typeof h === 'string' ? h : (
+                      <><strong>{h.title}:</strong> {h.desc}</>
+                    )}
+                  </li>
+                ))
+              ) : (
+                <>
+                  <li><strong>Small Batch Sizes:</strong> Small batches so teachers can give personal attention and resolve doubts directly for every student.</li>
+                  <li><strong>Thorough Concept Coverage:</strong> Step-by-step NCERT coverage combined with focused practice on competitive exam problem patterns.</li>
+                  <li><strong>Weekly Tests & Feedback:</strong> Regular practice tests modeled on actual exam patterns to track progress and identify areas for improvement.</li>
+                  <li><strong>Daily Doubt Clearing:</strong> Direct access to subject teachers after class to ask questions and clear doubts immediately.</li>
+                  <li><strong>Printed Study Material & DPPs:</strong> Structured topic booklets, previous year question banks, and daily practice problem sheets.</li>
+                </>
+              )}
             </ul>
           </div>
         </div>
@@ -2121,10 +2134,14 @@ function CourseDetailView({ courseId, navigate, openEnquiry, settings }) {
                 </div>
               )}
 
-              <div>
-                <div style={{ fontSize: '0.78rem', textTransform: 'uppercase', color: '#64748b', fontWeight: 700, letterSpacing: '0.04em' }}>Study Mode</div>
-                <div style={{ fontSize: '0.95rem', color: '#0f2b48', fontWeight: 600, marginTop: '2px' }}>Classroom (Offline) @ Jind Campus</div>
-              </div>
+              {course.showStudyMode !== false && (
+                <div>
+                  <div style={{ fontSize: '0.78rem', textTransform: 'uppercase', color: '#64748b', fontWeight: 700, letterSpacing: '0.04em' }}>Study Mode</div>
+                  <div style={{ fontSize: '0.95rem', color: '#0f2b48', fontWeight: 600, marginTop: '2px' }}>
+                    {course.studyMode || 'Classroom (Offline) @ Jind Campus'}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -2916,11 +2933,13 @@ function DynamicPostView({ slug, navigate }) {
         <span>Published on: {post.publishDate}</span>
       </div>
       {post.coverImage && (
-        <img 
-          src={post.coverImage} 
-          alt={post.title} 
-          style={{ width: '100%', borderRadius: 'var(--radius-lg)', marginBottom: '25px', objectFit: 'cover', maxHeight: '350px' }} 
-        />
+        <div style={{ borderRadius: 'var(--radius-lg)', overflow: 'hidden', marginBottom: '25px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
+          <img 
+            src={post.coverImage} 
+            alt={post.title} 
+            style={{ width: '100%', height: 'auto', display: 'block' }} 
+          />
+        </div>
       )}
       <div 
         className="dynamic-page-body" 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../css/admin.css';
 import { dbService, mergeAboutData } from '../services/dbService';
 import { isDefault } from '../services/firebase';
@@ -1458,6 +1458,344 @@ function AdminSliders({ currentUser, onGoogleLogin }) {
   );
 }
 
+// ---------------- REUSABLE CONTENT EDITOR WITH HEADING TOOLBAR ----------------
+function ContentEditorWithToolbar({ value = '', onChange, label = 'Content Body', rows = 8, placeholder = 'Write your content here...' }) {
+  const textareaRef = useRef(null);
+  const [activeTab, setActiveTab] = useState('edit'); // 'edit' | 'preview'
+
+  const insertTag = (startTag, endTag = '', defaultText = '') => {
+    const el = textareaRef.current;
+    if (!el) return;
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    const selectedText = el.value.substring(start, end);
+    const replacement = selectedText ? `${startTag}${selectedText}${endTag}` : `${startTag}${defaultText}${endTag}`;
+    const newValue = el.value.substring(0, start) + replacement + el.value.substring(end);
+    onChange(newValue);
+    setTimeout(() => {
+      el.focus();
+      const cursorTarget = selectedText ? start + replacement.length : start + startTag.length + defaultText.length;
+      el.setSelectionRange(cursorTarget, cursorTarget);
+    }, 10);
+  };
+
+  const wordCount = value ? (value.replace(/<[^>]*>/g, ' ').match(/\b\w+\b/g) || []).length : 0;
+  const charCount = value ? value.length : 0;
+
+  return (
+    <div className="content-editor-wrap" style={{ border: '1px solid #cbd5e1', borderRadius: '8px', overflow: 'hidden', background: '#ffffff', marginBottom: '16px' }}>
+      {/* Top Header / Switch Tabs */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f1f5f9', padding: '6px 12px', borderBottom: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '6px' }}>
+        <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#334155' }}>{label}</span>
+        <div style={{ display: 'flex', gap: '4px' }}>
+          <button
+            type="button"
+            onClick={() => setActiveTab('edit')}
+            style={{
+              padding: '4px 10px',
+              fontSize: '0.74rem',
+              fontWeight: 600,
+              borderRadius: '4px',
+              border: 'none',
+              background: activeTab === 'edit' ? '#0284c7' : 'transparent',
+              color: activeTab === 'edit' ? '#ffffff' : '#64748b',
+              cursor: 'pointer'
+            }}
+          >
+            ✏️ Write & Headings
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('preview')}
+            style={{
+              padding: '4px 10px',
+              fontSize: '0.74rem',
+              fontWeight: 600,
+              borderRadius: '4px',
+              border: 'none',
+              background: activeTab === 'preview' ? '#0284c7' : 'transparent',
+              color: activeTab === 'preview' ? '#ffffff' : '#64748b',
+              cursor: 'pointer'
+            }}
+          >
+            👁️ Live Preview
+          </button>
+        </div>
+      </div>
+
+      {activeTab === 'edit' ? (
+        <div>
+          {/* Visual Formatting Toolbar */}
+          <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', padding: '8px 10px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#64748b', marginRight: '2px' }}>Headings:</span>
+            <button
+              type="button"
+              onClick={() => insertTag('<h2>', '</h2>', 'Section Heading')}
+              title="Add Major Heading (H2)"
+              style={{ padding: '3px 8px', fontSize: '0.76rem', fontWeight: 800, background: '#e0f2fe', color: '#0369a1', border: '1px solid #bae6fd', borderRadius: '4px', cursor: 'pointer' }}
+            >
+              H2 Heading
+            </button>
+            <button
+              type="button"
+              onClick={() => insertTag('<h3>', '</h3>', 'Subsection Heading')}
+              title="Add Subheading (H3)"
+              style={{ padding: '3px 8px', fontSize: '0.76rem', fontWeight: 700, background: '#e0f2fe', color: '#0369a1', border: '1px solid #bae6fd', borderRadius: '4px', cursor: 'pointer' }}
+            >
+              H3 Subheading
+            </button>
+            <button
+              type="button"
+              onClick={() => insertTag('<h4>', '</h4>', 'Topic Title')}
+              title="Add Topic Heading (H4)"
+              style={{ padding: '3px 8px', fontSize: '0.76rem', fontWeight: 700, background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '4px', cursor: 'pointer' }}
+            >
+              H4 Small
+            </button>
+
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#64748b', margin: '0 2px 0 6px' }}>Format:</span>
+            <button
+              type="button"
+              onClick={() => insertTag('<p>', '</p>', 'Paragraph text...')}
+              style={{ padding: '3px 8px', fontSize: '0.76rem', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', cursor: 'pointer' }}
+            >
+              &lt;p&gt; Para
+            </button>
+            <button
+              type="button"
+              onClick={() => insertTag('<strong>', '</strong>', 'bold text')}
+              style={{ padding: '3px 8px', fontSize: '0.76rem', fontWeight: 700, background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', cursor: 'pointer' }}
+            >
+              B Bold
+            </button>
+            <button
+              type="button"
+              onClick={() => insertTag('<ul>\n  <li>', '</li>\n  <li>Second key point</li>\n</ul>', 'First key point')}
+              style={{ padding: '3px 8px', fontSize: '0.76rem', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', cursor: 'pointer' }}
+            >
+              • Bullet List
+            </button>
+            <button
+              type="button"
+              onClick={() => insertTag('<ol>\n  <li>', '</li>\n  <li>Step 2</li>\n</ol>', 'Step 1')}
+              style={{ padding: '3px 8px', fontSize: '0.76rem', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', cursor: 'pointer' }}
+            >
+              1. Numbered List
+            </button>
+            <button
+              type="button"
+              onClick={() => insertTag('<div style="background:#f8fafc;border-left:4px solid #0284c7;padding:12px;margin:16px 0;border-radius:4px;">\n  <p><strong>Note:</strong> ', '</p>\n</div>', 'Enter important highlights here...')}
+              style={{ padding: '3px 8px', fontSize: '0.76rem', background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', borderRadius: '4px', cursor: 'pointer' }}
+            >
+              💡 Callout Box
+            </button>
+          </div>
+
+          <textarea
+            ref={textareaRef}
+            value={value}
+            onChange={e => onChange(e.target.value)}
+            rows={rows}
+            placeholder={placeholder}
+            style={{ width: '100%', border: 'none', padding: '12px', fontSize: '0.9rem', lineHeight: 1.6, fontFamily: 'monospace', outline: 'none', resize: 'vertical', boxSizing: 'border-box' }}
+          />
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 12px', background: '#f8fafc', borderTop: '1px solid #f1f5f9', fontSize: '0.74rem', color: '#64748b', flexWrap: 'wrap', gap: '4px' }}>
+            <span><strong>{wordCount}</strong> words • <strong>{charCount}</strong> characters</span>
+            <span>Tip: Use <code>&lt;h2&gt;</code> and <code>&lt;h3&gt;</code> headings to structure syllabus &amp; topics for Google ranking</span>
+          </div>
+        </div>
+      ) : (
+        <div style={{ padding: '20px', minHeight: '180px', maxHeight: '450px', overflowY: 'auto', background: '#ffffff' }}>
+          {value ? (
+            <div 
+              className="dynamic-page-body"
+              dangerouslySetInnerHTML={{ __html: value }}
+              style={{ fontSize: '0.95rem', lineHeight: 1.7, color: '#1e293b' }}
+            />
+          ) : (
+            <p style={{ color: '#94a3b8', fontStyle: 'italic', margin: 0 }}>Content preview is empty. Switch to Write &amp; Headings tab to enter content.</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------- REUSABLE SEO CHECKLIST ASSISTANT ----------------
+function SeoChecklistAssistant({
+  title = '',
+  metaTitle = '',
+  metaDescription = '',
+  slug = '',
+  content = '',
+  coverImage = '',
+  focusKeyword = '',
+  setFocusKeyword,
+  basePath = '/posts/'
+}) {
+  const effectiveTitle = (metaTitle || title || '').trim();
+  const effectiveDesc = (metaDescription || '').trim();
+  const rawContent = (content || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  const wordCount = rawContent ? (rawContent.match(/\b\w+\b/g) || []).length : 0;
+  const kw = (focusKeyword || '').toLowerCase().trim();
+
+  const hasKeyword = kw.length > 2;
+  const kwInTitle = hasKeyword && effectiveTitle.toLowerCase().includes(kw);
+  const titleLen = effectiveTitle.length;
+  const titleLenOk = titleLen >= 35 && titleLen <= 65;
+
+  const kwInDesc = hasKeyword && effectiveDesc.toLowerCase().includes(kw);
+  const descLen = effectiveDesc.length;
+  const descLenOk = descLen >= 110 && descLen <= 165;
+
+  const slugClean = slug && /^[a-z0-9-]+$/.test(slug) && !slug.startsWith('-') && !slug.endsWith('-');
+  const hasHeadings = /<h[2-4][^>]*>/i.test(content || '');
+
+  const contentDepthOk = wordCount >= 300;
+  const contentDepthFair = wordCount >= 150;
+  const hasMedia = Boolean(coverImage);
+
+  let score = 0;
+  if (hasKeyword) score += 10;
+  if (kwInTitle) score += 15;
+  if (titleLenOk) score += 15; else if (titleLen > 15) score += 8;
+  if (kwInDesc) score += 15;
+  if (descLenOk) score += 15; else if (descLen > 50) score += 8;
+  if (slugClean) score += 10;
+  if (hasHeadings) score += 10;
+  if (contentDepthOk) score += 10; else if (contentDepthFair) score += 5;
+  if (hasMedia) score += 5;
+  score = Math.min(100, score);
+
+  const scoreColor = score >= 80 ? '#16a34a' : score >= 50 ? '#d97706' : '#dc2626';
+  const scoreLabel = score >= 80 ? 'Ready to Rank on Google' : score >= 50 ? 'Good Start - Needs Tuning' : 'Needs Optimization';
+
+  return (
+    <div className="admin-card" style={{ padding: '16px', backgroundColor: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '10px', marginTop: '16px', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+        <div>
+          <span style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--navy-blue)', display: 'block' }}>
+            🔍 Google SEO Indexing &amp; Ranking Assistant
+          </span>
+          <span style={{ fontSize: '0.74rem', color: '#64748b' }}>
+            Real-time checks to ensure this page gets crawled, indexed, and separately ranked on Google.
+          </span>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <span style={{ fontSize: '1.1rem', fontWeight: 800, color: scoreColor }}>{score}/100</span>
+          <span style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: scoreColor }}>{scoreLabel}</span>
+        </div>
+      </div>
+
+      {setFocusKeyword && (
+        <div style={{ marginBottom: '14px', background: '#ffffff', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+          <label style={{ fontSize: '0.78rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>
+            Target Focus Keyword (e.g. &ldquo;neet coaching jind&rdquo; or &ldquo;iit jee foundation&rdquo;)
+          </label>
+          <input
+            type="text"
+            value={focusKeyword}
+            onChange={e => setFocusKeyword(e.target.value)}
+            placeholder="Type the main phrase you want this page to rank for on Google..."
+            style={{ width: '100%', fontSize: '0.85rem', padding: '7px 10px', border: '1px solid #cbd5e1', borderRadius: '6px', boxSizing: 'border-box' }}
+          />
+        </div>
+      )}
+
+      {/* Google Search Listing Preview */}
+      <div style={{ background: '#ffffff', padding: '14px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '14px' }}>
+        <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 800, color: '#64748b', display: 'block', marginBottom: '8px' }}>
+          Google Search Listing Preview
+        </span>
+        <div style={{ fontFamily: 'Arial, sans-serif' }}>
+          <div style={{ fontSize: '0.78rem', color: '#202124', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
+            <span style={{ color: '#1a0dab', fontWeight: 500 }}>instituteapex.in</span>
+            <span style={{ color: '#5f6368' }}>&rsaquo; {basePath.replace(/^\/|\/$/g, '')} &rsaquo; {slug || 'slug'}</span>
+          </div>
+          <div style={{ fontSize: '1.05rem', color: '#1a0dab', fontWeight: 500, lineHeight: 1.3, marginBottom: '3px' }}>
+            {effectiveTitle || 'Page Title will appear here...'}
+          </div>
+          <div style={{ fontSize: '0.82rem', color: '#4d5156', lineHeight: 1.45 }}>
+            {effectiveDesc || 'Meta description snippet will appear here on Google. Write an informative summary to attract student clicks.'}
+          </div>
+        </div>
+      </div>
+
+      {/* Checklist Items Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '8px' }}>
+        <div style={{ background: '#fff', padding: '8px 10px', borderRadius: '6px', border: `1px solid ${titleLenOk ? '#bbf7d0' : '#fecaca'}`, display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+          <span style={{ fontSize: '0.95rem' }}>{titleLenOk ? '✅' : '⚠️'}</span>
+          <div style={{ fontSize: '0.76rem', color: '#334155' }}>
+            <strong>Title Length:</strong> {titleLen} / 60 chars {titleLenOk ? '(Optimal)' : titleLen < 35 ? '(Too short, aim for 40-60)' : '(May be truncated)'}
+          </div>
+        </div>
+
+        <div style={{ background: '#fff', padding: '8px 10px', borderRadius: '6px', border: `1px solid ${descLenOk ? '#bbf7d0' : '#fecaca'}`, display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+          <span style={{ fontSize: '0.95rem' }}>{descLenOk ? '✅' : '⚠️'}</span>
+          <div style={{ fontSize: '0.76rem', color: '#334155' }}>
+            <strong>Meta Description:</strong> {descLen} / 155 chars {descLenOk ? '(Optimal)' : descLen < 110 ? '(Too short, add more details)' : '(A bit long)'}
+          </div>
+        </div>
+
+        {hasKeyword && (
+          <div style={{ background: '#fff', padding: '8px 10px', borderRadius: '6px', border: `1px solid ${kwInTitle ? '#bbf7d0' : '#fed7aa'}`, display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+            <span style={{ fontSize: '0.95rem' }}>{kwInTitle ? '✅' : '💡'}</span>
+            <div style={{ fontSize: '0.76rem', color: '#334155' }}>
+              <strong>Focus Keyword in Title:</strong> {kwInTitle ? 'Found in title' : 'Include focus keyword in title'}
+            </div>
+          </div>
+        )}
+
+        {hasKeyword && (
+          <div style={{ background: '#fff', padding: '8px 10px', borderRadius: '6px', border: `1px solid ${kwInDesc ? '#bbf7d0' : '#fed7aa'}`, display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+            <span style={{ fontSize: '0.95rem' }}>{kwInDesc ? '✅' : '💡'}</span>
+            <div style={{ fontSize: '0.76rem', color: '#334155' }}>
+              <strong>Focus Keyword in Snippet:</strong> {kwInDesc ? 'Found in description' : 'Include focus keyword in description'}
+            </div>
+          </div>
+        )}
+
+        <div style={{ background: '#fff', padding: '8px 10px', borderRadius: '6px', border: `1px solid ${hasHeadings ? '#bbf7d0' : '#fed7aa'}`, display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+          <span style={{ fontSize: '0.95rem' }}>{hasHeadings ? '✅' : '💡'}</span>
+          <div style={{ fontSize: '0.76rem', color: '#334155' }}>
+            <strong>Headings Structure:</strong> {hasHeadings ? 'H2/H3 headings found' : 'Use H2/H3 buttons above'}
+          </div>
+        </div>
+
+        <div style={{ background: '#fff', padding: '8px 10px', borderRadius: '6px', border: `1px solid ${contentDepthOk ? '#bbf7d0' : contentDepthFair ? '#fde68a' : '#fecaca'}`, display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+          <span style={{ fontSize: '0.95rem' }}>{contentDepthOk ? '✅' : contentDepthFair ? '⚠️' : '❌'}</span>
+          <div style={{ fontSize: '0.76rem', color: '#334155' }}>
+            <strong>Content Depth:</strong> {wordCount} words {contentDepthOk ? '(Great for Google indexing)' : contentDepthFair ? '(Fair, 300+ words recommended)' : '(Thin content risk)'}
+          </div>
+        </div>
+
+        <div style={{ background: '#fff', padding: '8px 10px', borderRadius: '6px', border: `1px solid ${slugClean ? '#bbf7d0' : '#fed7aa'}`, display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+          <span style={{ fontSize: '0.95rem' }}>{slugClean ? '✅' : '⚠️'}</span>
+          <div style={{ fontSize: '0.76rem', color: '#334155' }}>
+            <strong>Clean URL Slug:</strong> {slugClean ? 'SEO-friendly slug' : 'Use lowercase letters and hyphens'}
+          </div>
+        </div>
+
+        <div style={{ background: '#fff', padding: '8px 10px', borderRadius: '6px', border: `1px solid ${hasMedia ? '#bbf7d0' : '#f1f5f9'}`, display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+          <span style={{ fontSize: '0.95rem' }}>{hasMedia ? '✅' : '📷'}</span>
+          <div style={{ fontSize: '0.76rem', color: '#334155' }}>
+            <strong>Featured Image:</strong> {hasMedia ? 'Cover image attached' : 'Add cover image for rich snippets'}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const DEFAULT_COURSE_HIGHLIGHTS = [
+  { title: 'Small Batch Sizes', desc: "Small batches so teachers can give personal attention and resolve doubts directly for every student." },
+  { title: 'Thorough Concept Coverage', desc: "Step-by-step NCERT coverage combined with focused practice on competitive exam problem patterns." },
+  { title: 'Weekly Tests & Feedback', desc: "Regular practice tests modeled on actual exam patterns to track progress and identify areas for improvement." },
+  { title: 'Daily Doubt Clearing', desc: "Direct access to subject teachers after class to ask questions and clear doubts immediately." },
+  { title: 'Printed Study Material & DPPs', desc: "Structured topic booklets, previous year question banks, and daily practice problem sheets." }
+];
+
 // ---------------- ADMIN COURSES SUB-VIEW ----------------
 function AdminCourses() {
   const [courses, setCourses] = useState([]);
@@ -1466,20 +1804,30 @@ function AdminCourses() {
   const [isSaving, setIsSaving] = useState(false);
 
   const [title, setTitle] = useState('');
+  const [subtitle, setSubtitle] = useState('');
   const [category, setCategory] = useState('class-11-12');
   const [target, setTarget] = useState('');
   const [boards, setBoards] = useState('');
   const [duration, setDuration] = useState('');
   const [schedule, setSchedule] = useState('');
+  const [studyMode, setStudyMode] = useState('Classroom (Offline) @ Jind Campus');
   const [fee, setFee] = useState('');
   const [image, setImage] = useState('');
   const [details, setDetails] = useState('');
+  const [highlights, setHighlights] = useState(DEFAULT_COURSE_HIGHLIGHTS);
+
+  // SEO Attributes
+  const [seoTitle, setSeoTitle] = useState('');
+  const [seoDescription, setSeoDescription] = useState('');
+  const [seoKeywords, setSeoKeywords] = useState('');
+  const [focusKeyword, setFocusKeyword] = useState('');
 
   // Individual visibility toggles
   const [showTarget, setShowTarget] = useState(true);
   const [showBoards, setShowBoards] = useState(true);
   const [showDuration, setShowDuration] = useState(true);
   const [showSchedule, setShowSchedule] = useState(true);
+  const [showStudyMode, setShowStudyMode] = useState(true);
   const [showFee, setShowFee] = useState(true);
   const [showImage, setShowImage] = useState(true);
   const [showDetails, setShowDetails] = useState(true);
@@ -1494,21 +1842,37 @@ function AdminCourses() {
 
   const handleEdit = (course) => {
     setEditingCourse(course);
-    setTitle(course.title);
-    setCategory(course.category);
-    setTarget(course.target);
-    setBoards(course.boards);
-    setDuration(course.duration);
-    setSchedule(course.schedule);
-    setFee(course.fee);
-    setImage(course.image);
-    setDetails(course.details);
+    setTitle(course.title || '');
+    setSubtitle(course.subtitle || '');
+    setCategory(course.category || 'class-11-12');
+    setTarget(course.target || '');
+    setBoards(course.boards || '');
+    setDuration(course.duration || '');
+    setSchedule(course.schedule || '');
+    setStudyMode(course.studyMode || 'Classroom (Offline) @ Jind Campus');
+    setFee(course.fee || '');
+    setImage(course.image || '');
+    setDetails(course.details || '');
     
+    // Highlights
+    if (Array.isArray(course.highlights) && course.highlights.length > 0) {
+      setHighlights(course.highlights.map(h => typeof h === 'string' ? { title: 'Feature', desc: h } : h));
+    } else {
+      setHighlights(DEFAULT_COURSE_HIGHLIGHTS);
+    }
+
+    // SEO
+    setSeoTitle(course.seoTitle || course.metaTitle || '');
+    setSeoDescription(course.seoDescription || course.metaDescription || '');
+    setSeoKeywords(course.seoKeywords || course.keywords || '');
+    setFocusKeyword(course.focusKeyword || '');
+
     // Default to true if property is undefined
     setShowTarget(course.showTarget !== false);
     setShowBoards(course.showBoards !== false);
     setShowDuration(course.showDuration !== false);
     setShowSchedule(course.showSchedule !== false);
+    setShowStudyMode(course.showStudyMode !== false);
     setShowFee(course.showFee !== false);
     setShowImage(course.showImage !== false);
     setShowDetails(course.showDetails !== false);
@@ -1518,23 +1882,48 @@ function AdminCourses() {
   const handleCreateNew = () => {
     setEditingCourse(null);
     setTitle('');
+    setSubtitle('Classroom coaching program in Jind designed to help students master syllabus concepts, build problem-solving speed, and prepare thoroughly for competitive and school board exams.');
     setCategory('class-11-12');
     setTarget('');
     setBoards('');
     setDuration('');
     setSchedule('');
+    setStudyMode('Classroom (Offline) @ Jind Campus');
     setFee('');
     setImage('');
     setDetails('');
+    setHighlights(DEFAULT_COURSE_HIGHLIGHTS);
+
+    setSeoTitle('');
+    setSeoDescription('');
+    setSeoKeywords('');
+    setFocusKeyword('');
     
     setShowTarget(true);
     setShowBoards(true);
     setShowDuration(true);
     setShowSchedule(true);
+    setShowStudyMode(true);
     setShowFee(true);
     setShowImage(true);
     setShowDetails(true);
     setFormOpen(true);
+  };
+
+  const updateHighlight = (idx, field, val) => {
+    setHighlights(prev => {
+      const copy = [...prev];
+      copy[idx] = { ...copy[idx], [field]: val };
+      return copy;
+    });
+  };
+
+  const addHighlight = () => {
+    setHighlights(prev => [...prev, { title: 'New Feature', desc: 'Detailed description of this academic feature...' }]);
+  };
+
+  const removeHighlight = (idx) => {
+    setHighlights(prev => prev.filter((_, i) => i !== idx));
   };
 
   const handleDelete = async (id) => {
@@ -1555,18 +1944,26 @@ function AdminCourses() {
       await dbService.saveCourse({
         id: editingCourse ? editingCourse.id : undefined,
         title,
+        subtitle,
         category,
         target,
         boards,
         duration,
         schedule,
+        studyMode,
         fee: parseInt(fee) || 0,
         image,
         details,
+        highlights,
+        seoTitle,
+        seoDescription,
+        seoKeywords,
+        focusKeyword,
         showTarget,
         showBoards,
         showDuration,
         showSchedule,
+        showStudyMode,
         showFee: showFee !== false,
         showImage: showImage !== false,
         showDetails
@@ -1594,21 +1991,33 @@ function AdminCourses() {
       {formOpen ? (
         <form onSubmit={handleSubmit} style={{ border: '1px solid #e2e8f0', padding: '20px', borderRadius: 'var(--radius-lg)' }}>
           <h4 style={{ marginBottom: '15px', color: 'var(--navy-dark)', fontFamily: 'var(--font-family)' }}>
-            {editingCourse ? `Edit: ${editingCourse.title}` : 'Create New Course Offering'}
+            {editingCourse ? `Edit Course: ${editingCourse.title}` : 'Create New Course Offering'}
           </h4>
+
           <div className="admin-form-row">
-            <div className="admin-input-group">
+            <div className="admin-input-group" style={{ flex: 2 }}>
               <label>Course Title *</label>
               <input type="text" value={title} onChange={e => setTitle(e.target.value)} required />
             </div>
-            <div className="admin-input-group">
+            <div className="admin-input-group" style={{ flex: 1 }}>
               <label>Academic Tab Category *</label>
               <select value={category} onChange={e => setCategory(e.target.value)}>
-                <option value="class-9-10">Class 9th & 10th (Foundations)</option>
-                <option value="class-11-12">Class 11th & 12th (NEET/JEE)</option>
+                <option value="class-9-10">Class 9th &amp; 10th (Foundations)</option>
+                <option value="class-11-12">Class 11th &amp; 12th (NEET/JEE)</option>
               </select>
             </div>
           </div>
+
+          <div className="admin-input-group">
+            <label>Course Hero Subtitle / Tagline (Appears directly below H1 title)</label>
+            <input 
+              type="text" 
+              value={subtitle} 
+              onChange={e => setSubtitle(e.target.value)} 
+              placeholder="e.g. Classroom coaching program in Jind designed to help students master syllabus concepts..." 
+            />
+          </div>
+
           <div className="admin-form-row">
             <div className="admin-input-group">
               <label>Target Audience Label (e.g. 11th studying) *</label>
@@ -1619,14 +2028,15 @@ function AdminCourses() {
               </div>
             </div>
             <div className="admin-input-group">
-              <label>Board Coverage (e.g. CBSE & HBSE) *</label>
-              <input type="text" value={boards} onChange={e => setBoards(e.target.value)} placeholder="CBSE, ICSE & HBSE Board Students" required />
+              <label>Board Coverage (e.g. CBSE &amp; ICSE) *</label>
+              <input type="text" value={boards} onChange={e => setBoards(e.target.value)} placeholder="CBSE, ICSE &amp; State Board Students" required />
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
                 <input type="checkbox" id="chk-show-boards" checked={showBoards} onChange={e => setShowBoards(e.target.checked)} />
                 <label htmlFor="chk-show-boards" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#666', cursor: 'pointer', display: 'inline', margin: 0 }}>Show boards on website</label>
               </div>
             </div>
           </div>
+
           <div className="admin-form-row">
             <div className="admin-input-group">
               <label>Course Duration *</label>
@@ -1638,7 +2048,7 @@ function AdminCourses() {
             </div>
             <div className="admin-input-group">
               <label>Class Weekly Schedule *</label>
-              <input type="text" value={schedule} onChange={e => setSchedule(e.target.value)} placeholder="Mon - Fri (3 hrs) • Sat - Sun (3 hrs)" required />
+              <input type="text" value={schedule} onChange={e => setSchedule(e.target.value)} placeholder="Mon - Sat (3 hrs) • Sun - Test (3 hrs)" required />
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
                 <input type="checkbox" id="chk-show-schedule" checked={showSchedule} onChange={e => setShowSchedule(e.target.checked)} />
                 <label htmlFor="chk-show-schedule" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#666', cursor: 'pointer', display: 'inline', margin: 0 }}>Show schedule on website</label>
@@ -1648,7 +2058,22 @@ function AdminCourses() {
 
           <div className="admin-form-row">
             <div className="admin-input-group" style={{ flex: 1 }}>
-              <label>Course Card Cover Image URL / Upload</label>
+              <label>Study Mode / Campus Location</label>
+              <input type="text" value={studyMode} onChange={e => setStudyMode(e.target.value)} placeholder="Classroom (Offline) @ Jind Campus" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
+                <input type="checkbox" id="chk-show-studymode" checked={showStudyMode} onChange={e => setShowStudyMode(e.target.checked)} />
+                <label htmlFor="chk-show-studymode" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#666', cursor: 'pointer', display: 'inline', margin: 0 }}>Show study mode on website</label>
+              </div>
+            </div>
+            <div className="admin-input-group" style={{ flex: 1 }}>
+              <label>Tuition Fee (Optional INR)</label>
+              <input type="number" value={fee} onChange={e => setFee(e.target.value)} placeholder="e.g. 45000" />
+            </div>
+          </div>
+
+          <div className="admin-form-row">
+            <div className="admin-input-group" style={{ flex: 1 }}>
+              <label>Course Banner Graphic URL / Upload</label>
               <input 
                 type="text" 
                 value={image} 
@@ -1669,14 +2094,14 @@ function AdminCourses() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
                 <input type="checkbox" id="chk-show-image" checked={showImage} onChange={e => setShowImage(e.target.checked)} />
                 <label htmlFor="chk-show-image" style={{ fontSize: '0.78rem', fontWeight: 600, color: '#475569', cursor: 'pointer', display: 'inline', margin: 0 }}>
-                  Show cover image banner on course card
+                  Show cover image banner on course screen
                 </label>
               </div>
 
               {image && (
                 <div style={{ marginTop: '12px', padding: '12px', backgroundColor: '#f8fafc', borderRadius: 'var(--radius-md)', border: '1px solid #cbd5e1' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--navy-blue)' }}>Live Course Banner Preview:</span>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--navy-blue)' }}>Live Course Banner Preview (Uncropped):</span>
                     <button 
                       type="button" 
                       className="admin-btn secondary"
@@ -1689,24 +2114,126 @@ function AdminCourses() {
                   <img 
                     src={image} 
                     alt="Course Card Cover Preview" 
-                    style={{ width: '100%', maxHeight: '180px', objectFit: 'cover', borderRadius: 'var(--radius-sm)', border: '1px solid #e2e8f0' }} 
+                    style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 'var(--radius-sm)', border: '1px solid #e2e8f0' }} 
                   />
                 </div>
               )}
             </div>
           </div>
 
-          <div className="admin-input-group">
-            <label>Course Details / Description *</label>
-            <textarea value={details} onChange={e => setDetails(e.target.value)} rows="3" required></textarea>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
-              <input type="checkbox" id="chk-show-details" checked={showDetails} onChange={e => setShowDetails(e.target.checked)} />
-              <label htmlFor="chk-show-details" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#666', cursor: 'pointer', display: 'inline', margin: 0 }}>Show description text on website</label>
+          {/* Curriculum & Detailed Overview Editor with Heading Options */}
+          <ContentEditorWithToolbar
+            label="Curriculum &amp; Course Syllabus Overview (Use Heading buttons to structure topics)"
+            value={details}
+            onChange={setDetails}
+            rows={8}
+            placeholder="Outline syllabus units, concept modules, weekly test structures, and board topics..."
+          />
+
+          {/* Key Academic Features / Highlights */}
+          <div className="admin-card" style={{ padding: '16px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <div>
+                <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--navy-dark)', display: 'block' }}>
+                  Key Academic Features (Course Bullet Points)
+                </span>
+                <span style={{ fontSize: '0.74rem', color: '#64748b' }}>
+                  Displayed in the &ldquo;What Students Get in This Course&rdquo; section.
+                </span>
+              </div>
+              <button
+                type="button"
+                className="admin-btn secondary"
+                style={{ padding: '4px 10px', fontSize: '0.76rem' }}
+                onClick={addHighlight}
+              >
+                + Add Feature
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {highlights.map((hl, hIdx) => (
+                <div key={hIdx} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', background: '#ffffff', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ flex: 1 }}>
+                    <input 
+                      type="text" 
+                      value={hl.title || ''} 
+                      onChange={e => updateHighlight(hIdx, 'title', e.target.value)} 
+                      placeholder="Feature Title (e.g. Small Batch Sizes)"
+                      style={{ fontSize: '0.82rem', fontWeight: 700, marginBottom: '6px', width: '100%' }}
+                    />
+                    <textarea 
+                      rows="2" 
+                      value={hl.desc || ''} 
+                      onChange={e => updateHighlight(hIdx, 'desc', e.target.value)} 
+                      placeholder="Feature Description (e.g. Small batches so teachers can give personal attention...)"
+                      style={{ fontSize: '0.82rem', width: '100%' }}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    className="table-action-btn delete"
+                    title="Remove Feature"
+                    onClick={() => removeHighlight(hIdx)}
+                    style={{ marginTop: '4px' }}
+                  >
+                    <IconTrash />
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
+
+          {/* Google SEO Ranking Attributes & Live Checklist */}
+          <div className="admin-card" style={{ padding: '15px', backgroundColor: '#f8fafc', marginBottom: '15px' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--navy-dark)', display: 'block', marginBottom: '10px' }}>
+              Google SEO Ranking &amp; Meta Settings
+            </span>
+            <div className="admin-form-row">
+              <div className="admin-input-group">
+                <label>Meta Search Title</label>
+                <input 
+                  type="text" 
+                  value={seoTitle} 
+                  onChange={e => setSeoTitle(e.target.value)} 
+                  placeholder={title ? `${title} in Jind | Institute APEX` : 'Course Title in Jind | Institute APEX'} 
+                />
+              </div>
+              <div className="admin-input-group">
+                <label>Meta Search Keywords (comma-separated)</label>
+                <input 
+                  type="text" 
+                  value={seoKeywords} 
+                  onChange={e => setSeoKeywords(e.target.value)} 
+                  placeholder="neet coaching jind, iit jee prep, foundation classes jind" 
+                />
+              </div>
+            </div>
+            <div className="admin-input-group" style={{ marginBottom: 0 }}>
+              <label>Meta Search Description (Google Snippet Description)</label>
+              <input 
+                type="text" 
+                value={seoDescription} 
+                onChange={e => setSeoDescription(e.target.value)} 
+                placeholder="Comprehensive classroom coaching in Jind for NEET &amp; JEE..." 
+              />
+            </div>
+          </div>
+
+          <SeoChecklistAssistant
+            title={title}
+            metaTitle={seoTitle}
+            metaDescription={seoDescription}
+            slug={editingCourse ? editingCourse.id : 'course-id'}
+            content={details}
+            coverImage={image}
+            focusKeyword={focusKeyword}
+            setFocusKeyword={setFocusKeyword}
+            basePath="/courses/"
+          />
           
-          <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-            <button type="submit" className="admin-btn" disabled={isSaving}>{isSaving ? 'Saving...' : 'Save Course Offer'}</button>
+          <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+            <button type="submit" className="admin-btn" disabled={isSaving}>{isSaving ? 'Saving...' : 'Save Course Offering'}</button>
             <button type="button" className="admin-btn secondary" onClick={() => setFormOpen(false)}>Cancel</button>
           </div>
         </form>
@@ -2224,6 +2751,7 @@ function AdminPages() {
   const [metaTitle, setMetaTitle] = useState('');
   const [metaDescription, setMetaDescription] = useState('');
   const [keywords, setKeywords] = useState('');
+  const [focusKeyword, setFocusKeyword] = useState('');
   const [aboutData, setAboutData] = useState(null);
 
   const isAboutPage = slug === 'about-apex-jind' || editingPage?.id === 'p1';
@@ -2249,6 +2777,7 @@ function AdminPages() {
     setMetaTitle(page.metaTitle || '');
     setMetaDescription(page.metaDescription || '');
     setKeywords(page.keywords || '');
+    setFocusKeyword(page.focusKeyword || '');
     if (page.slug === 'about-apex-jind' || page.id === 'p1' || page.aboutData) {
       setAboutData(mergeAboutData(page.aboutData));
     } else {
@@ -2265,6 +2794,7 @@ function AdminPages() {
     setMetaTitle('');
     setMetaDescription('');
     setKeywords('');
+    setFocusKeyword('');
     setAboutData(null);
     setFormOpen(true);
   };
@@ -2291,7 +2821,8 @@ function AdminPages() {
         content,
         metaTitle,
         metaDescription,
-        keywords
+        keywords,
+        focusKeyword
       };
       if (isAboutPage && aboutData) {
         payload.aboutData = aboutData;
@@ -2627,13 +3158,28 @@ function AdminPages() {
               </div>
             </div>
           ) : (
-            <div className="admin-input-group">
-              <label>HTML Content Body (supports HTML tags like &lt;p&gt;, &lt;h2&gt;, &lt;ul&gt;)</label>
-              <textarea value={content} onChange={e => setContent(e.target.value)} rows="8" required></textarea>
-            </div>
+            <ContentEditorWithToolbar
+              label="Page HTML Content Body (Use Heading buttons to structure your page content)"
+              value={content}
+              onChange={setContent}
+              rows={10}
+              placeholder="Write your custom institutional page content with headings, lists, and paragraphs..."
+            />
           )}
 
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <SeoChecklistAssistant
+            title={title}
+            metaTitle={metaTitle}
+            metaDescription={metaDescription}
+            slug={slug}
+            content={isAboutPage ? (aboutData?.heroSubtitle || '') + ' ' + (aboutData?.weekendText || '') : content}
+            coverImage=""
+            focusKeyword={focusKeyword}
+            setFocusKeyword={setFocusKeyword}
+            basePath={slug === 'about-apex-jind' ? '/' : '/pages/'}
+          />
+
+          <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
             <button type="submit" className="admin-btn" disabled={isSaving}>{isSaving ? 'Saving...' : (isAboutPage ? 'Save About Us Page' : 'Save Custom Page')}</button>
             <button type="button" className="admin-btn secondary" onClick={() => setFormOpen(false)}>Cancel</button>
           </div>
@@ -2693,6 +3239,7 @@ function AdminPosts() {
   const [metaTitle, setMetaTitle] = useState('');
   const [metaDescription, setMetaDescription] = useState('');
   const [keywords, setKeywords] = useState('');
+  const [focusKeyword, setFocusKeyword] = useState('');
   const [categorySelect, setCategorySelect] = useState('JEE');
   const [customCategory, setCustomCategory] = useState('');
 
@@ -2718,6 +3265,7 @@ function AdminPosts() {
     setMetaTitle(post.metaTitle);
     setMetaDescription(post.metaDescription);
     setKeywords(post.keywords);
+    setFocusKeyword(post.focusKeyword || '');
     
     const PREDEFINED = ['JEE', 'NEET', 'Olympiads', 'Announcements', 'Academic Guides', 'Admission Alerts'];
     if (PREDEFINED.includes(post.category)) {
@@ -2740,6 +3288,7 @@ function AdminPosts() {
     setMetaTitle('');
     setMetaDescription('');
     setKeywords('');
+    setFocusKeyword('');
     setCategorySelect('JEE');
     setCustomCategory('');
     setFormOpen(true);
@@ -2769,6 +3318,7 @@ function AdminPosts() {
         metaTitle,
         metaDescription,
         keywords,
+        focusKeyword,
         category: categorySelect === 'Custom' ? customCategory : categorySelect
       });
       setFormOpen(false);
@@ -2864,12 +3414,27 @@ function AdminPosts() {
             </div>
           </div>
 
-          <div className="admin-input-group">
-            <label>HTML Content Body *</label>
-            <textarea value={content} onChange={e => setContent(e.target.value)} rows="8" required></textarea>
-          </div>
+          <ContentEditorWithToolbar
+            label="Article Content Body (Use Heading buttons to structure your article for SEO)"
+            value={content}
+            onChange={setContent}
+            rows={12}
+            placeholder="Write your article with <h2> section headings, <h3> subtopics, bullet lists, and bold highlights..."
+          />
 
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <SeoChecklistAssistant
+            title={title}
+            metaTitle={metaTitle}
+            metaDescription={metaDescription}
+            slug={slug}
+            content={content}
+            coverImage={coverImage}
+            focusKeyword={focusKeyword}
+            setFocusKeyword={setFocusKeyword}
+            basePath="/posts/"
+          />
+
+          <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
             <button type="submit" className="admin-btn" disabled={isSaving}>{isSaving ? 'Publishing...' : 'Publish Update'}</button>
             <button type="button" className="admin-btn secondary" onClick={() => setFormOpen(false)}>Cancel</button>
           </div>

@@ -409,6 +409,118 @@ const routes = [
   }
 ];
 
+// Dynamically load additional or updated courses, posts, and pages from snapshot
+const snapshotPath = path.join(__dirname, '..', 'src', 'services', 'firestoreSnapshot.json');
+let snapshotData = { courses: [], pages: [], posts: [] };
+if (fs.existsSync(snapshotPath)) {
+  try {
+    snapshotData = JSON.parse(fs.readFileSync(snapshotPath, 'utf8'));
+  } catch (e) {
+    console.warn('Could not parse firestoreSnapshot.json, using defaults.');
+  }
+}
+
+// 1. Dynamic Courses
+if (Array.isArray(snapshotData.courses)) {
+  snapshotData.courses.forEach(c => {
+    if (!c.id) return;
+    const coursePath = `courses/${c.id}`;
+    const existing = routes.find(r => r.path === coursePath);
+    if (!existing) {
+      routes.push({
+        path: coursePath,
+        title: c.seoTitle || c.metaTitle || `${c.title} in Jind | Institute APEX`,
+        description: c.seoDescription || c.metaDescription || (c.details ? c.details.replace(/<[^>]*>/g, '').slice(0, 160) : `Join ${c.title} at Institute APEX Jind. Small batches & proven top ranks.`),
+        canonical: `https://instituteapex.in/${coursePath}`,
+        contentHtml: `
+          <article style="max-width:1000px;margin:30px auto;padding:0 20px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:#0f2b48;">
+            <h1 style="font-size:2.2rem;font-weight:800;color:#0f2b48;margin-bottom:14px;">${c.title} in Jind</h1>
+            ${c.subtitle ? `<p style="font-size:1.1rem;line-height:1.6;color:#334155;margin-bottom:24px;">${c.subtitle}</p>` : ''}
+            ${c.image ? `<img src="${c.image}" alt="${c.title}" style="width:100%;height:auto;display:block;border-radius:12px;margin-bottom:24px;" />` : ''}
+            <div style="background:#f8fafc;padding:24px;border-radius:12px;margin-bottom:28px;border:1px solid #e2e8f0;">
+              <h2 style="font-size:1.3rem;font-weight:700;color:#0369a1;margin-bottom:12px;">Curriculum & Course Overview</h2>
+              <div style="line-height:1.75;color:#334155;">${c.details || ''}</div>
+            </div>
+          </article>
+        `,
+        schema: {
+          "@context": "https://schema.org",
+          "@type": "Course",
+          "name": c.title,
+          "description": c.seoDescription || c.metaDescription || c.title,
+          "provider": { "@type": "EducationalOrganization", "name": "Institute APEX", "url": "https://instituteapex.in" }
+        }
+      });
+    }
+  });
+}
+
+// 2. Dynamic Posts
+if (Array.isArray(snapshotData.posts)) {
+  snapshotData.posts.forEach(p => {
+    if (!p.slug) return;
+    const postPath = `posts/${p.slug}`;
+    const existing = routes.find(r => r.path === postPath);
+    if (!existing) {
+      routes.push({
+        path: postPath,
+        title: p.metaTitle || `${p.title} | Institute APEX Jind`,
+        description: p.metaDescription || (p.content ? p.content.replace(/<[^>]*>/g, '').slice(0, 160) : `Read ${p.title} on Institute APEX Jind academic blog.`),
+        canonical: `https://instituteapex.in/${postPath}`,
+        contentHtml: `
+          <article style="max-width:1000px;margin:30px auto;padding:0 20px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:#0f2b48;">
+            <span style="font-size:0.8rem;text-transform:uppercase;color:#0369a1;font-weight:700;">${p.category || 'Academic News'}</span>
+            <h1 style="font-size:2.2rem;font-weight:800;color:#0f2b48;margin:10px 0 14px 0;">${p.title}</h1>
+            ${p.coverImage ? `<img src="${p.coverImage}" alt="${p.title}" style="width:100%;height:auto;display:block;border-radius:12px;margin-bottom:24px;" />` : ''}
+            <div style="font-size:1.05rem;line-height:1.8;color:#334155;">
+              ${p.content || ''}
+            </div>
+          </article>
+        `,
+        schema: {
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          "headline": p.title,
+          "datePublished": p.publishDate || "2026-08-01",
+          "author": { "@type": "Organization", "name": "Institute APEX" },
+          "publisher": { "@type": "Organization", "name": "Institute APEX", "url": "https://instituteapex.in" }
+        }
+      });
+    }
+  });
+}
+
+// 3. Dynamic Custom Pages
+if (Array.isArray(snapshotData.pages)) {
+  snapshotData.pages.forEach(pg => {
+    if (!pg.slug || pg.slug === 'about-apex-jind') return;
+    const pagePath = `pages/${pg.slug}`;
+    const existing = routes.find(r => r.path === pagePath);
+    if (!existing) {
+      routes.push({
+        path: pagePath,
+        title: pg.metaTitle || `${pg.title} | Institute APEX Jind`,
+        description: pg.metaDescription || (pg.content ? pg.content.replace(/<[^>]*>/g, '').slice(0, 160) : `Official page for ${pg.title} at Institute APEX Jind.`),
+        canonical: `https://instituteapex.in/${pagePath}`,
+        contentHtml: `
+          <section style="max-width:1200px;margin:30px auto;padding:0 20px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:#0f2b48;">
+            <h1 style="font-size:2rem;font-weight:800;color:#0f2b48;margin-bottom:16px;">${pg.title}</h1>
+            <div style="font-size:1.05rem;line-height:1.75;color:#334155;">
+              ${pg.content || ''}
+            </div>
+          </section>
+        `,
+        schema: {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": pg.title,
+          "url": `https://instituteapex.in/${pagePath}`
+        }
+      });
+    }
+  });
+}
+
 console.log('Prerendering static route HTML files for SEO indexing...');
 
 routes.forEach(route => {
@@ -466,4 +578,40 @@ routes.forEach(route => {
   console.log(`✓ Prerendered: dist/${route.path}/index.html (${Math.round(fs.statSync(targetFilePath).size / 1024)} KB)`);
 });
 
+// Dynamic XML Sitemap Generator
+const today = new Date().toISOString().split('T')[0];
+const sitemapUrls = [
+  { loc: 'https://instituteapex.in/', priority: '1.0', changefreq: 'daily' },
+  ...routes.map(r => ({
+    loc: r.canonical,
+    priority: r.path.startsWith('courses/') ? '0.9' : r.path.startsWith('posts/') ? '0.8' : r.path.startsWith('pages/') ? '0.8' : '0.9',
+    changefreq: r.path.startsWith('posts/') ? 'weekly' : 'monthly'
+  }))
+];
+
+const seenUrls = new Set();
+const uniqueSitemapUrls = sitemapUrls.filter(item => {
+  if (seenUrls.has(item.loc)) return false;
+  seenUrls.add(item.loc);
+  return true;
+});
+
+const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${uniqueSitemapUrls.map(u => `  <url>
+    <loc>${u.loc}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority}</priority>
+  </url>`).join('\n')}
+</urlset>`;
+
+fs.writeFileSync(path.join(distDir, 'sitemap.xml'), sitemapXml, 'utf8');
+const publicSitemapPath = path.join(__dirname, '..', 'public', 'sitemap.xml');
+try {
+  fs.writeFileSync(publicSitemapPath, sitemapXml, 'utf8');
+} catch (e) {}
+
+console.log(`✓ Generated dynamic sitemap.xml with ${uniqueSitemapUrls.length} indexed URLs.`);
 console.log('Prerendering complete! All static routes generated successfully.');
