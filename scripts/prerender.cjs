@@ -649,7 +649,14 @@ routes.forEach(route => {
   html = html.replace(/<div class="shell-hero">[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/i, `${staticContent}</div></div>`);
 
   fs.writeFileSync(targetFilePath, html, 'utf8');
-  console.log(`✓ Prerendered: dist/${route.path}/index.html (${Math.round(fs.statSync(targetFilePath).size / 1024)} KB)`);
+  
+  // Also write flat cleanUrl file (e.g. dist/results.html) so Vercel serves extensionless clean URLs directly with 200 OK (no 308 redirect)
+  const flatFilePath = path.join(distDir, `${route.path}.html`);
+  const flatFileDir = path.dirname(flatFilePath);
+  fs.mkdirSync(flatFileDir, { recursive: true });
+  fs.writeFileSync(flatFilePath, html, 'utf8');
+
+  console.log(`✓ Prerendered: dist/${route.path}/index.html & ${route.path}.html (${Math.round(fs.statSync(targetFilePath).size / 1024)} KB)`);
 });
 
 // Dynamic XML Sitemap Generator
