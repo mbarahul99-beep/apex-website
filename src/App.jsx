@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { dbService, mergeAboutData } from './services/dbService';
-import { isDefault } from './services/firebase';
 import './css/main.css';
 // admin.css is imported inside AdminPanel.jsx to keep it out of the critical path
 
@@ -10,14 +9,11 @@ import {
   IconPhone, 
   IconHome, 
   IconBook, 
-  IconShare, 
   IconChevronLeft,
   IconChevronRight, 
   IconPlay, 
   IconClose, 
   IconMenu, 
-  IconPlus, 
-  IconEdit, 
   IconTrash, 
   IconExternalLink, 
   IconCheck, 
@@ -260,7 +256,7 @@ export default function App() {
 
   return (
     <HelmetProvider>
-      <div className="app-root-wrapper">
+      <div className="app-root-wrapper" data-app-hydrated="true">
         {isStudentView ? (
           <StudentLayout 
             settings={settings} 
