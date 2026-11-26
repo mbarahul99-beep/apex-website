@@ -28,7 +28,8 @@ import {
   IconClock,
   IconInfo,
   getLogoSrc, 
-  getEmbedVideoUrl 
+  getEmbedVideoUrl,
+  getYouTubeThumbnailUrl
 } from './components/icons';
 
 // Lazy-load the heavy Administrative Panel chunk
@@ -1124,65 +1125,61 @@ function StudentLayout({ children, settings, navigate, currentPath, openEnquiry 
 
 // ---------------- TESTIMONIAL CARD COMPONENT ----------------
 function TestimonialCard({ item, onPlayVideo }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const text = item.textReview || '';
-  const isLongText = text.length > 115;
-  const displayedText = (isLongText && !isExpanded) ? text.slice(0, 115).trim() + '...' : text;
   const hasVideo = Boolean(item.videoUrl && item.videoUrl.trim());
+  if (!hasVideo) return null;
+
+  const thumbnailSrc = item.photo || getYouTubeThumbnailUrl(item.videoUrl);
 
   return (
-    <div className={`testimonial-card ${hasVideo ? 'testimonial-card-with-video' : ''}`}>
+    <div className="testimonial-card testimonial-card-with-video">
       {/* Prominent Video Placeholder Container */}
-      {hasVideo && (
-        <div 
-          className="testimonial-video-box"
-          onClick={() => onPlayVideo(item.videoUrl)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              onPlayVideo(item.videoUrl);
-            }
-          }}
-          aria-label={`Watch video review from ${item.studentName}`}
-        >
-          {item.photo ? (
-            <img 
-              src={item.photo} 
-              className="testimonial-video-bg" 
-              alt={item.studentName} 
-              loading="lazy"
-            />
-          ) : (
-            <div className="testimonial-video-bg-placeholder">
-              <span>{item.studentName?.[0] || 'A'}</span>
-            </div>
-          )}
-          
-          <div className="testimonial-video-scrim"></div>
-
-          {/* Video Badge / Tag */}
-          <div className="testimonial-video-tag">
-            <span className="testimonial-video-tag-pulse"></span>
-            <span>Watch Video Story</span>
+      <div 
+        className="testimonial-video-box"
+        onClick={() => onPlayVideo(item.videoUrl)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onPlayVideo(item.videoUrl);
+          }
+        }}
+        aria-label={`Watch video review from ${item.studentName}`}
+      >
+        {thumbnailSrc ? (
+          <img 
+            src={thumbnailSrc} 
+            className="testimonial-video-bg" 
+            alt={item.studentName} 
+            loading="lazy"
+          />
+        ) : (
+          <div className="testimonial-video-bg-placeholder">
+            <span>{item.studentName?.[0] || 'A'}</span>
           </div>
+        )}
+        
+        <div className="testimonial-video-scrim"></div>
 
-          {/* Large Center Play Button */}
-          <div className="testimonial-play-btn-large">
-            <div className="testimonial-play-btn-circle" title="Click to play video">
-              <IconPlay />
-            </div>
-          </div>
+        {/* Video Badge / Tag */}
+        <div className="testimonial-video-tag">
+          <span className="testimonial-video-tag-pulse"></span>
+          <span>Watch Video Story</span>
+        </div>
 
-          {/* Bottom Action Bar */}
-          <div className="testimonial-video-bar">
-            <span>Student Interview</span>
-            <span className="testimonial-video-action">Play Video &#9654;</span>
+        {/* Large Center Play Button */}
+        <div className="testimonial-play-btn-large">
+          <div className="testimonial-play-btn-circle" title="Click to play video">
+            <IconPlay />
           </div>
         </div>
-      )}
+
+        {/* Bottom Action Bar */}
+        <div className="testimonial-video-bar">
+          <span>Student Video Review</span>
+          <span className="testimonial-video-action">Play Video &#9654;</span>
+        </div>
+      </div>
 
       {/* Top Student Info */}
       <div className="testimonial-header">
@@ -1208,33 +1205,8 @@ function TestimonialCard({ item, onPlayVideo }) {
       </div>
 
       {/* Star Rating for Credibility */}
-      <div className="testimonial-stars" aria-label="5 star rating">
+      <div className="testimonial-stars" aria-label="5 star rating" style={{ marginBottom: 0 }}>
         &#9733;&#9733;&#9733;&#9733;&#9733;
-      </div>
-
-      {/* Review Text Body with Extension Button */}
-      <div className="testimonial-body">
-        <p className="testimonial-text">
-          "{displayedText}"
-        </p>
-
-        {isLongText && (
-          <button 
-            type="button" 
-            className="testimonial-expand-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsExpanded(!isExpanded);
-            }}
-            aria-expanded={isExpanded}
-          >
-            {isExpanded ? (
-              <>Show Less <span className="btn-chevron">&#9650;</span></>
-            ) : (
-              <>Read Full Review <span className="btn-chevron">&#9660;</span></>
-            )}
-          </button>
-        )}
       </div>
     </div>
   );
@@ -1760,22 +1732,24 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
         </section>
       )}
 
-      {/* Testimonials */}
-      {settings.showTestimonials !== false && testimonials.length > 0 && (
+      {/* Testimonials (Video Reviews Only) */}
+      {settings.showTestimonials !== false && testimonials.some(item => item.videoUrl && item.videoUrl.trim()) && (
         <section className="testimonials-section">
           <div className="section-header">
-            <h2 className="section-title">Real Student & Parent Reviews in Jind</h2>
-            <p className="section-subtitle">Read how Apex Institute helped Jind students conquer NEET, JEE, and Board exams</p>
+            <h2 className="section-title">Student Video Reviews in Jind</h2>
+            <p className="section-subtitle">Watch how Institute APEX helped Jind students conquer NEET, JEE, and Board exams</p>
           </div>
 
           <div className="testimonials-scroll">
-            {testimonials.map(item => (
-              <TestimonialCard 
-                key={item.id} 
-                item={item} 
-                onPlayVideo={setVideoModalUrl} 
-              />
-            ))}
+            {testimonials
+              .filter(item => item.videoUrl && item.videoUrl.trim())
+              .map(item => (
+                <TestimonialCard 
+                  key={item.id} 
+                  item={item} 
+                  onPlayVideo={setVideoModalUrl} 
+                />
+              ))}
           </div>
         </section>
       )}

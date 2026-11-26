@@ -37,20 +37,36 @@ export const getLogoSrc = (url) => {
   return url;
 };
 
-// Helper to transform any YouTube URL (watch, youtu.be, embed) into an embeddable URL
+// Extract YouTube Video ID from standard, short, embed, live, or mobile URLs
+export const getYouTubeVideoId = (url) => {
+  if (!url) return null;
+  const trimmed = url.trim();
+  const patterns = [
+    /(?:youtube\.com\/embed\/)([^?&/]+)/i,
+    /(?:youtube\.com\/shorts\/)([^?&/]+)/i,
+    /(?:youtube\.com\/live\/)([^?&/]+)/i,
+    /(?:youtu\.be\/)([^?&/]+)/i,
+    /[?&]v=([^?&/]+)/i
+  ];
+  for (const regex of patterns) {
+    const match = trimmed.match(regex);
+    if (match && match[1]) return match[1];
+  }
+  return null;
+};
+
+// Helper to transform any YouTube URL (watch, youtu.be, shorts, live, embed) into an embeddable URL
 export const getEmbedVideoUrl = (url) => {
   if (!url) return '';
   const trimmed = url.trim();
-  if (trimmed.includes('youtube.com/embed/')) {
-    return trimmed.includes('?') ? trimmed : `${trimmed}?autoplay=1`;
-  }
-  if (trimmed.includes('watch?v=')) {
-    const videoId = trimmed.split('watch?v=')[1]?.split('&')[0];
-    return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-  }
-  if (trimmed.includes('youtu.be/')) {
-    const videoId = trimmed.split('youtu.be/')[1]?.split('?')[0];
-    return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+  const videoId = getYouTubeVideoId(trimmed);
+  if (videoId) {
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
   }
   return trimmed;
+};
+
+export const getYouTubeThumbnailUrl = (url) => {
+  const videoId = getYouTubeVideoId(url);
+  return videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : '';
 };

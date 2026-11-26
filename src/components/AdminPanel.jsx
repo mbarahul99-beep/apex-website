@@ -4319,10 +4319,10 @@ function AdminTestimonials() {
               <input type="text" value={rankBadge} onChange={e => setRankBadge(e.target.value)} required />
             </div>
             <div className="admin-input-group">
-              <label>YouTube Video Embed URL (Optional for video review)</label>
-              <input type="text" value={videoUrl} onChange={e => setVideoUrl(e.target.value)} placeholder="e.g. https://www.youtube.com/embed/XXXXXX" />
-              <span style={{ fontSize: '0.7rem', color: '#666', marginTop: '4px', display: 'block' }}>
-                Must be an embed URL (with <code>/embed/</code> in it) for the video player to load.
+              <label>YouTube Video URL (Standard, Shorts, or Embed link) *</label>
+              <input type="text" value={videoUrl} onChange={e => setVideoUrl(e.target.value)} placeholder="e.g. https://youtu.be/XXXXXX or https://youtube.com/shorts/XXXXXX" required />
+              <span style={{ fontSize: '0.72rem', color: '#b45309', marginTop: '4px', display: 'block', fontWeight: 500 }}>
+                Important: On YouTube Studio, set visibility to <b>Unlisted</b> or <b>Public</b> (YouTube blocks <b>Private</b> videos from playing on websites).
               </span>
             </div>
           </div>
@@ -4348,8 +4348,8 @@ function AdminTestimonials() {
           </div>
 
           <div className="admin-input-group">
-            <label>Text Review / Testimonial Write-up *</label>
-            <textarea value={textReview} onChange={e => setTextReview(e.target.value)} rows={4} required placeholder="Write student experience story here..." />
+            <label>Short Note / Summary (Optional - hidden on video cards)</label>
+            <textarea value={textReview} onChange={e => setTextReview(e.target.value)} rows={3} placeholder="Optional internal note..." />
           </div>
 
           <div style={{ display: 'flex', gap: '10px' }}>
