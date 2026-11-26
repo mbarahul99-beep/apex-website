@@ -276,17 +276,16 @@ export default function App() {
 
         {videoModalUrl && (
           <div className="modal-backdrop" onClick={() => setVideoModalUrl(null)}>
-            <div className="modal-content" style={{ maxWidth: '600px', width: '95%' }} onClick={e => e.stopPropagation()}>
+            <div className="modal-content" style={{ maxWidth: '380px', width: '92%' }} onClick={e => e.stopPropagation()}>
               <div className="modal-header">
                 <span className="modal-title">Student success testimonial video</span>
                 <button className="modal-close" onClick={() => setVideoModalUrl(null)}><IconClose /></button>
               </div>
-              <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
+              <div style={{ position: 'relative', width: '100%', aspectRatio: '9 / 16', maxHeight: '78vh', backgroundColor: '#000', borderRadius: '0 0 12px 12px', overflow: 'hidden' }}>
                 <iframe
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', borderRadius: '0 0 12px 12px' }}
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
                   src={getEmbedVideoUrl(videoModalUrl)}
                   title="Testimonial Player"
-                  frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 ></iframe>
