@@ -18,7 +18,13 @@
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  # 4. Fallback to index.html for Single Page Application (React) client-side routing
+  # 4. Never rewrite missing static assets (/assets/*, *.js, *.css, images) to index.html
+  #    Prevents Cloudflare from caching text/html at a .js/.css URL during deployments
+  RewriteCond %{REQUEST_URI} ^/assets/ [OR]
+  RewriteCond %{REQUEST_URI} \.(js|css|png|jpg|jpeg|webp|svg|ico|xml|txt|json|woff2?)$ [NC]
+  RewriteRule ^ - [R=404,L]
+
+  # 5. Fallback to index.html for Single Page Application (React) client-side routing
   RewriteRule ^ index.html [L]
 </IfModule>
 
