@@ -1002,7 +1002,8 @@
 @media (min-width: 768px) {
   .testimonials-scroll {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(260px, 310px));
+    justify-content: center;
     overflow-x: visible;
     padding: 0;
     gap: var(--spacing-lg);
@@ -1010,14 +1011,14 @@
 }
 
 .testimonial-card {
-  flex: 0 0 calc(90vw - 32px);
-  min-width: 280px;
-  max-width: 380px;
+  flex: 0 0 265px;
+  min-width: 260px;
+  max-width: 310px;
   scroll-snap-align: center;
   background-color: var(--white);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
-  padding: var(--spacing-md);
+  padding: var(--spacing-sm);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
@@ -1029,10 +1030,10 @@
 @media (min-width: 768px) {
   .testimonial-card {
     min-width: auto;
-    max-width: none;
+    max-width: 310px;
     width: 100%;
-    padding: var(--spacing-lg);
-    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
   }
 }
 
@@ -1041,12 +1042,11 @@
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
 }
 
-/* Big Video Placeholder Container */
+/* Big Video Placeholder Container (9:16 Vertical Shorts/Reels Ratio) */
 .testimonial-video-box {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
-  min-height: 180px;
+  aspect-ratio: 9 / 16;
   border-radius: var(--radius-md);
   overflow: hidden;
   background-color: #0b1329;
@@ -1066,7 +1066,7 @@
 .testimonial-video-bg {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center top;
   background-color: #0b1329;
   transition: transform 0.4s ease;
