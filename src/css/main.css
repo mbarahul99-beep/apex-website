@@ -984,9 +984,10 @@
   display: flex;
   gap: var(--spacing-md);
   overflow-x: auto;
-  padding: var(--spacing-xs) 4px var(--spacing-md);
+  padding: var(--spacing-xs) 2px var(--spacing-md);
   scrollbar-width: thin;
   scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -1001,20 +1002,16 @@
 
 @media (min-width: 768px) {
   .testimonials-scroll {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 310px));
-    justify-content: center;
-    overflow-x: visible;
-    padding: 0;
     gap: var(--spacing-lg);
+    padding: var(--spacing-xs) 2px var(--spacing-md);
   }
 }
 
 .testimonial-card {
-  flex: 0 0 265px;
-  min-width: 260px;
-  max-width: 310px;
-  scroll-snap-align: center;
+  flex: 0 0 100%;
+  min-width: 0;
+  max-width: 100%;
+  scroll-snap-align: start;
   background-color: var(--white);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
@@ -1029,9 +1026,8 @@
 
 @media (min-width: 768px) {
   .testimonial-card {
-    min-width: auto;
-    max-width: 310px;
-    width: 100%;
+    flex: 0 0 calc((100% - 2 * var(--spacing-lg)) / 3);
+    max-width: calc((100% - 2 * var(--spacing-lg)) / 3);
     padding: var(--spacing-md);
     gap: var(--spacing-sm);
   }

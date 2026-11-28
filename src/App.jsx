@@ -1730,12 +1730,38 @@ function HomeView({ settings, navigate, openEnquiry, setVideoModalUrl, setSelect
       {/* Testimonials (Video Reviews Only) */}
       {settings.showTestimonials !== false && testimonials.some(item => item.videoUrl && item.videoUrl.trim()) && (
         <section className="testimonials-section">
-          <div className="section-header">
-            <h2 className="section-title">Student Video Reviews in Jind</h2>
-            <p className="section-subtitle">Watch how Institute APEX helped Jind students conquer NEET, JEE, and Board exams</p>
+          <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '12px', flexWrap: 'wrap' }}>
+            <div>
+              <h2 className="section-title">Student Video Reviews in Jind</h2>
+              <p className="section-subtitle">Watch how Institute APEX helped Jind students conquer NEET, JEE, and Board exams</p>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <button
+                type="button"
+                aria-label="Scroll reviews left"
+                onClick={() => {
+                  const el = document.getElementById('video-reviews-carousel');
+                  if (el) el.scrollBy({ left: -el.clientWidth, behavior: 'smooth' });
+                }}
+                style={{ width: '36px', height: '36px', borderRadius: '9999px', border: '1px solid var(--border-light)', background: '#fff', color: 'var(--navy-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 6px rgba(0,0,0,0.06)' }}
+              >
+                <IconChevronLeft />
+              </button>
+              <button
+                type="button"
+                aria-label="Scroll reviews right"
+                onClick={() => {
+                  const el = document.getElementById('video-reviews-carousel');
+                  if (el) el.scrollBy({ left: el.clientWidth, behavior: 'smooth' });
+                }}
+                style={{ width: '36px', height: '36px', borderRadius: '9999px', border: '1px solid var(--border-light)', background: '#fff', color: 'var(--navy-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 6px rgba(0,0,0,0.06)' }}
+              >
+                <IconChevronRight />
+              </button>
+            </div>
           </div>
 
-          <div className="testimonials-scroll">
+          <div id="video-reviews-carousel" className="testimonials-scroll">
             {testimonials
               .filter(item => item.videoUrl && item.videoUrl.trim())
               .map(item => (
